@@ -428,7 +428,7 @@ const OnePagePortfolio = () => {
           </div>
         </SectionBlock>
 
-        <SectionBlock id="mobile-projects" title="Products">
+        <SectionBlock id="mobile-projects" title="Projects">
           <div className="grid gap-2 md:grid-cols-2">
             {featuredOffGitHubProjects.map((project) => (
               <motion.article
@@ -514,9 +514,9 @@ const OnePagePortfolio = () => {
           </div>
         </SectionBlock>
 
-        <SectionBlock id="projects" title="Featured Projects">
+        <SectionBlock id="projects" title="Featured Repositories">
           {isProjectsLoading && (
-            <p className="text-sm">Loading GitHub projects...</p>
+            <p className="text-sm">Loading GitHub Repositories...</p>
           )}
 
           {projectsError && (
