@@ -11,6 +11,7 @@ import {
   Mail,
   Smartphone,
   Star,
+  Users,
 } from "lucide-react";
 import { FaGithub, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
 import { useState, type ReactNode } from "react";
@@ -27,6 +28,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/Components/ui/tooltip";
+import { useChromeExtensionUsers } from "@/hooks/useChromeExtensionUsers";
 import { useGitHubProjects } from "@/hooks/useGitHubProjects";
 import { useGitHubStats } from "@/hooks/useGitHubStats";
 import { cn } from "@/lib/utils";
@@ -49,6 +51,66 @@ const formatDate = (isoDate: string): string => {
     month: "short",
   });
 };
+
+/**
+ * Total months between two "YYYY-MM" ISO month strings, inclusive of both
+ * months — matches how tenure is usually counted on a CV ("Feb–Apr 2025" is
+ * three months, not two).
+ */
+const monthsInclusive = (startIso: string, endIso: string): number => {
+  const [startY, startM] = startIso.split("-").map(Number);
+  const [endY, endM] = endIso.split("-").map(Number);
+  if (!startY || !startM || !endY || !endM) {
+    return 0;
+  }
+  return (endY - startY) * 12 + (endM - startM) + 1;
+};
+
+/** Human-readable tenure label like "11 mos" or "1 yr 2 mos". */
+const formatTenure = (months: number): string => {
+  if (months <= 0) {
+    return "";
+  }
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+  const monthPart = remainingMonths === 1 ? "1 mo" : `${remainingMonths} mos`;
+  if (years === 0) {
+    return monthPart;
+  }
+  const yearPart = years === 1 ? "1 yr" : `${years} yrs`;
+  if (remainingMonths === 0) {
+    return yearPart;
+  }
+  return `${yearPart} ${monthPart}`;
+};
+
+const tenureLabel = (item: {
+  startDate?: string;
+  endDate?: string;
+}): string => {
+  if (!item.startDate) {
+    return "";
+  }
+  const endIso =
+    item.endDate ?? new Date().toISOString().slice(0, 7); // "YYYY-MM"
+  return formatTenure(monthsInclusive(item.startDate, endIso));
+};
+
+/**
+ * Project-name → brand logo. Lets us swap the generic Github mark on a few
+ * repos. Keys are matched case-insensitively against either the GitHub repo
+ * slug ("ebay-mcp") or the curated display name ("eBay MCP API Server"), so
+ * both live and fallback feeds resolve.
+ */
+const REPO_LOGO_OVERRIDES: Record<string, { src: string; alt: string }> = {
+  "ebay-mcp": { src: "/logos/ebay.svg", alt: "eBay logo" },
+  "ebay mcp api server": { src: "/logos/ebay.svg", alt: "eBay logo" },
+  "fresh-squeezy": { src: "/logos/lemon-squeezy.svg", alt: "Lemon Squeezy logo" },
+  "tim-trailers": { src: "/logos/tim-trailers.png", alt: "Tim Trailers logo" },
+};
+
+const findRepoLogoOverride = (projectName: string) =>
+  REPO_LOGO_OVERRIDES[projectName.trim().toLowerCase()];
 
 const SectionBlock = ({
   id,
@@ -148,6 +210,10 @@ const OnePagePortfolio = () => {
     error: projectsError,
     refetch,
   } = useGitHubProjects(recruiterProfile.githubUsername);
+  const chromeExtensionIds = featuredOffGitHubProjects
+    .map((project) => project.chromeExtensionId)
+    .filter((id): id is string => Boolean(id));
+  const chromeExtensionUsers = useChromeExtensionUsers(chromeExtensionIds);
   const contactEmail = recruiterProfile.contactEmail || "yosefisabag@gmail.com";
   const stackedTechLoop = [
     ...coreTechStack,
@@ -342,7 +408,12 @@ const OnePagePortfolio = () => {
                   </div>
                   <p className="inline-flex shrink-0 items-center gap-2 text-xs text-[var(--text-secondary)]">
                     <CalendarDays size={12} />
-                    {item.dateRange}
+                    <span>{item.dateRange}</span>
+                    {tenureLabel(item) && (
+                      <span className="text-[10px] text-[var(--text-secondary)]/80">
+                        ({tenureLabel(item)})
+                      </span>
+                    )}
                   </p>
                 </div>
                 <ul className="grid gap-2 text-sm leading-relaxed text-[var(--text-secondary)]">
@@ -357,7 +428,7 @@ const OnePagePortfolio = () => {
           </div>
         </SectionBlock>
 
-        <SectionBlock id="mobile-projects" title="Mobile Projects">
+        <SectionBlock id="mobile-projects" title="Products">
           <div className="grid gap-2 md:grid-cols-2">
             {featuredOffGitHubProjects.map((project) => (
               <motion.article
@@ -401,7 +472,17 @@ const OnePagePortfolio = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {project.chromeExtensionId &&
+                      chromeExtensionUsers[project.chromeExtensionId] !==
+                        undefined && (
+                        <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] p-2 text-xs text-green-500">
+                          <Users size={12} color="#05df72" />
+                          {chromeExtensionUsers[
+                            project.chromeExtensionId
+                          ]?.toLocaleString()}
+                        </span>
+                      )}
                     {!project.url && (
                       <span className="inline-flex h-9 items-center justify-center rounded-full border border-[var(--border-subtle)] px-2.5 text-xs text-[var(--text-secondary)]">
                         {project.status}
@@ -452,7 +533,9 @@ const OnePagePortfolio = () => {
           )}
 
           <div className="grid gap-2 md:grid-cols-2">
-            {projects.map((project) => (
+            {projects.map((project) => {
+              const logoOverride = findRepoLogoOverride(project.name);
+              return (
               <motion.article
                 className="min-w-0 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 sm:p-4"
                 initial={{ opacity: 0, y: 12 }}
@@ -470,7 +553,15 @@ const OnePagePortfolio = () => {
                         rel="noreferrer"
                         target="_blank"
                       >
-                        <Github className="mt-0.5 shrink-0" size={16} />
+                        {logoOverride ? (
+                          <img
+                            alt={logoOverride.alt}
+                            className="mt-0.5 size-4 shrink-0 object-contain"
+                            src={logoOverride.src}
+                          />
+                        ) : (
+                          <Github className="mt-0.5 shrink-0" size={16} />
+                        )}
                         <span className="min-w-0 break-words">
                           {project.name}
                         </span>
@@ -510,7 +601,8 @@ const OnePagePortfolio = () => {
                   ))}
                 </div>
               </motion.article>
-            ))}
+              );
+            })}
           </div>
         </SectionBlock>
       </AnimatedPage>

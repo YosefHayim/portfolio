@@ -5,7 +5,7 @@ import {
   createResponsePreview,
   createUserChatMessage,
   DOWNLOAD_RESUME_ACTION,
-  RESUME_DOWNLOAD_PATH,
+  RESUME_URL,
   toAssistantRequestMessages,
 } from "./chatSession";
 import type { Message } from "./chatUtils";
@@ -29,7 +29,7 @@ export type ChatSessionActions = {
 
 export type ChatSessionAdapters = {
   createAbortSignal: () => AbortSignal;
-  downloadResume: (path: string, fileName: string) => void;
+  openResume: (url: string) => void;
   fetchStreamingResponse: (
     messages: Array<{ role: string; content: string }>,
     onChunk: (chunk: string) => void,
@@ -61,10 +61,7 @@ export async function runChatSessionMessage({
   }
 
   if (content === DOWNLOAD_RESUME_ACTION) {
-    adapters.downloadResume(
-      RESUME_DOWNLOAD_PATH,
-      "yosef-hayim-full-stack-resume.pdf",
-    );
+    adapters.openResume(RESUME_URL);
     return;
   }
 

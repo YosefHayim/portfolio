@@ -5,6 +5,7 @@ import { env } from "./config/env.js";
 import { httpLogger, logger } from "./config/logger.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import chatRouter from "./routes/chat.js";
+import chromeExtensionsRouter from "./routes/chromeExtensions.js";
 import emailRouter from "./routes/email.js";
 
 async function main() {
@@ -56,6 +57,7 @@ async function main() {
 
 	app.use("/api/chat", chatRouter);
 	app.use("/api/email", emailRouter);
+	app.use("/api/chrome-extension", chromeExtensionsRouter);
 
 	app.get("/health", (_req, res) => {
 		res.json({

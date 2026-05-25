@@ -5,6 +5,10 @@ export type PortfolioExperience = {
   companyUrl?: string;
   logoUrl?: string;
   logoMonogram?: string;
+  /** ISO month "YYYY-MM" — used to derive months-on-the-job alongside `dateRange`. */
+  startDate?: string;
+  /** ISO month "YYYY-MM"; omit for ongoing roles. */
+  endDate?: string;
   dateRange: string;
   promptDateRange: string;
   bullets: string[];
@@ -16,6 +20,8 @@ export type FeaturedPortfolioProduct = {
   url?: string;
   logoUrl?: string;
   logoMonogram?: string;
+  /** Chrome Web Store extension id; presence triggers a live user-count fetch. */
+  chromeExtensionId?: string;
   description: string;
   status: string;
   dateRange: string;

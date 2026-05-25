@@ -12,12 +12,14 @@ import {
  SiAxios,
  SiAnthropic,
  SiBinance,
+ SiExpo,
  SiExpress,
  SiFirebase,
  SiGooglecloud,
  SiJavascript,
  SiJest,
  SiMongodb,
+ SiNestjs,
  SiNextdotjs,
  SiNpm,
  SiOpenai,
@@ -33,6 +35,7 @@ import {
  SiTelegram,
  SiTypescript,
  SiVitest,
+ SiWxt,
  SiZod,
 } from "react-icons/si";
 import { TbApi, TbBrandReactNative } from "react-icons/tb";
@@ -88,7 +91,16 @@ const techIconMap: TechIconMap = {
  "tanstack query": (
  <SiReactquery className="text-[#FF4154]" size={ICON_SIZE} />
  ),
- expo: <TbBrandReactNative className="text-[#000020]" size={ICON_SIZE} />,
+ expo: <SiExpo className="text-[#ffffff]" size={ICON_SIZE} />,
+ wxt: <SiWxt className="text-[#67D55E]" size={ICON_SIZE} />,
+ nestjs: <SiNestjs className="text-[#E0234E]" size={ICON_SIZE} />,
+ "nest.js": <SiNestjs className="text-[#E0234E]" size={ICON_SIZE} />,
+ nest: <SiNestjs className="text-[#E0234E]" size={ICON_SIZE} />,
+ gcp: <SiGooglecloud className="text-[#4285F4]" size={ICON_SIZE} />,
+ "google cloud": <SiGooglecloud className="text-[#4285F4]" size={ICON_SIZE} />,
+ "google cloud platform": (
+ <SiGooglecloud className="text-[#4285F4]" size={ICON_SIZE} />
+ ),
  "google api": <SiGooglecloud className="text-[#4285F4]" size={ICON_SIZE} />,
  oauth: <BsGear className="text-[#ffffff]" size={ICON_SIZE} />,
  "oauth 2.1": <BsGear className="text-[#ffffff]" size={ICON_SIZE} />,
@@ -140,8 +152,12 @@ const canonicalTechIconMap: TechIconMap = Object.fromEntries(
 const keywordMatchers: Array<{ keywords: string[]; icon: React.ReactNode }> = [
  { keywords: ["typescript"], icon: techIconMap.typescript },
  { keywords: ["javascript", "nodejs", "node"], icon: techIconMap.javascript },
- { keywords: ["reactnative", "expo"], icon: techIconMap["react native"] },
+ { keywords: ["reactnative"], icon: techIconMap["react native"] },
+ { keywords: ["expo"], icon: techIconMap.expo },
  { keywords: ["react"], icon: techIconMap.react },
+ { keywords: ["nestjs", "nest"], icon: techIconMap.nestjs },
+ { keywords: ["googlecloud", "gcp"], icon: techIconMap.gcp },
+ { keywords: ["wxt"], icon: techIconMap.wxt },
  { keywords: ["next"], icon: techIconMap["next.js"] },
  { keywords: ["tailwind"], icon: techIconMap.tailwind },
  { keywords: ["postgres", "postgresql"], icon: techIconMap.postgresql },

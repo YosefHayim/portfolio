@@ -33,7 +33,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     icon: "contact",
   },
   {
-    label: "Download Resume",
+    label: "View Resume",
     prompt: "__ACTION_DOWNLOAD_RESUME__",
     icon: "resume",
   },

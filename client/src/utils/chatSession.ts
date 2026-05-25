@@ -3,6 +3,7 @@ import {
   findPendingContactEmailRequest,
   markContactEmailStatus,
 } from "../../../shared/portfolio/contactEmail.js";
+import { portfolioKnowledge } from "../../../shared/portfolio/portfolioKnowledge.js";
 import { type EmailData, type Message } from "./chatUtils";
 
 const ID_START = 2;
@@ -10,7 +11,7 @@ const ID_END = 9;
 const RADIX = 36;
 
 export const DOWNLOAD_RESUME_ACTION = "__ACTION_DOWNLOAD_RESUME__";
-export const RESUME_DOWNLOAD_PATH = "/resume/yosef-hayim-full-stack-resume.pdf";
+export const RESUME_URL = portfolioKnowledge.links.resume;
 
 export function createChatMessageId(): string {
   return Math.random().toString(RADIX).substring(ID_START, ID_END);

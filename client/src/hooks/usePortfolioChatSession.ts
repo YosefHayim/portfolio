@@ -89,11 +89,8 @@ export function usePortfolioChatSession({
             abortControllerRef.current = new AbortController();
             return abortControllerRef.current.signal;
           },
-          downloadResume: (path, fileName) => {
-            const link = document.createElement("a");
-            link.href = path;
-            link.download = fileName;
-            link.click();
+          openResume: (url) => {
+            window.open(url, "_blank", "noopener,noreferrer");
           },
           fetchStreamingResponse,
           getOfflineResponse,

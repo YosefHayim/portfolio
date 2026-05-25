@@ -62,8 +62,10 @@ export const portfolioKnowledge = {
       role: "Software Engineer",
       companyUrl:
         "https://www.linkedin.com/company/predicto-ai/posts/?feedView=all",
-      logoUrl: "https://predicto.ai/logo.png",
+      logoUrl: "/logos/predicto-ai.png",
       logoMonogram: "PA",
+      startDate: "2025-07",
+      endDate: "2026-05",
       dateRange: "Jul 2025 - May 2026",
       promptDateRange: "Jul 2025 - current profile",
       bullets: [
@@ -77,8 +79,10 @@ export const portfolioKnowledge = {
       company: "Wotch Health",
       role: "Software Engineer Intern",
       companyUrl: "https://www.linkedin.com/company/wotch-health/",
-      logoUrl: "https://wotch.health/logo.png",
+      logoUrl: "/logos/wotch-health.webp",
       logoMonogram: "WH",
+      startDate: "2025-02",
+      endDate: "2025-04",
       dateRange: "Feb 2025 - Apr 2025",
       promptDateRange: "Feb 2025 - Apr 2025",
       bullets: [
@@ -103,7 +107,7 @@ export const portfolioKnowledge = {
       id: "small-bites",
       name: "SmallBites",
       url: "https://apps.apple.com/ca/app/small-bites/id6759283694",
-      logoUrl: "https://www.apple.com/apple-touch-icon.png",
+      logoUrl: "/logos/small-bites.jpg",
       logoMonogram: "SB",
       description:
         "Ditch the puree panic. SmallBites helps parents start solids with confidence through expert-led BLW guidance, a 400+ first-food database, personalized meal plans, progress tracking, and 300+ practical recipes.",
@@ -129,6 +133,8 @@ export const portfolioKnowledge = {
     {
       id: "ebay-mcp-api-server",
       name: "eBay MCP API Server",
+      logoUrl: "/logos/ebay.svg",
+      logoMonogram: "eB",
       status: "Open Source",
       dateRange: "2025",
       techStack: ["TypeScript", "MCP", "OAuth", "eBay API", "Vitest"],
@@ -136,6 +142,50 @@ export const portfolioKnowledge = {
         "Open-source MCP server for eBay Sell APIs with broad tool coverage, tests, and npm distribution.",
       promptSummary:
         "open-source MCP server for eBay Sell APIs, broad tool coverage, tests, and npm distribution.",
+    },
+    {
+      id: "omri-association",
+      name: "Omri Association",
+      url: "https://www.omri-association.com/",
+      logoUrl: "/logos/omri-association.svg",
+      logoMonogram: "OA",
+      status: "Live",
+      dateRange: "2026",
+      techStack: ["Next.js", "TypeScript", "PostgreSQL", "Mantine"],
+      description:
+        "Developed and maintains a charity financial platform for managing beneficiaries, donors, donations, expenses, and monthly reporting.",
+      promptSummary:
+        "Hebrew charity management platform built and maintained for Omri Association covering beneficiaries, donors, donations, budgeting, and monthly reports.",
+    },
+    {
+      id: "sora-auto-queue-prompts",
+      name: "Sora Auto Queue Prompts",
+      url: "https://chromewebstore.google.com/detail/sora-auto-queue-prompts/kbpbdckjechbjmnjagfkgcplmhdkkgph",
+      chromeExtensionId: "kbpbdckjechbjmnjagfkgcplmhdkkgph",
+      logoUrl: "/logos/chrome.svg",
+      logoMonogram: "SQ",
+      status: "Chrome Web Store",
+      dateRange: "2025",
+      techStack: ["TypeScript", "React", "WXT", "Playwright"],
+      description:
+        "Chrome extension that queues prompts in Sora and fires them back-to-back unattended — no manual clicking between generations.",
+      promptSummary:
+        "Chrome extension that queues prompts in Sora and fires them back-to-back unattended.",
+    },
+    {
+      id: "batchbeam-bulk-prompt-queue",
+      name: "BatchBeam — Bulk Prompt Queue",
+      url: "https://chromewebstore.google.com/detail/batchbeam-bulk-prompt-que/lidnnjbepijjbbphbdhcchgpckpcbgfm",
+      chromeExtensionId: "lidnnjbepijjbbphbdhcchgpckpcbgfm",
+      logoUrl: "/logos/chrome.svg",
+      logoMonogram: "BB",
+      status: "Chrome Web Store",
+      dateRange: "2025",
+      techStack: ["TypeScript", "React", "WXT", "CSV"],
+      description:
+        "Bulk prompt runner for Gemini, AI Studio, and ChatGPT — CSV import, retries, auto-downloads, and mass edits across runs.",
+      promptSummary:
+        "Bulk prompt runner across Gemini, AI Studio, and ChatGPT with CSV import, retries, auto-downloads, and mass edits.",
     },
     {
       id: "automation-marketplace-tools",

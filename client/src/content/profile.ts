@@ -26,6 +26,10 @@ export type ExperienceItem = {
   companyUrl?: string;
   logoUrl?: string;
   logoMonogram?: string;
+  /** ISO month "YYYY-MM" — used to derive months-on-the-job alongside `dateRange`. */
+  startDate?: string;
+  /** ISO month "YYYY-MM"; omit for ongoing roles. */
+  endDate?: string;
   dateRange: string;
   bullets: string[];
 };
@@ -36,6 +40,8 @@ export type FeaturedOffGitHubProject = {
   url?: string;
   logoUrl?: string;
   logoMonogram?: string;
+  /** Chrome Web Store extension id; presence triggers a live user-count fetch. */
+  chromeExtensionId?: string;
   description: string;
   status: string;
   dateRange: string;
@@ -46,6 +52,9 @@ const PROFILE_EXPERIENCE_IDS = new Set(["predicto", "wotch"]);
 const PROFILE_FEATURED_PRODUCT_IDS = new Set([
   "small-bites",
   "wise-note-taker",
+  "omri-association",
+  "sora-auto-queue-prompts",
+  "batchbeam-bulk-prompt-queue",
 ]);
 
 export const recruiterProfile = {

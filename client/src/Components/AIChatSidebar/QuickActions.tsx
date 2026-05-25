@@ -2,7 +2,7 @@ import { memo } from "react";
 import {
  FiBriefcase,
  FiCode,
- FiDownload,
+ FiExternalLink,
 } from "react-icons/fi";
 import {
  Tooltip,
@@ -18,7 +18,7 @@ const ICON_MAP: Record<IconKey, React.ComponentType<{ size?: number }>> = {
  projects: FiCode,
  experience: FiBriefcase,
  contact: FiCode,
- resume: FiDownload,
+ resume: FiExternalLink,
 };
 
 type QuickActionsProps = {
