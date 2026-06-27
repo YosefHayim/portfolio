@@ -1,8 +1,8 @@
-const LOCAL_API_URL = "http://localhost:3000";
+const LOCAL_API_URL = 'http://localhost:3000';
 const PRODUCTION_HOST_PATTERN = /(^|\.)yosefhayimsabag\.com$/i;
 const WORKERS_DEV_HOST_PATTERN = /\.workers\.dev$/i;
 
-const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, "");
+const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 
 export const resolveApiBaseUrl = (): string => {
   const configuredUrl = import.meta.env.VITE_API_URL?.trim();
@@ -12,7 +12,7 @@ export const resolveApiBaseUrl = (): string => {
   }
 
   if (
-    typeof window !== "undefined" &&
+    typeof window !== 'undefined' &&
     (PRODUCTION_HOST_PATTERN.test(window.location.hostname) ||
       WORKERS_DEV_HOST_PATTERN.test(window.location.hostname))
   ) {

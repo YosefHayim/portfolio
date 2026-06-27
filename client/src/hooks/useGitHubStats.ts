@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { loadGitHubStatsSnapshot } from "@/data/githubPortfolioSnapshot";
-import type { GitHubStats } from "@/db/types";
+import { useCallback, useEffect, useState } from 'react';
+import { loadGitHubStatsSnapshot } from '@/data/githubPortfolioSnapshot';
+import type { GitHubStats } from '@/db/types';
 
 type UseGitHubStatsResult = {
   stats: GitHubStats | null;

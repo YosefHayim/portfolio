@@ -1,22 +1,17 @@
-import type { AppConfig } from "./types";
-import { gqminiConfig } from "./gqmini";
-import { quickApplyConfig } from "./quickapply";
-import { sorqaConfig } from "./sorqa";
+import { gqminiConfig } from './gqmini.tsx';
+import { quickApplyConfig } from './quickapply.tsx';
+import { sorqaConfig } from './sorqa.tsx';
+import type { AppConfig } from './types.ts';
 
 export const appRegistry: Record<string, AppConfig> = {
- "prompt-queue": gqminiConfig,
- "quick-apply": quickApplyConfig,
- sorqa: sorqaConfig,
+  'prompt-queue': gqminiConfig,
+  'quick-apply': quickApplyConfig,
+  sorqa: sorqaConfig,
 };
 
-export const getAppConfig = (appId: string): AppConfig | undefined => {
- return appRegistry[appId.toLowerCase()];
-};
+export const getAppConfig = (appId: string): AppConfig | undefined =>
+  appRegistry[appId.toLowerCase()];
 
-export const getAllAppIds = (): string[] => {
- return Object.keys(appRegistry);
-};
+export const getAllAppIds = (): string[] => Object.keys(appRegistry);
 
-export const getAllApps = (): AppConfig[] => {
- return Object.values(appRegistry);
-};
+export const getAllApps = (): AppConfig[] => Object.values(appRegistry);

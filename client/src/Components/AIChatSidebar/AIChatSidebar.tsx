@@ -1,19 +1,15 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { FiAlertCircle } from "react-icons/fi";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/Components/ui/tooltip";
-import { ColorOrb } from "@/Components/ui/ai-input";
-import { cn } from "@/lib/utils";
-import { cx } from "class-variance-authority";
-import { usePortfolioChatSession } from "@/hooks/usePortfolioChatSession";
-import { ChatHeader } from "./ChatHeader";
-import { ChatInput } from "./ChatInput";
-import { ChatMessage, TypingIndicator } from "./ChatMessage";
-import { QuickActions } from "./QuickActions";
+import { cx } from 'class-variance-authority';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { FiAlertCircle } from 'react-icons/fi';
+import { ColorOrb } from '@/Components/ui/ai-input';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/Components/ui/tooltip';
+import { usePortfolioChatSession } from '@/hooks/usePortfolioChatSession';
+import { cn } from '@/lib/utils';
+import { ChatHeader } from './ChatHeader.tsx';
+import { ChatInput } from './ChatInput.tsx';
+import { ChatMessage, TypingIndicator } from './ChatMessage.tsx';
+import { QuickActions } from './QuickActions.tsx';
 
 const SPEED_FACTOR = 1;
 const PANEL_WIDTH = 380;
@@ -49,7 +45,7 @@ export const AIChatSidebar = () => {
   } = usePortfolioChatSession({ isOpen, openPanel });
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
@@ -68,16 +64,15 @@ export const AIChatSidebar = () => {
         setIsOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleSidebarOutsideClick);
-    return () =>
-      document.removeEventListener("mousedown", handleSidebarOutsideClick);
+    document.addEventListener('mousedown', handleSidebarOutsideClick);
+    return () => document.removeEventListener('mousedown', handleSidebarOutsideClick);
   }, [isOpen]);
 
   useLayoutEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const handleSubmit = useCallback(
@@ -90,10 +85,10 @@ export const AIChatSidebar = () => {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         setIsOpen(false);
       }
-      if (e.key === "Enter" && !e.shiftKey) {
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage(inputValue);
       }
@@ -101,33 +96,26 @@ export const AIChatSidebar = () => {
     [inputValue, sendMessage],
   );
 
-  const handleAutoSpeakToggle = useCallback(
-    () => setAutoSpeak((prev) => !prev),
-    [setAutoSpeak],
-  );
+  const handleAutoSpeakToggle = useCallback(() => setAutoSpeak((prev) => !prev), [setAutoSpeak]);
 
   return (
     <div
       className={cn(
-        "fixed z-50 flex items-end justify-end",
-        isMobile
-          ? isOpen
-            ? "right-3 bottom-6 left-3"
-            : "right-3 bottom-6"
-          : "right-4 bottom-6",
+        'fixed z-50 flex items-end justify-end',
+        isMobile ? (isOpen ? 'right-3 bottom-6 left-3' : 'right-3 bottom-6') : 'right-4 bottom-6',
       )}
-      style={{ width: isMobile ? "auto" : PANEL_WIDTH }}
+      style={{ width: isMobile ? 'auto' : PANEL_WIDTH }}
     >
       <motion.div
         ref={wrapperRef}
-        data-panel
+        data-panel={true}
         className={cx(
-          "relative flex flex-col overflow-hidden border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-2xl",
-          isMobile && isOpen && "w-full",
+          'relative flex flex-col overflow-hidden border border-[var(--border-subtle)] bg-[var(--bg-card)] shadow-2xl',
+          isMobile && isOpen && 'w-full',
         )}
         initial={false}
         animate={{
-          width: isOpen ? (isMobile ? "100%" : PANEL_WIDTH) : "auto",
+          width: isOpen ? (isMobile ? '100%' : PANEL_WIDTH) : 'auto',
           height: isOpen
             ? isMobile
               ? PANEL_HEIGHT_EXPANDED_MOBILE
@@ -136,7 +124,7 @@ export const AIChatSidebar = () => {
           borderRadius: isOpen ? (isMobile ? 12 : 16) : 26,
         }}
         transition={{
-          type: "spring",
+          type: 'spring',
           stiffness: 550 / SPEED_FACTOR,
           damping: 45,
           mass: 0.7,
@@ -152,7 +140,7 @@ export const AIChatSidebar = () => {
               className="flex h-[52px] items-center justify-center whitespace-nowrap select-none"
             >
               <Tooltip>
-                <TooltipTrigger asChild>
+                <TooltipTrigger asChild={true}>
                   <div
                     className="flex cursor-pointer items-center justify-center gap-2 p-2"
                     onClick={openPanel}
@@ -160,10 +148,10 @@ export const AIChatSidebar = () => {
                     <ColorOrb
                       dimension="28px"
                       tones={{
-                        base: "oklch(10% 0.02 145)",
-                        accent1: "oklch(80% 0.25 145)",
-                        accent2: "oklch(70% 0.2 195)",
-                        accent3: "oklch(75% 0.18 280)",
+                        base: 'oklch(10% 0.02 145)',
+                        accent1: 'oklch(80% 0.25 145)',
+                        accent2: 'oklch(70% 0.2 195)',
+                        accent3: 'oklch(75% 0.18 280)',
                       }}
                     />
                     <button

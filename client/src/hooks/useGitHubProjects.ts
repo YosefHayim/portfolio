@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { loadGitHubProjectSnapshot } from "@/data/githubPortfolioSnapshot";
-import type { GitHubProjectPreview } from "@/db/types";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { loadGitHubProjectSnapshot } from '@/data/githubPortfolioSnapshot';
+import type { GitHubProjectPreview } from '@/db/types';
 
 type UseGitHubProjectsResult = {
   projects: GitHubProjectPreview[];
@@ -9,9 +9,7 @@ type UseGitHubProjectsResult = {
   refetch: () => Promise<void>;
 };
 
-export const useGitHubProjects = (
-  username: string,
-): UseGitHubProjectsResult => {
+export const useGitHubProjects = (username: string): UseGitHubProjectsResult => {
   const [projects, setProjects] = useState<GitHubProjectPreview[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

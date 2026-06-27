@@ -1,5 +1,5 @@
-import { projects as fallbackProjects } from "@/data/projects";
-import type { GitHubProjectPreview, GitHubStats } from "@/db/types";
+import { projects as fallbackProjects } from '@/data/projects';
+import type { GitHubProjectPreview, GitHubStats } from '@/db/types';
 import {
   createGitHubProjectPreviews,
   createGitHubStatsSnapshot,
@@ -7,7 +7,7 @@ import {
   GITHUB_API_BASE,
   GITHUB_USERNAME,
   isExcludedRepoName,
-} from "../../../shared/portfolio/githubPortfolio.js";
+} from '../../../shared/portfolio/githubPortfolio.js';
 
 const MAX_PROJECTS = 8;
 const LAST_PAGE_REGEX = /page=(\d+)>; rel="last"/;
@@ -31,7 +31,7 @@ export const fallbackProjectPreviews: GitHubProjectPreview[] = fallbackProjects
     techStack: project.techStack.slice(0, 5),
     repoUrl: project.repoUrl,
     deployedUrl: project.deployedUrl,
-    status: project.status ?? "completed",
+    status: project.status ?? 'completed',
     stars: 0,
     updatedAt: new Date().toISOString(),
   }));
@@ -51,14 +51,14 @@ export async function fetchGitHubStats(): Promise<GitHubStats> {
     try {
       const commitsResponse = await fetch(
         `${GITHUB_API_BASE}/repos/${GITHUB_USERNAME}/${repo.name}/commits?per_page=1`,
-        { method: "HEAD" },
+        { method: 'HEAD' },
       );
 
       if (commitsResponse.status === RATE_LIMIT_STATUS) {
         break;
       }
 
-      const linkHeader = commitsResponse.headers.get("Link");
+      const linkHeader = commitsResponse.headers.get('Link');
       if (linkHeader) {
         const match = linkHeader.match(LAST_PAGE_REGEX);
         if (match) {

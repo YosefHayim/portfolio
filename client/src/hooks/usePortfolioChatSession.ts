@@ -1,37 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import {
-  fetchStreamingResponse,
-  sendEmail,
-  transcribeAudio,
-} from "@/utils/chatApi";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { fetchStreamingResponse, sendEmail, transcribeAudio } from '@/utils/chatApi';
 import {
   createWelcomeMessage,
   findPendingEmailRequest,
   markMessageEmailStatus,
-} from "@/utils/chatSession";
+} from '@/utils/chatSession';
 import {
   notifyHiddenChatResponse,
   runChatSessionMessage,
   runVoiceChatInput,
   speakLastAssistantMessage,
-} from "@/utils/chatSessionRuntime";
-import { type EmailData, type Message } from "@/utils/chatUtils";
-import { getOfflineResponse } from "@/utils/offlineResponses";
-import { useSpeechSynthesis } from "./useSpeechSynthesis";
-import { useVoiceRecorder } from "./useVoiceRecorder";
+} from '@/utils/chatSessionRuntime';
+import type { EmailData, Message } from '@/utils/chatUtils';
+import { getOfflineResponse } from '@/utils/offlineResponses';
+import { useSpeechSynthesis } from './useSpeechSynthesis.ts';
+import { useVoiceRecorder } from './useVoiceRecorder.ts';
 
 type UsePortfolioChatSessionOptions = {
   isOpen: boolean;
   openPanel: () => void;
 };
 
-export function usePortfolioChatSession({
-  isOpen,
-  openPanel,
-}: UsePortfolioChatSessionOptions) {
+export function usePortfolioChatSession({ isOpen, openPanel }: UsePortfolioChatSessionOptions) {
   const [messages, setMessages] = useState<Message[]>([createWelcomeMessage()]);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,7 +71,7 @@ export function usePortfolioChatSession({
         },
         actions: {
           updateMessages: setMessages,
-          clearInput: () => setInputValue(""),
+          clearInput: () => setInputValue(''),
           setError,
           setUseAI,
           setIsTyping,
@@ -90,7 +83,7 @@ export function usePortfolioChatSession({
             return abortControllerRef.current.signal;
           },
           openResume: (url) => {
-            window.open(url, "_blank", "noopener,noreferrer");
+            window.open(url, '_blank', 'noopener,noreferrer');
           },
           fetchStreamingResponse,
           getOfflineResponse,
@@ -130,27 +123,22 @@ export function usePortfolioChatSession({
     });
   }, [messages, speechSynthesis]);
 
-  const sendEmailFromMarker = useCallback(
-    async (messageId: string, emailData: EmailData) => {
-      if (processedEmailsRef.current.has(messageId)) {
-        return;
-      }
-      processedEmailsRef.current.add(messageId);
+  const sendEmailFromMarker = useCallback(async (messageId: string, emailData: EmailData) => {
+    if (processedEmailsRef.current.has(messageId)) {
+      return;
+    }
+    processedEmailsRef.current.add(messageId);
 
-      setMessages((prev) => markMessageEmailStatus(prev, messageId, "sending"));
+    setMessages((prev) => markMessageEmailStatus(prev, messageId, 'sending'));
 
-      try {
-        await sendEmail(emailData);
-        setMessages((prev) => markMessageEmailStatus(prev, messageId, "sent"));
-      } catch (err) {
-        setMessages((prev) =>
-          markMessageEmailStatus(prev, messageId, "failed"),
-        );
-        setError(err instanceof Error ? err.message : "Failed to send email");
-      }
-    },
-    [],
-  );
+    try {
+      await sendEmail(emailData);
+      setMessages((prev) => markMessageEmailStatus(prev, messageId, 'sent'));
+    } catch (err) {
+      setMessages((prev) => markMessageEmailStatus(prev, messageId, 'failed'));
+      setError(err instanceof Error ? err.message : 'Failed to send email');
+    }
+  }, []);
 
   useEffect(() => {
     const pendingEmail = findPendingEmailRequest(messages, isStreaming);
@@ -172,8 +160,7 @@ export function usePortfolioChatSession({
     setAutoSpeak,
     voiceRecorder,
     speechSynthesis,
-    isInputDisabled:
-      isStreaming || isTyping || isTranscribing || voiceRecorder.isRecording,
+    isInputDisabled: isStreaming || isTyping || isTranscribing || voiceRecorder.isRecording,
     sendMessage,
     handleVoiceRecord,
     speakLastMessage,

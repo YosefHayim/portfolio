@@ -7,8 +7,8 @@ import {
   DOWNLOAD_RESUME_ACTION,
   RESUME_URL,
   toAssistantRequestMessages,
-} from "./chatSession";
-import type { Message } from "./chatUtils";
+} from './chatSession.ts';
+import type { Message } from './chatUtils.ts';
 
 const TYPING_DELAY = 800;
 
@@ -75,10 +75,7 @@ export async function runChatSessionMessage({
     actions.setIsTyping(true);
     adapters.schedule(() => {
       const response = adapters.getOfflineResponse(trimmedContent);
-      actions.updateMessages((messages) => [
-        ...messages,
-        createAssistantMessage(response),
-      ]);
+      actions.updateMessages((messages) => [...messages, createAssistantMessage(response)]);
       actions.setIsTyping(false);
       adapters.notifyResponseReady(response);
 
@@ -94,10 +91,7 @@ export async function runChatSessionMessage({
   actions.updateMessages((messages) => [...messages, assistantMessage]);
 
   try {
-    const requestMessages = toAssistantRequestMessages([
-      ...snapshot.messages,
-      userMessage,
-    ]);
+    const requestMessages = toAssistantRequestMessages([...snapshot.messages, userMessage]);
     const fullResponse = await adapters.fetchStreamingResponse(
       requestMessages,
       (chunk) => {
@@ -114,7 +108,7 @@ export async function runChatSessionMessage({
       adapters.speak(fullResponse);
     }
   } catch (error) {
-    if (error instanceof Error && error.name === "AbortError") {
+    if (error instanceof Error && error.name === 'AbortError') {
       return;
     }
 
@@ -123,11 +117,8 @@ export async function runChatSessionMessage({
     );
 
     const fallbackResponse = adapters.getOfflineResponse(trimmedContent);
-    actions.updateMessages((messages) => [
-      ...messages,
-      createAssistantMessage(fallbackResponse),
-    ]);
-    actions.setError("AI unavailable. Using offline responses.");
+    actions.updateMessages((messages) => [...messages, createAssistantMessage(fallbackResponse)]);
+    actions.setError('AI unavailable. Using offline responses.');
     actions.setUseAI(false);
     adapters.notifyResponseReady(fallbackResponse);
 
@@ -176,9 +167,7 @@ export async function runVoiceChatInput({
       await sendMessage(transcribedText, true);
     }
   } catch (error) {
-    setError(
-      error instanceof Error ? error.message : "Failed to process voice",
-    );
+    setError(error instanceof Error ? error.message : 'Failed to process voice');
   } finally {
     setIsTranscribing(false);
   }
@@ -193,7 +182,7 @@ export function speakLastAssistantMessage({
 }): void {
   const lastAssistantMessage = [...messages]
     .reverse()
-    .find((message) => message.role === "assistant" && message.content);
+    .find((message) => message.role === 'assistant' && message.content);
 
   if (lastAssistantMessage) {
     speak(lastAssistantMessage.content);
@@ -222,10 +211,10 @@ export function notifyHiddenChatResponse({
     return;
   }
 
-  notify("AI Response Ready", {
+  notify('AI Response Ready', {
     description: createResponsePreview(response),
     action: {
-      label: "View",
+      label: 'View',
       onClick: openPanel,
     },
     duration: 5000,

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 import {
   BriefcaseBusiness,
   Building2,
@@ -6,49 +6,45 @@ import {
   ExternalLink,
   FileText,
   FolderGit2,
-  Github,
   GitCommitHorizontal,
+  Github,
   Mail,
   Smartphone,
   Star,
   Users,
-} from "lucide-react";
-import { FaGithub, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
-import { useState, type ReactNode } from "react";
-import { AnimatedPage } from "@/Components/AnimatedPage/AnimatedPage";
-import { SEO } from "@/Components/SEO/SEO";
+} from 'lucide-react';
+import { type ReactNode, useState } from 'react';
+import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
+import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
+import { SEO } from '@/Components/SEO/SEO';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/Components/ui/tooltip';
 import {
   coreTechStack,
   experienceItems,
   featuredOffGitHubProjects,
   recruiterProfile,
-} from "@/content/profile";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/Components/ui/tooltip";
-import { useChromeExtensionUsers } from "@/hooks/useChromeExtensionUsers";
-import { useGitHubProjects } from "@/hooks/useGitHubProjects";
-import { useGitHubStats } from "@/hooks/useGitHubStats";
-import { cn } from "@/lib/utils";
-import { getTechIcon } from "@/utils/techIcons";
+} from '@/content/profile';
+import { useChromeExtensionUsers } from '@/hooks/useChromeExtensionUsers';
+import { useGitHubProjects } from '@/hooks/useGitHubProjects';
+import { useGitHubStats } from '@/hooks/useGitHubStats';
+import { cn } from '@/lib/utils';
+import { getTechIcon } from '@/utils/techIcons';
 
-const sectionTitleClass = "text-2xl font-semibold tracking-tight md:text-3xl";
+const sectionTitleClass = 'text-2xl font-semibold tracking-tight md:text-3xl';
 
 const SOCIAL_ICON_SIZE = 14;
 
 const actionLinkClass =
-  "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-[var(--border-subtle)] px-2.5 text-xs font-medium hover:border-[#05df72]/50";
+  'inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-[var(--border-subtle)] px-2.5 text-xs font-medium hover:border-[#05df72]/50';
 
 const formatDate = (isoDate: string): string => {
   const date = new Date(isoDate);
   if (Number.isNaN(date.getTime())) {
-    return "Recently";
+    return 'Recently';
   }
   return date.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
+    year: 'numeric',
+    month: 'short',
   });
 };
 
@@ -58,9 +54,9 @@ const formatDate = (isoDate: string): string => {
  * three months, not two).
  */
 const monthsInclusive = (startIso: string, endIso: string): number => {
-  const [startY, startM] = startIso.split("-").map(Number);
-  const [endY, endM] = endIso.split("-").map(Number);
-  if (!startY || !startM || !endY || !endM) {
+  const [startY, startM] = startIso.split('-').map(Number);
+  const [endY, endM] = endIso.split('-').map(Number);
+  if (!(startY && startM && endY && endM)) {
     return 0;
   }
   return (endY - startY) * 12 + (endM - startM) + 1;
@@ -69,30 +65,26 @@ const monthsInclusive = (startIso: string, endIso: string): number => {
 /** Human-readable tenure label like "11 mos" or "1 yr 2 mos". */
 const formatTenure = (months: number): string => {
   if (months <= 0) {
-    return "";
+    return '';
   }
   const years = Math.floor(months / 12);
   const remainingMonths = months % 12;
-  const monthPart = remainingMonths === 1 ? "1 mo" : `${remainingMonths} mos`;
+  const monthPart = remainingMonths === 1 ? '1 mo' : `${remainingMonths} mos`;
   if (years === 0) {
     return monthPart;
   }
-  const yearPart = years === 1 ? "1 yr" : `${years} yrs`;
+  const yearPart = years === 1 ? '1 yr' : `${years} yrs`;
   if (remainingMonths === 0) {
     return yearPart;
   }
   return `${yearPart} ${monthPart}`;
 };
 
-const tenureLabel = (item: {
-  startDate?: string;
-  endDate?: string;
-}): string => {
+const tenureLabel = (item: { startDate?: string; endDate?: string }): string => {
   if (!item.startDate) {
-    return "";
+    return '';
   }
-  const endIso =
-    item.endDate ?? new Date().toISOString().slice(0, 7); // "YYYY-MM"
+  const endIso = item.endDate ?? new Date().toISOString().slice(0, 7); // "YYYY-MM"
   return formatTenure(monthsInclusive(item.startDate, endIso));
 };
 
@@ -103,10 +95,10 @@ const tenureLabel = (item: {
  * both live and fallback feeds resolve.
  */
 const REPO_LOGO_OVERRIDES: Record<string, { src: string; alt: string }> = {
-  "ebay-mcp": { src: "/logos/ebay.svg", alt: "eBay logo" },
-  "ebay mcp api server": { src: "/logos/ebay.svg", alt: "eBay logo" },
-  "fresh-squeezy": { src: "/logos/lemon-squeezy.svg", alt: "Lemon Squeezy logo" },
-  "tim-trailers": { src: "/logos/tim-trailers.png", alt: "Tim Trailers logo" },
+  'ebay-mcp': { src: '/logos/ebay.svg', alt: 'eBay logo' },
+  'ebay mcp api server': { src: '/logos/ebay.svg', alt: 'eBay logo' },
+  'fresh-squeezy': { src: '/logos/lemon-squeezy.svg', alt: 'Lemon Squeezy logo' },
+  'tim-trailers': { src: '/logos/tim-trailers.png', alt: 'Tim Trailers logo' },
 };
 
 const findRepoLogoOverride = (projectName: string) =>
@@ -124,21 +116,17 @@ const SectionBlock = ({
   description?: string;
   className?: string;
   children: ReactNode;
-}) => {
-  return (
-    <section className={cn("w-full max-w-6xl scroll-mt-24", className)} id={id}>
-      <header className="space-y-1.5 pb-3 sm:space-y-2">
-        <h2 className={sectionTitleClass}>{title}</h2>
-        {description && (
-          <p className="max-w-3xl text-sm text-[var(--text-secondary)] md:text-base">
-            {description}
-          </p>
-        )}
-      </header>
-      {children}
-    </section>
-  );
-};
+}) => (
+  <section className={cn('w-full max-w-6xl scroll-mt-24', className)} id={id}>
+    <header className="space-y-1.5 pb-3 sm:space-y-2">
+      <h2 className={sectionTitleClass}>{title}</h2>
+      {description && (
+        <p className="max-w-3xl text-sm text-[var(--text-secondary)] md:text-base">{description}</p>
+      )}
+    </header>
+    {children}
+  </section>
+);
 
 const TechIconChip = ({ tech }: { tech: string }) => {
   const icon = getTechIcon(tech);
@@ -146,21 +134,17 @@ const TechIconChip = ({ tech }: { tech: string }) => {
     .split(/[\s-/]+/)
     .filter(Boolean)
     .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
+      <TooltipTrigger asChild={true}>
         <span
           aria-label={tech}
           className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-[var(--bg-void)]/50 text-[var(--text-secondary)]"
         >
-          {icon ?? (
-            <span className="text-[10px] font-semibold">
-              {fallbackLabel || "?"}
-            </span>
-          )}
+          {icon ?? <span className="text-[10px] font-semibold">{fallbackLabel || '?'}</span>}
         </span>
       </TooltipTrigger>
       <TooltipContent side="top" sideOffset={8}>
@@ -214,7 +198,7 @@ const OnePagePortfolio = () => {
     .map((project) => project.chromeExtensionId)
     .filter((id): id is string => Boolean(id));
   const chromeExtensionUsers = useChromeExtensionUsers(chromeExtensionIds);
-  const contactEmail = recruiterProfile.contactEmail || "yosefisabag@gmail.com";
+  const contactEmail = recruiterProfile.contactEmail || 'yosefisabag@gmail.com';
   const stackedTechLoop = [
     ...coreTechStack,
     ...coreTechStack,
@@ -229,47 +213,47 @@ const OnePagePortfolio = () => {
   const heroStats = [
     {
       icon: <FolderGit2 size={14} className="text-[#7ff7af]" />,
-      label: "Repositories",
-      tooltip: "Total public repositories on GitHub",
-      value: stats?.totalRepos ?? "--",
+      label: 'Repositories',
+      tooltip: 'Total public repositories on GitHub',
+      value: stats?.totalRepos ?? '--',
     },
     {
       icon: <Star size={14} className="text-[#7ff7af]" />,
-      label: "Stars",
-      tooltip: "Total stars across public repositories",
-      value: stats?.totalStars ?? "--",
+      label: 'Stars',
+      tooltip: 'Total stars across public repositories',
+      value: stats?.totalStars ?? '--',
     },
     {
       icon: <GitCommitHorizontal size={14} className="text-[#7ff7af]" />,
-      label: "Commits",
-      tooltip: "Total public GitHub commits",
-      value: stats?.totalCommits ?? "--",
+      label: 'Commits',
+      tooltip: 'Total public GitHub commits',
+      value: stats?.totalCommits ?? '--',
     },
   ] as const;
 
   const socialLinks = [
     {
-      label: "LinkedIn",
+      label: 'LinkedIn',
       href: recruiterProfile.linkedinUrl,
       icon: <FaLinkedinIn size={SOCIAL_ICON_SIZE} className="text-[#0A66C2]" />,
     },
     {
-      label: "GitHub",
+      label: 'GitHub',
       href: `https://github.com/${recruiterProfile.githubUsername}`,
       icon: <FaGithub size={SOCIAL_ICON_SIZE} className="text-[#f1f5f9]" />,
     },
     {
-      label: "WhatsApp",
+      label: 'WhatsApp',
       href: recruiterProfile.whatsappUrl,
       icon: <FaWhatsapp size={SOCIAL_ICON_SIZE} className="text-[#25D366]" />,
     },
     {
-      label: "CV",
+      label: 'CV',
       href: recruiterProfile.resumeUrl,
       icon: <FileText size={SOCIAL_ICON_SIZE} className="text-[#7ff7af]" />,
     },
     {
-      label: "Email",
+      label: 'Email',
       href: `mailto:${contactEmail}`,
       icon: <Mail size={SOCIAL_ICON_SIZE} className="text-[#f7c76b]" />,
     },
@@ -280,13 +264,13 @@ const OnePagePortfolio = () => {
       <SEO
         description="Joseph Sabag, AI Software Engineer. Fast recruiter overview with core projects, stack, and direct contact."
         keywords={[
-          "Joseph Sabag",
-          "AI Software Engineer",
-          "Recruiter Portfolio",
-          "React",
-          "Node.js",
-          "TypeScript",
-          "GitHub Projects",
+          'Joseph Sabag',
+          'AI Software Engineer',
+          'Recruiter Portfolio',
+          'React',
+          'Node.js',
+          'TypeScript',
+          'GitHub Projects',
         ]}
         title="Portfolio"
         url="/"
@@ -310,7 +294,7 @@ const OnePagePortfolio = () => {
               <div className="grid grid-cols-3 gap-2">
                 {heroStats.map((stat) => (
                   <Tooltip key={stat.label}>
-                    <TooltipTrigger asChild>
+                    <TooltipTrigger asChild={true}>
                       <div className="flex min-h-17 flex-col items-start justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 sm:min-h-0 sm:flex-row sm:items-center sm:justify-start">
                         <div
                           aria-label={stat.label}
@@ -401,9 +385,7 @@ const OnePagePortfolio = () => {
                           <span className="truncate">{item.company}</span>
                         )}
                       </h3>
-                      <p className="text-xs text-[var(--text-secondary)]">
-                        {item.role}
-                      </p>
+                      <p className="text-xs text-[var(--text-secondary)]">{item.role}</p>
                     </div>
                   </div>
                   <p className="inline-flex shrink-0 items-center gap-2 text-xs text-[var(--text-secondary)]">
@@ -456,14 +438,10 @@ const OnePagePortfolio = () => {
                             rel="noreferrer"
                             target="_blank"
                           >
-                            <span className="min-w-0 break-words">
-                              {project.name}
-                            </span>
+                            <span className="min-w-0 break-words">{project.name}</span>
                           </a>
                         ) : (
-                          <span className="min-w-0 break-words">
-                            {project.name}
-                          </span>
+                          <span className="min-w-0 break-words">{project.name}</span>
                         )}
                       </h3>
                       <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
@@ -474,13 +452,10 @@ const OnePagePortfolio = () => {
                   </div>
                   <div className="flex shrink-0 items-center gap-1.5">
                     {project.chromeExtensionId &&
-                      chromeExtensionUsers[project.chromeExtensionId] !==
-                        undefined && (
+                      chromeExtensionUsers[project.chromeExtensionId] !== undefined && (
                         <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] p-2 text-xs text-green-500">
                           <Users size={12} color="#05df72" />
-                          {chromeExtensionUsers[
-                            project.chromeExtensionId
-                          ]?.toLocaleString()}
+                          {chromeExtensionUsers[project.chromeExtensionId]?.toLocaleString()}
                         </span>
                       )}
                     {!project.url && (
@@ -515,9 +490,7 @@ const OnePagePortfolio = () => {
         </SectionBlock>
 
         <SectionBlock id="projects" title="Featured Repositories">
-          {isProjectsLoading && (
-            <p className="text-sm">Loading GitHub Repositories...</p>
-          )}
+          {isProjectsLoading && <p className="text-sm">Loading GitHub Repositories...</p>}
 
           {projectsError && (
             <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 text-sm">
@@ -536,71 +509,69 @@ const OnePagePortfolio = () => {
             {projects.map((project) => {
               const logoOverride = findRepoLogoOverride(project.name);
               return (
-              <motion.article
-                className="min-w-0 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 sm:p-4"
-                initial={{ opacity: 0, y: 12 }}
-                key={project.id}
-                transition={{ duration: 0.24 }}
-                viewport={{ once: true }}
-                whileInView={{ opacity: 1, y: 0 }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="text-base leading-tight font-semibold sm:text-lg">
+                <motion.article
+                  className="min-w-0 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 sm:p-4"
+                  initial={{ opacity: 0, y: 12 }}
+                  key={project.id}
+                  transition={{ duration: 0.24 }}
+                  viewport={{ once: true }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="text-base leading-tight font-semibold sm:text-lg">
+                        <a
+                          className="inline-flex max-w-full items-start gap-2 hover:text-[#7ff7af]"
+                          href={project.repoUrl}
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          {logoOverride ? (
+                            <img
+                              alt={logoOverride.alt}
+                              className="mt-0.5 size-4 shrink-0 object-contain"
+                              src={logoOverride.src}
+                            />
+                          ) : (
+                            <Github className="mt-0.5 shrink-0" size={16} />
+                          )}
+                          <span className="min-w-0 break-words">{project.name}</span>
+                        </a>
+                      </h3>
+                      <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
+                        <CalendarDays size={12} />
+                        Updated {formatDate(project.updatedAt)}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      {project.stars > 0 && (
+                        <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] p-2 text-xs text-green-500">
+                          <Star size={12} color="#05df72" />
+                          {project.stars}
+                        </span>
+                      )}
                       <a
-                        className="inline-flex max-w-full items-start gap-2 hover:text-[#7ff7af]"
-                        href={project.repoUrl}
+                        className={actionLinkClass}
+                        href={project.deployedUrl}
                         rel="noreferrer"
                         target="_blank"
                       >
-                        {logoOverride ? (
-                          <img
-                            alt={logoOverride.alt}
-                            className="mt-0.5 size-4 shrink-0 object-contain"
-                            src={logoOverride.src}
-                          />
-                        ) : (
-                          <Github className="mt-0.5 shrink-0" size={16} />
-                        )}
-                        <span className="min-w-0 break-words">
-                          {project.name}
-                        </span>
+                        <ExternalLink size={14} />
+                        Live
                       </a>
-                    </h3>
-                    <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
-                      <CalendarDays size={12} />
-                      Updated {formatDate(project.updatedAt)}
-                    </p>
+                    </div>
                   </div>
-                  <div className="flex shrink-0 items-center gap-1.5">
-                    {project.stars > 0 && (
-                      <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] p-2 text-xs text-green-500">
-                        <Star size={12} color="#05df72" />
-                        {project.stars}
-                      </span>
-                    )}
-                    <a
-                      className={actionLinkClass}
-                      href={project.deployedUrl}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      <ExternalLink size={14} />
-                      Live
-                    </a>
+
+                  <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+                    {project.description}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {project.techStack.slice(0, 6).map((tech) => (
+                      <TechIconChip key={`${project.id}-${tech}`} tech={tech} />
+                    ))}
                   </div>
-                </div>
-
-                <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-                  {project.description}
-                </p>
-
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {project.techStack.slice(0, 6).map((tech) => (
-                    <TechIconChip key={`${project.id}-${tech}`} tech={tech} />
-                  ))}
-                </div>
-              </motion.article>
+                </motion.article>
               );
             })}
           </div>

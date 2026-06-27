@@ -1,16 +1,16 @@
-import type { CSSProperties, ComponentType } from "react";
+import type { ComponentType, CSSProperties } from 'react';
 
 export type TechIconComponent = ComponentType<{
- size?: number;
- style?: CSSProperties;
- className?: string;
+  size?: number;
+  style?: CSSProperties;
+  className?: string;
 }>;
 
 export type NamedTech = {
- name: string;
- icon: TechIconComponent;
+  name: string;
+  icon: TechIconComponent;
 };
 
 export type ColoredTech = NamedTech & {
- color: string;
+  color: string;
 };

@@ -4,11 +4,11 @@ import {
   fetchGitHubProjectPreviews,
   fetchGitHubStats,
   isExcludedRepoName,
-} from "@/data/githubPortfolio";
-import { localDb } from "@/db/localDb";
-import type { GitHubProjectPreview, GitHubStats } from "@/db/types";
+} from '@/data/githubPortfolio';
+import { localDb } from '@/db/localDb';
+import type { GitHubProjectPreview, GitHubStats } from '@/db/types';
 
-export type GitHubSnapshotSource = "cache" | "live" | "fallback";
+export type GitHubSnapshotSource = 'cache' | 'live' | 'fallback';
 
 export type GitHubSnapshotResult<T> = {
   value: T;
@@ -41,14 +41,14 @@ export async function loadGitHubProjectSnapshot({
 }): Promise<GitHubSnapshotResult<GitHubProjectPreview[]>> {
   const normalizedUsername = username.trim();
   if (!normalizedUsername) {
-    return { value: fallbackProjectPreviews, source: "fallback", error: null };
+    return { value: fallbackProjectPreviews, source: 'fallback', error: null };
   }
 
   const cachedProjects = storage.getProjects();
   if (cachedProjects && cachedProjects.length > 0) {
     return {
       value: filterPortfolioProjects(cachedProjects),
-      source: "cache",
+      source: 'cache',
       error: null,
     };
   }
@@ -58,22 +58,19 @@ export async function loadGitHubProjectSnapshot({
     if (freshProjects.length === 0) {
       return {
         value: fallbackProjectPreviews,
-        source: "fallback",
+        source: 'fallback',
         error: null,
       };
     }
 
     storage.setProjects(freshProjects);
-    return { value: freshProjects, source: "live", error: null };
+    return { value: freshProjects, source: 'live', error: null };
   } catch (error) {
     storage.setProjects(fallbackProjectPreviews);
     return {
       value: fallbackProjectPreviews,
-      source: "fallback",
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to fetch GitHub projects",
+      source: 'fallback',
+      error: error instanceof Error ? error.message : 'Failed to fetch GitHub projects',
     };
   }
 }
@@ -87,19 +84,19 @@ export async function loadGitHubStatsSnapshot({
 } = {}): Promise<GitHubSnapshotResult<GitHubStats>> {
   const cachedStats = storage.getStats();
   if (cachedStats) {
-    return { value: cachedStats, source: "cache", error: null };
+    return { value: cachedStats, source: 'cache', error: null };
   }
 
   try {
     const freshStats = await fetchStats();
     storage.setStats(freshStats);
-    return { value: freshStats, source: "live", error: null };
+    return { value: freshStats, source: 'live', error: null };
   } catch (error) {
     storage.setStats(fallbackGitHubStats);
     return {
       value: fallbackGitHubStats,
-      source: "fallback",
-      error: error instanceof Error ? error.message : "Failed to fetch stats",
+      source: 'fallback',
+      error: error instanceof Error ? error.message : 'Failed to fetch stats',
     };
   }
 }

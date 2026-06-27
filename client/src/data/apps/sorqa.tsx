@@ -1,14 +1,7 @@
-import {
-  FileUp,
-  ListTodo,
-  Settings,
-  Shield,
-  Sparkles,
-  Zap,
-} from "lucide-react";
-import { appCatalog } from "./catalog";
-import { createAppConfig } from "./catalogBuilder";
-import type { AppConfig } from "./types";
+import { FileUp, ListTodo, Settings, Shield, Sparkles, Zap } from 'lucide-react';
+import { appCatalog } from './catalog.ts';
+import { createAppConfig } from './catalogBuilder.ts';
+import type { AppConfig } from './types.ts';
 
 const featureIcons = [
   <Sparkles className="h-6 w-6" />,

@@ -9,8 +9,9 @@
 		"build": "tsc",
 		"test": "tsx --test src/**/*.test.ts",
 		"start": "node dist/index.js",
-		"lint": "biome check src/",
-		"format": "biome format --write src/"
+		"lint": "biome check .",
+		"lint:fix": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true .",
+		"format": "biome format --write ."
 	},
 	"dependencies": {
 		"compression": "^1.8.1",
@@ -24,7 +25,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
+		"@biomejs/biome": "^2.4.16",
 		"@types/compression": "^1.8.1",
 		"@types/cors": "^2.8.17",
 		"@types/express": "^5.0.0",

@@ -1,14 +1,14 @@
 import {
   CONTACT_EMAIL_MARKER_REGEX,
-  parseContactEmailMarker,
-  stripContactEmailMarker,
   type ContactEmailInput,
   type ContactEmailStatus,
-} from "../../../shared/portfolio/contactEmail.js";
+  parseContactEmailMarker,
+  stripContactEmailMarker,
+} from '../../../shared/portfolio/contactEmail.js';
 
 export type Message = {
   id: string;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
   isVoice?: boolean;

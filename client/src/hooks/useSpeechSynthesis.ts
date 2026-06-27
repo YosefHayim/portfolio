@@ -1,7 +1,7 @@
-import { useCallback, useRef, useState, useEffect } from "react";
-import { API_BASE_URL } from "@/utils/apiBaseUrl";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { API_BASE_URL } from '@/utils/apiBaseUrl';
 
-type SpeechState = "idle" | "loading" | "playing" | "paused";
+type SpeechState = 'idle' | 'loading' | 'playing' | 'paused';
 
 interface UseSpeechSynthesisOptions {
   apiUrl?: string;
@@ -28,7 +28,7 @@ export function useSpeechSynthesis(
 ): UseSpeechSynthesisReturn {
   const { apiUrl = API_BASE_URL, onStart, onEnd, onError } = options;
 
-  const [state, setState] = useState<SpeechState>("idle");
+  const [state, setState] = useState<SpeechState>('idle');
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
@@ -43,7 +43,7 @@ export function useSpeechSynthesis(
     }
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.src = "";
+      audioRef.current.src = '';
       audioRef.current = null;
     }
     if (utteranceRef.current) {
@@ -52,24 +52,22 @@ export function useSpeechSynthesis(
     }
   }, []);
 
-  useEffect(() => {
-    return cleanup;
-  }, [cleanup]);
+  useEffect(() => cleanup, [cleanup]);
 
   const speak = useCallback(
     async (text: string): Promise<void> => {
       cleanup();
-      setState("loading");
+      setState('loading');
 
       try {
         const response = await fetch(`${apiUrl}/api/chat/tts`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text }),
         });
 
         if (!response.ok) {
-          throw new Error("Failed to generate speech");
+          throw new Error('Failed to generate speech');
         }
 
         const audioBlob = await response.blob();
@@ -84,7 +82,7 @@ export function useSpeechSynthesis(
         };
 
         audioRef.current.onplay = () => {
-          setState("playing");
+          setState('playing');
           onStart?.();
 
           timeUpdateIntervalRef.current = setInterval(() => {
@@ -96,12 +94,12 @@ export function useSpeechSynthesis(
 
         audioRef.current.onpause = () => {
           if (audioRef.current && audioRef.current.currentTime < audioRef.current.duration) {
-            setState("paused");
+            setState('paused');
           }
         };
 
         audioRef.current.onended = () => {
-          setState("idle");
+          setState('idle');
           setCurrentTime(0);
           onEnd?.();
           if (timeUpdateIntervalRef.current) {
@@ -111,17 +109,17 @@ export function useSpeechSynthesis(
         };
 
         audioRef.current.onerror = () => {
-          const error = new Error("Audio playback failed");
+          const error = new Error('Audio playback failed');
           onError?.(error);
-          setState("idle");
+          setState('idle');
           URL.revokeObjectURL(audioUrl);
         };
 
         await audioRef.current.play();
       } catch (err) {
-        const error = err instanceof Error ? err : new Error("Speech synthesis failed");
+        const error = err instanceof Error ? err : new Error('Speech synthesis failed');
         onError?.(error);
-        setState("idle");
+        setState('idle');
         speakWithBrowserTTS(text);
       }
     },
@@ -132,8 +130,8 @@ export function useSpeechSynthesis(
     (text: string) => {
       cleanup();
 
-      if (!("speechSynthesis" in window)) {
-        onError?.(new Error("Browser does not support speech synthesis"));
+      if (!('speechSynthesis' in window)) {
+        onError?.(new Error('Browser does not support speech synthesis'));
         return;
       }
 
@@ -145,29 +143,29 @@ export function useSpeechSynthesis(
       utterance.volume = 1;
 
       const voices = window.speechSynthesis.getVoices();
-      const englishVoice = voices.find(
-        (v) => v.lang.startsWith("en") && v.name.includes("Google"),
-      ) || voices.find((v) => v.lang.startsWith("en"));
+      const englishVoice =
+        voices.find((v) => v.lang.startsWith('en') && v.name.includes('Google')) ||
+        voices.find((v) => v.lang.startsWith('en'));
 
       if (englishVoice) {
         utterance.voice = englishVoice;
       }
 
       utterance.onstart = () => {
-        setState("playing");
+        setState('playing');
         onStart?.();
       };
 
       utterance.onend = () => {
-        setState("idle");
+        setState('idle');
         onEnd?.();
       };
 
       utterance.onerror = (event) => {
-        if (event.error !== "canceled") {
+        if (event.error !== 'canceled') {
           onError?.(new Error(`Speech synthesis error: ${event.error}`));
         }
-        setState("idle");
+        setState('idle');
       };
 
       window.speechSynthesis.speak(utterance);
@@ -176,35 +174,35 @@ export function useSpeechSynthesis(
   );
 
   const pause = useCallback(() => {
-    if (audioRef.current && state === "playing") {
+    if (audioRef.current && state === 'playing') {
       audioRef.current.pause();
-      setState("paused");
-    } else if (utteranceRef.current && state === "playing") {
+      setState('paused');
+    } else if (utteranceRef.current && state === 'playing') {
       window.speechSynthesis.pause();
-      setState("paused");
+      setState('paused');
     }
   }, [state]);
 
   const resume = useCallback(() => {
-    if (audioRef.current && state === "paused") {
+    if (audioRef.current && state === 'paused') {
       audioRef.current.play();
-    } else if (utteranceRef.current && state === "paused") {
+    } else if (utteranceRef.current && state === 'paused') {
       window.speechSynthesis.resume();
-      setState("playing");
+      setState('playing');
     }
   }, [state]);
 
   const stop = useCallback(() => {
     cleanup();
-    setState("idle");
+    setState('idle');
     setCurrentTime(0);
     setDuration(0);
   }, [cleanup]);
 
   return {
     state,
-    isPlaying: state === "playing",
-    isLoading: state === "loading",
+    isPlaying: state === 'playing',
+    isLoading: state === 'loading',
     currentTime,
     duration,
     speak,

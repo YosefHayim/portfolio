@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { API_BASE_URL } from "@/utils/apiBaseUrl";
+import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '@/utils/apiBaseUrl';
 
 /** Map of Chrome Web Store extension id → live user count. */
 export type ChromeExtensionUsersMap = Record<string, number>;
@@ -15,10 +15,8 @@ type ServerResponse = {
  * Failures are skipped silently — the badge just won't render for that id.
  * One in-flight request per id; runs once per `ids` set change.
  */
-export const useChromeExtensionUsers = (
-  ids: readonly string[],
-): ChromeExtensionUsersMap => {
-  const key = ids.join(",");
+export const useChromeExtensionUsers = (ids: readonly string[]): ChromeExtensionUsersMap => {
+  const key = ids.join(',');
   const [users, setUsers] = useState<ChromeExtensionUsersMap>({});
 
   useEffect(() => {
@@ -30,10 +28,9 @@ export const useChromeExtensionUsers = (
     Promise.all(
       ids.map(async (id) => {
         try {
-          const response = await fetch(
-            `${API_BASE_URL}/api/chrome-extension/${id}/users`,
-            { signal: controller.signal },
-          );
+          const response = await fetch(`${API_BASE_URL}/api/chrome-extension/${id}/users`, {
+            signal: controller.signal,
+          });
           if (!response.ok) {
             return null;
           }

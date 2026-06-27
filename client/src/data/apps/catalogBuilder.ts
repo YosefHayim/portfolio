@@ -1,8 +1,8 @@
-import { requirePortfolioProductFact } from "../../../../shared/portfolio/productRegistry.js";
-import type { AppConfig, AppMetadata, FeatureCopy } from "./types";
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
+import { requirePortfolioProductFact } from '../../../../shared/portfolio/productRegistry.js';
+import type { AppConfig, AppMetadata, FeatureCopy } from './types.ts';
 
-export type AppCatalogSeed = Omit<AppMetadata, "pagePath" | "legalSlug"> & {
+export type AppCatalogSeed = Omit<AppMetadata, 'pagePath' | 'legalSlug'> & {
   features: FeatureCopy[];
 };
 
