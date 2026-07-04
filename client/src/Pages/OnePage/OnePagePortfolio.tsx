@@ -15,7 +15,9 @@ import {
 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
+import { Link } from 'react-router';
 import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
+import { BlogCover } from '@/Components/Blog/BlogCover';
 import { SEO } from '@/Components/SEO/SEO';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/Components/ui/tooltip';
 import {
@@ -24,6 +26,7 @@ import {
   featuredOffGitHubProjects,
   recruiterProfile,
 } from '@/content/profile';
+import { getRecentPosts } from '@/data/blog';
 import { useChromeExtensionUsers } from '@/hooks/useChromeExtensionUsers';
 import { useGitHubProjects } from '@/hooks/useGitHubProjects';
 import { useGitHubStats } from '@/hooks/useGitHubStats';
@@ -574,6 +577,40 @@ const OnePagePortfolio = () => {
                 </motion.article>
               );
             })}
+          </div>
+        </SectionBlock>
+
+        <SectionBlock
+          description="Real stories from building things that ship — no fluff, no listicles."
+          id="writing"
+          title="Latest Writing"
+        >
+          <div className="grid gap-2 md:grid-cols-3">
+            {getRecentPosts(3).map((post) => (
+              <Link
+                className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] transition hover:border-[#05df72]/40 hover:bg-[var(--bg-card-hover)]"
+                key={post.id}
+                to={`/blog/${post.slug}`}
+              >
+                <BlogCover className="aspect-[16/9] w-full" post={post} />
+                <div className="flex flex-1 flex-col gap-1.5 p-3">
+                  <h3 className="text-sm leading-snug font-semibold transition group-hover:text-[#7ff7af]">
+                    {post.title}
+                  </h3>
+                  <p className="line-clamp-2 text-xs leading-relaxed text-[var(--text-secondary)]">
+                    {post.excerpt}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="pt-3">
+            <Link
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#7ff7af] hover:underline"
+              to="/blog"
+            >
+              Read all writing →
+            </Link>
           </div>
         </SectionBlock>
       </AnimatedPage>

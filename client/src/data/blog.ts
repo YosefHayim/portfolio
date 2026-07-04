@@ -49,962 +49,259 @@ const categoryConfig: Record<BlogCategory, { label: string; color: string; bgCol
 
 export const getCategoryConfig = (category: BlogCategory) => categoryConfig[category];
 
+const AUTHOR = {
+  name: 'Joseph Sabag',
+  avatar: '/images-of-me/hero-image.svg',
+};
+
 export const blogPosts: BlogPost[] = [
   {
     id: '1',
-    slug: 'from-idf-commander-to-software-engineer',
-    title: 'From IDF Commander to Software Engineer: My Unconventional Path',
+    slug: 'the-security-guard-who-taught-himself-to-code',
+    title: 'The security guard who taught himself to code',
     excerpt:
-      'How military leadership, discipline, and problem-solving shaped my approach to software engineering. The story of pivoting careers and finding my passion in code.',
-    content: `
-# From IDF Commander to Software Engineer
+      'I wanted to automate Amazon. I couldn’t afford a developer. So I became the developer. The ugly, true version — the failed SaaS, the plastic chair, the month I didn’t sleep.',
+    content: `I wanted to automate Amazon. I couldn't afford a developer. So I became the developer.
 
-When people ask about my background, they're often surprised to learn I spent three years as an Infantry Commander in the IDF before touching my first line of code. But looking back, that experience shaped everything about how I approach software engineering.
+That's the whole story. Here's the ugly version, because the ugly version is the true one.
 
-## The Military Foundation
+2021. I had an idea I called Bolt ASINs — a system that rips winning products off Amazon and hands them to dropshipping sellers on autopilot. No spreadsheets, no manual hunting. Push a button, get ASINs. I was sure it was money.
 
-During my service in Gdud 931, I learned three things that still guide me today:
+One problem. I couldn't build it. Not a line.
 
-**1. Discipline Under Pressure**
-In combat operations, there's no room for "I'll figure it out later." Every decision matters, every detail counts. This translates directly to writing clean, maintainable code and handling production incidents with a cool head.
+So I did what you do. I hired. A Python guy on Fiverr, good reviews, big promises. He took my money and my deadline and handed back a pile of Selenium scripts held together with spit. Half didn't run. The other half ran wrong. I asked for something heavier, something real. He went quiet.
 
-**2. Leading by Example**
-I earned two Excellence Awards not by telling people what to do, but by being the first to tackle the hardest tasks. In software teams, I apply the same principle - I won't ask anyone to work on something I wouldn't dig into myself.
+So I hired more. Other platforms, other promises, same movie every time — my idea in my head, my money in their pocket, nothing shipping. The best anyone gave me was an MVP in pure HTML. No JavaScript. A brochure pretending to be software.
 
-**3. Rapid Problem-Solving**
-Tactical situations change in seconds. You gather information, make a decision, and adapt. Sound familiar? That's exactly what debugging is.
+Then the money ran out. Turns out a dream gets expensive when you're paying other people to not build it.
 
-## The Pivot
+So I took a job as a security guard.
 
-After my service, I found myself working at an insurance company in Holon. The job was fine, but I noticed something: there was this manual process that took hours every week. With zero coding knowledge, I opened ChatGPT and started asking questions.
+Picture it. Twenty-something, plastic chair, night shift, watching a door — with a SaaS idea rotting in a Google Doc I had no way to turn into anything. That wasn't a low point in the story. That was the end of it. Over.
 
-That first Python script I built to automate data extraction was terrible by any standard. But it worked. And more importantly, it saved the company hours of manual work.
+Then ChatGPT showed up.
 
-That feeling - of building something that solves a real problem - that's when I knew.
+I opened it the way you open anything when you're broke and out of ideas — not expecting a thing. Asked it a dumb Python question. It answered. Asked another. It answered that too. And something in my chest went off like a starter pistol.
 
-## The Grind
+I didn't sleep right for a month. My mother was sure I'd finally cracked. And understand — this was 2022. That model was nothing like the sharp thing you use now. It lied to your face and smiled doing it. No MCP, no tools, no way to ground it or trust a single line it gave you. So I became the grounding. I copy-pasted whole Interactive Brokers PDFs and Binance API docs into that box by hand, page after page, force-feeding it the truth until it finally spat back code that actually ran. This was before anyone said "vibe coding," before there was a name for it or a course selling it — just me, a model that lied, and a hunger I couldn't switch off. Eighteen hours a day, I rebuilt every single thing I'd paid strangers to fail at. Interactive Brokers bots firing trades. Crypto bots running while I slept. Scrapers eating Amazon alive. In under a month I had more working software than all that hired help ever shipped.
 
-I enrolled in IITC's 795-hour Full Stack Development program. Coming from a non-technical background, the learning curve was steep. But here's the thing about military training: you learn that discomfort is just part of the process.
+And then I stopped cold, staring at the screen, and thought: what the fuck is this. I can make it work but I can't read a word of it. I'm driving with my eyes shut and I keep not crashing.
 
-I graduated with Excellence. Not because I was the most talented in the room, but because I treated every assignment like a mission. Every bug like an obstacle to overcome. Every new concept like a skill to master.
+That scared me more than the plastic chair ever did.
 
-## The Philosophy
+I don't do slow — never have. So I cut a deal with myself on the spot: take one real course, and if the fire's still burning when it's done, go all the way to a degree. IITC in Ramat Gan, the program that takes combat soldiers and turns them into engineers. Finished it with Excellence — the same word I earned twice in the army, once as a soldier, once as a commander. Turns out whatever makes you good at holding a line makes you good at holding a build.
 
-Today, as a Software Developer at Predicto AI, I still approach every day with the same mindset:
+I'm a freelance AI engineer now. I ship things people pay for — apps in the App Store, open-source tools with real users, automation that deletes someone else's boring work the way I once wanted to delete mine.
 
-**"Turning ideas into products people love."**
-
-It's not about being the best. It's about being better than yesterday. Whether that's learning a new TypeScript pattern, optimizing a database query, or building a side project that pushes my limits.
-
-## To Anyone Making a Career Pivot
-
-If you're considering switching to tech from a completely different field, here's what I'll tell you:
-
-Your "unrelated" experience isn't a liability - it's your superpower. The discipline, the work ethic, the unique perspective you bring - that's what will set you apart in an industry full of people who all learned the same way.
-
-The path isn't always conventional. But sometimes, the unconventional path is exactly the one you were meant to take.
-
----
-
-*If you're on a similar journey and want to connect, feel free to reach out. I'm always happy to share what I've learned along the way.*
- `,
-    coverImage: '/images-of-me/desktop-view.svg',
+Bolt ASINs never shipped. Doesn't matter. It was never about the ASINs. It was about the guy in the plastic chair who refused to stay in it.`,
+    coverImage: '/blog/security-guard.png',
     category: 'career',
-    tags: ['career change', 'IDF', 'software engineering', 'journey'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2025-01-15',
-    readingTime: 6,
+    tags: ['origin story', 'self-taught', 'automation', 'Bolt ASINs'],
+    author: AUTHOR,
+    publishedAt: '2026-07-01',
+    readingTime: 4,
     featured: true,
   },
   {
     id: '2',
-    slug: 'building-ebay-mcp-server-lessons-learned',
-    title: 'Building an Open Source MCP Server: 387 Tools for eBay APIs',
+    slug: 'ebay-mcp-322-tools',
+    title: 'eBay MCP: 322 tools I gave away for free',
     excerpt:
-      'Deep dive into building my most ambitious open source project - a Model Context Protocol server with 100% eBay API coverage. Architecture decisions, testing strategies, and lessons learned.',
-    content: `
-# Building the eBay MCP Server
+      'I couldn’t build the whole dropshipping SaaS, so I built the one piece nobody else had: eBay’s entire Sell API, wrapped for AI agents. 322 tools. 92 stars. Given away.',
+    content: `I wanted to build the next AutoDS. A platform that does the boring eBay work for you — listing, pricing, inventory, orders — so a seller can run a store without living inside sixteen browser tabs.
 
-When I set out to build the eBay MCP API Server, I had a simple goal: give AI assistants comprehensive access to eBay's selling capabilities. What started as a weekend project turned into my most ambitious open source contribution - 387 tools across 270 endpoints with 958+ tests.
+Then I looked at the size of it. AutoDS has a team, years, funding. I had a laptop and a stubborn streak. The full platform was too big for one guy. Fine. I asked a smaller question: what's the one piece nobody's built yet?
 
-## Why MCP?
+Nobody had wired eBay's Sell APIs into an MCP. Nobody. An AI agent could reason about your eBay store all day but couldn't touch it — couldn't list an item, fix a price, pull an order. All the thinking, none of the hands.
 
-The Model Context Protocol is changing how AI assistants interact with external services. Instead of relying on generic API calls, MCP provides a standardized way for AI to discover and use tools intelligently.
+So I built the hands.
 
-For eBay sellers, this means being able to ask Claude or Cursor things like "List my top-selling items this month" or "Update inventory for SKU-123" and have it just work.
+eBay's Sell APIs are a swamp. Modern REST in one corner, a crusty legacy XML Trading API in the other, all of it locked behind OAuth that fights you the whole way. I wrapped the entire thing — 322 tools across around 270 endpoints, the full Sell surface — into one local MCP server. OAuth wizard, refresh tokens, JWT, STDIO and HTTP, and a gate so an agent only loads the tools it needs instead of drowning in all 322.
 
-## The Architecture
+I open-sourced it because I couldn't build the whole SaaS, but I could build the part everyone after me would need. Developers plug it into Claude and Cursor and run real eBay work through an agent.
 
-Here's the high-level structure I landed on:
-
-\`\`\`
-ebay-mcp/
-├── src/
-│ ├── tools/ # 387 tool implementations
-│ ├── auth/ # OAuth 2.0 handling
-│ ├── validation/ # Zod schemas
-│ └── utils/ # Shared utilities
-├── tests/ # 958+ test cases
-└── docs/ # API documentation
-\`\`\`
-
-### Key Decisions
-
-**1. TypeScript All The Way**
-Every tool, every response, every edge case is typed. This caught countless bugs during development and makes the codebase maintainable.
-
-**2. Zod for Validation**
-Runtime validation isn't optional when you're dealing with external APIs. Zod schemas ensure we catch invalid data before it causes problems.
-
-**3. Test Everything**
-958+ tests might seem like overkill. It's not. When you're building something that sellers rely on for their business, you need confidence that updates won't break things.
-
-## Challenges
-
-**OAuth Token Management**
-eBay's OAuth flow is complex. I built automatic token refresh that handles edge cases like network failures and expired credentials gracefully.
-
-**API Consistency**
-eBay has 270 endpoints across different API versions. Making them work consistently through MCP required careful abstraction.
-
-**Documentation**
-Good tools need good docs. Every single tool has clear descriptions, parameter explanations, and example usage.
-
-## What I Learned
-
-1. **Start with the hard parts** - OAuth was the scariest piece. Tackling it first meant everything else was easier.
-
-2. **Tests are documentation** - When someone wants to understand how a tool works, the tests show exactly what inputs produce what outputs.
-
-3. **Open source is a commitment** - Once people depend on your project, you need to maintain it. I've set up CI/CD to ensure quality stays high.
-
-## What's Next
-
-The server now supports 9 AI clients including Claude Desktop, Cursor, and Zed. I'm working on:
-
-- Better error messages for common seller mistakes
-- Batch operations for inventory management
-- Analytics dashboards integration
-
-## Try It Out
-
-The project is live on npm:
-
-\`\`\`bash
-npm install ebay-mcp
-\`\`\`
-
-Check out the [GitHub repo](https://github.com/YosefHayim/ebay-mcp) for full documentation.
-
----
-
-*Building developer tools is a different beast than building user-facing products. The satisfaction of seeing other developers use something you built is hard to describe. If you're considering contributing to open source, I can't recommend it enough.*
- `,
-    coverImage: '/screenshots/ebay-mcp.png',
+I didn't get to build AutoDS. So I built the piece anyone chasing it needs first — and gave it away. Ninety-two stars say I read that right.`,
+    coverImage: '/blog/ebay-mcp.png',
     category: 'projects',
-    tags: ['open source', 'MCP', 'TypeScript', 'eBay API', 'AI tools'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2025-01-10',
-    readingTime: 8,
+    tags: ['open source', 'MCP', 'eBay API', 'TypeScript', 'OAuth'],
+    author: AUTHOR,
+    publishedAt: '2026-06-20',
+    readingTime: 3,
     featured: true,
   },
   {
     id: '3',
-    slug: 'why-i-build-browser-extensions',
-    title: 'Why I Build Browser Extensions (And You Should Too)',
+    slug: 'two-extensions-400-users-one-paying-customer',
+    title: '2 extensions, 400 users, 1 paying customer',
     excerpt:
-      "Browser extensions are the perfect side project. Small scope, immediate feedback, real users. Here's why I've built 3 of them and what I've learned along the way.",
-    content: `
-# Why Browser Extensions?
+      'Every extension I’ve shipped started as me being annoyed. Two of them, 400 users, one paying stranger — and the bigger tool they led me to build.',
+    content: `Every extension I've shipped started as me being annoyed.
 
-I've shipped three browser extensions now - Sora Auto Queue, AI Conversation Navigator, and Gemini Nano Flow. Each one taught me something different about building products that people actually use.
+I was generating a lot in Sora, sitting there like an idiot clicking go, waiting, clicking go again. So I built Sora Auto Queue — line up your prompts, walk away, come back to a stack of finished work. Then the same itch hit me across ChatGPT, Gemini, AI Studio, so I built BatchBeam — dump a CSV of prompts, let it run them all back to back, retries and downloads handled.
 
-## The Perfect Side Project Scope
+Two extensions. Around 400 users between them. And one got me my first paying customer — a stranger on the internet who liked what I built enough to hand me money for it. I don't care how small the number was. The day someone pays you for a thing you made out of your own annoyance, something rewires in your head. You stop being a guy who codes. You're a guy who ships things people buy.
 
-Here's the thing about side projects: most of them die. Not because the idea is bad, but because the scope is too big. You get excited, start building, and three months later you're burnt out with nothing to show.
+But here's where it actually went. Automating a button inside a browser tab is fun. Automating the whole AI is better. So I built ai-browser-bridge — drive a real ChatGPT or Gemini conversation straight from your terminal, and hand the model a narrow, sandboxed set of your repo's tools over MCP. Grep, read, patch, run tests, diff. No raw shell, ever. Playwright drives the real browser tab, a Cloudflare tunnel lets ChatGPT reach back into your machine, six providers answer to one command.
 
-Browser extensions are different:
-
-- **Clear constraints** - You're working within a defined API
-- **Small surface area** - Most extensions do one thing well
-- **Immediate feedback** - Install it, use it, iterate
-
-## What I Built
-
-### Sora Auto Queue
-The first extension came from my own frustration. I was using AI tools heavily and kept wishing I could queue up prompts. So I built it.
-
-Features I'm proud of:
-- Completely redesigned UI in v2.0.0
-- E2E testing with Playwright
-- CI/CD with GitHub Actions
-
-### AI Conversation Navigator
-This one adds advanced navigation to ChatGPT, Claude, and Gemini. The challenging part was making it work consistently across three different platforms that change their DOM frequently.
-
-Key learning: **90%+ test coverage isn't paranoia when platforms update without notice.**
-
-### Gemini Nano Flow
-The newest addition, focusing on streamlined Gemini workflows. Still in active development, but already live on the Chrome Web Store.
-
-## Technical Lessons
-
-**1. DOM is a moving target**
-These AI platforms update their interfaces constantly. Build your selectors to be resilient, and test often.
-
-**2. Manifest V3 is the future**
-Chrome is phasing out V2. Learn V3 now and save yourself migration headaches later.
-
-**3. Cross-browser support matters**
-Chrome and Firefox have enough API differences to cause bugs. Test on both.
-
-## Why You Should Try It
-
-If you've never built an extension, here's my challenge to you:
-
-1. Think of one small annoyance in your daily browsing
-2. Spend one weekend building a solution
-3. Publish it to the Chrome Web Store
-
-The process of going from idea to published product - even a tiny one - teaches you more than months of tutorial following.
-
-Plus, there's something magical about seeing "X users" on your extension page. Real people, using something you built to solve a problem they have.
-
-## Resources
-
-- [Chrome Extension Docs](https://developer.chrome.com/docs/extensions/)
-- [WXT Framework](https://wxt.dev/) - What I use for modern extension development
-- My extensions on the Chrome Web Store (links in projects page)
-
----
-
-*The best project is one you'll actually finish. Browser extensions have the right constraints to make that happen.*
- `,
-    coverImage: '/screenshots/sora-extension.png',
-    category: 'engineering',
-    tags: ['browser extensions', 'Chrome', 'side projects', 'WXT'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2025-01-05',
-    readingTime: 5,
+The extensions taught me to kill small annoyances. ai-browser-bridge is me killing a big one. Same instinct, bigger blast radius.`,
+    coverImage: '/blog/extensions.png',
+    category: 'projects',
+    tags: ['browser extensions', 'Chrome', 'ai-browser-bridge', 'MCP', 'indie'],
+    author: AUTHOR,
+    publishedAt: '2026-06-10',
+    readingTime: 3,
   },
   {
     id: '4',
-    slug: 'chatgpt-taught-me-to-code',
-    title: "ChatGPT Taught Me to Code (And That's Okay)",
+    slug: 'i-vibe-coded-before-it-had-a-name',
+    title: 'I vibe-coded before it had a name',
     excerpt:
-      "I built my first automation scripts by asking ChatGPT questions. Here's why AI-assisted learning is valid and how to do it right.",
-    content: `
-# ChatGPT Taught Me to Code
+      'They sell courses on it now. I was doing it in 2022 in the dark, hand-feeding a model that lied to me until it stopped.',
+    content: `They call it vibe coding now. There are courses. Influencers. A whole vocabulary. I was doing it in 2022 in the dark, with no name for it and no idea if it would work.
 
-There's a certain gatekeeping in tech that says you need to learn everything from scratch. Start with fundamentals. Don't copy code. Understand every line.
+Except back then the model was a liar. Today's version is sharp — reads your repo, calls tools, checks itself. The 2022 one hallucinated functions that didn't exist and apologized beautifully when you caught it. No MCP, no grounding, nothing to trust. So I did the trusting by hand. I copy-pasted entire Interactive Brokers PDFs and Binance API docs into that little box, page after page, until it had enough truth in front of it to stop making things up.
 
-I'm going to push back on that a bit.
+That's the part nobody selling a course tells you. It wasn't lazy. It was the opposite. Eighteen hours a day feeding a machine the documentation it should've known, catching its lies, running the code, watching it break, pasting the error back, going again. I built trading bots and scrapers that way, from zero, on pure stubbornness and a chat window.
 
-## My Story
+People argue about whether vibe coding makes you a real engineer. Wrong question. The tool doesn't make you anything. The stubbornness does. I know guys with the sharpest AI on earth who ship nothing because they quit at the first hallucination. I shipped because I refused to.
 
-When I was working at that insurance company, I had zero programming experience. I saw a problem - manual data extraction that took hours - and I wanted to solve it.
-
-I opened ChatGPT and asked: "How do I write a Python script to extract data from a website?"
-
-Over the next few weeks, through hundreds of questions and iterations, I built working automation that saved real hours of real work. Was my code elegant? No. Did I understand every concept? No. Did it work and provide value? Absolutely.
-
-## The Critics
-
-I've seen the takes online:
-- "AI-generated code creates developers who can't think"
-- "You need to understand fundamentals first"
-- "Copilot is making programmers lazy"
-
-Here's my counter: **The goal is solving problems, not passing purity tests.**
-
-## How to Learn with AI Right
-
-That said, there's a difference between using AI as a learning accelerator and using it as a crutch.
-
-### Do This:
-- Ask "why" after every answer
-- Try to predict what the AI will say before you ask
-- Intentionally break the code to understand how it works
-- Move beyond tutorials to your own projects
-
-### Avoid This:
-- Copy-pasting without reading
-- Accepting the first answer without questioning
-- Never writing code from memory
-- Staying at the same level forever
-
-## The Real Skill
-
-The engineers I respect most aren't the ones who memorized every algorithm. They're the ones who can:
-
-1. Identify the actual problem
-2. Know what questions to ask
-3. Evaluate solutions critically
-4. Ship working software
-
-AI accelerates all of these. It doesn't replace them.
-
-## Where I Am Now
-
-Today, I can write TypeScript, React, Node.js, and Python without AI assistance. I understand the concepts. I can debug complex issues. I contribute to open source projects with hundreds of stars.
-
-The fundamentals came - but they came through building things, not through gatekept traditional learning paths.
-
-## My Advice
-
-If you're learning to code in 2025:
-
-1. **Use AI tools liberally** - They're the most patient teachers you'll ever have
-2. **Build real projects** - Tutorials are where learning begins, not ends
-3. **Don't let gatekeepers slow you down** - Your path is valid
-4. **Stay curious** - Keep asking "why" until you truly understand
-
-The tools have changed. The goal hasn't. Build things that matter.
-
----
-
-*This isn't a defense of not learning fundamentals. It's a defense of using every tool available to get there faster.*
- `,
-    coverImage: '/screenshots/auto-bay-saas.png',
+And I'll say the rest plain: we are living in the single greatest time in history to build the thing in your head. The gap between "I imagine it" and "it runs" has never been this thin. If you're not building right now, it's not the tools holding you back. It's you.`,
+    coverImage: '/blog/vibe-coding.png',
     category: 'thoughts',
-    tags: ['AI learning', 'ChatGPT', 'career advice', 'self-taught'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2024-12-20',
-    readingTime: 5,
+    tags: ['AI', 'vibe coding', 'self-taught', 'ChatGPT'],
+    author: AUTHOR,
+    publishedAt: '2026-05-28',
+    readingTime: 3,
+    featured: true,
   },
   {
     id: '5',
-    slug: 'building-trading-bots-with-zero-experience',
-    title: 'Building Trading Bots With Zero Coding Experience',
+    slug: 'the-bots-that-ran-while-i-slept',
+    title: 'The bots that ran while I slept',
     excerpt:
-      'How I went from knowing nothing about programming to building automated trading systems for stocks and crypto. A story of curiosity, iteration, and a lot of 3am debugging sessions.',
-    content: `
-# Trading Bots: Where It All Started
+      'For half a year I tried to build a trading bot that made money. I lost about four thousand shekels finding out I couldn’t — and it taught me the most important thing I know.',
+    content: `For half a year I tried to build a trading bot that actually made money. I did not succeed. I lost about four thousand shekels finding that out, and I'd do it again.
 
-Before the browser extensions. Before the full-stack bootcamp. Before Predicto AI. There were trading bots.
+Here's what people get wrong about that. I could build the bot. That was never the problem. Interactive Brokers bot firing trades, a crypto bot on Binance running while I slept, backtests grinding through years of TradingView data hunting for an edge. The code worked. The engineering was real. What I couldn't do was make the market hand me money for it.
 
-## The Origin
+I'd sit in TradingView for hours replaying strategies backwards over old candles. This pattern, that indicator, this stop-loss. Every one looked like genius in the backtest and bled money the second it touched real prices. The market doesn't care how clean your code is. It'll take your four thousand shekels and teach you something no course will.
 
-I was interested in trading but didn't have time to watch charts all day. The idea of automated trading seemed like science fiction - something only hedge funds could do.
+And it did. It taught me the difference between "it runs" and "it works." A bot that executes perfectly and loses money runs — it doesn't work. That gap is the whole job. Passing tests isn't shipping. Green isn't done. The market beat that into me for four grand, which is honestly cheaper than most people's tuition.
 
-Then I discovered you could access trading APIs programmatically.
-
-Armed with nothing but curiosity and ChatGPT, I started building.
-
-## The First Bot
-
-My first crypto bot used Binance's API. The strategy was simple: RSI-based entries and exits.
-
-\`\`\`python
-# My actual first working code (don't judge)
-if rsi < 30:
- buy()
-elif rsi > 70:
- sell()
-\`\`\`
-
-Was it sophisticated? No. Did it lose money initially? Yes. But it ran. Automatically. Making decisions while I slept.
-
-## Leveling Up
-
-Over months, I built more complex systems:
-
-**Stock Trading (Interactive Brokers)**
-- MACD + RSI combination strategies
-- Wyckoff pattern detection
-- Telegram notifications for trades
-
-**Crypto Trading (Binance)**
-- Multiple timeframe analysis
-- Risk management rules
-- Portfolio balancing
-
-## What I Learned
-
-### 1. APIs Are Powerful
-The ability to interact with financial systems programmatically opened my eyes to what's possible with code. Every platform you use probably has an API.
-
-### 2. Testing is Everything
-When real money is on the line, you learn to test thoroughly. Backtesting, paper trading, then small real trades. This discipline carried over to all my future development.
-
-### 3. Failure is Data
-My bots lost money. A lot at first. But each loss was information about what didn't work. The bots got better because I tracked and analyzed every trade.
-
-### 4. Automation Compounds
-A bot doesn't get tired. It doesn't get emotional. It executes consistently 24/7. The power of automation became crystal clear.
-
-## The Bigger Picture
-
-These bots were never about getting rich. They were about proving to myself that I could build things.
-
-That proof of concept led to:
-- Confidence to tackle bigger projects
-- Understanding of APIs and automation
-- Foundation for my bootcamp journey
-- Eventual career in software engineering
-
-## Should You Build Trading Bots?
-
-If you're interested in programming and finance, yes. But understand:
-
-- Start with paper trading (fake money)
-- Accept that you'll lose some real money learning
-- The code skills matter more than the profits
-- Don't bet money you can't afford to lose
-
-## Code Is Still Running
-
-Some of those original bots, refined over time, still run today. They're not my main focus anymore, but they're a reminder of where this all started.
-
-Sometimes the best way to learn is to build something you actually care about. For me, that was trying to automate away the tedious parts of trading.
-
----
-
-*The projects that teach you the most are often the ones that seem slightly crazy when you start them.*
- `,
-    coverImage: '/screenshots/binance.png',
+The bots are off now. The lesson never turned off.`,
+    coverImage: '/blog/trading-bots.png',
     category: 'projects',
-    tags: ['trading bots', 'Python', 'automation', 'Binance', 'APIs'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2024-12-10',
-    readingTime: 6,
+    tags: ['trading bots', 'Python', 'Binance', 'Interactive Brokers', 'failure'],
+    author: AUTHOR,
+    publishedAt: '2026-05-15',
+    readingTime: 2,
   },
   {
     id: '6',
-    slug: 'react-native-first-mobile-app',
-    title: 'Building My First React Native App: Lessons from Get Barber',
+    slug: 'shipping-ios-for-real-smallbites',
+    title: 'Shipping iOS for real: SmallBites',
     excerpt:
-      "Transitioning from web to mobile development with React Native and Expo. What surprised me, what frustrated me, and what I'd do differently.",
-    content: `
-# From Web to Mobile
+      'My first real native app went to the App Store on the back of a single Udemy course. You don’t wait until you’re ready. Nobody’s ever ready.',
+    content: `My first real native app went to the App Store. Before it, my entire mobile experience was one Udemy course — Maximilian's React Native guide, watched at 1.5x like everyone else.
 
-After building web apps for over a year, I finally took the plunge into mobile development. The project: Get Barber, a barber booking app built with React Native and Expo.
+Then a freelance client hired me to build SmallBites. Real product, real users, App Store review, the whole thing. Baby-led weaning — helping parents start their kid on solid food without losing their minds. Not a domain I'd have picked. Doesn't matter. The job isn't to build what you know. It's to build what the client needs and learn the rest on the way.
 
-## Why React Native?
+So I learned the rest on the way. There's a specific terror in shipping your first native app that the web never gave me. On the web you push and it's live in seconds; break it, fix it, push again. The App Store makes you stand in line. You submit, you wait, a stranger at Apple decides, and if you got something wrong you go to the back of the line and wait again. It forced a discipline the web let me be lazy about.
 
-The decision was practical:
-- I already knew React
-- Cross-platform from day one
-- Expo makes deployment painless
-- Large ecosystem and community
+SmallBites shipped. It's live. WiseNoteTaker — my own one, an AI that records a meeting and hands you back structured notes — is in review now.
 
-## The Surprises
-
-### 1. Styling is Different (But Familiar)
-No CSS files. Everything is StyleSheet or inline styles. But coming from Tailwind, NativeWind felt right at home.
-
-\`\`\`javascript
-// NativeWind makes this possible
-<View className="flex-1 bg-black p-2">
- <Text className="text-white text-xl font-bold">
- Hello Mobile
- </Text>
-</View>
-\`\`\`
-
-### 2. Navigation is Complex
-React Router on web is simple. React Navigation has more concepts - stacks, tabs, drawers. Expo Router simplified this significantly.
-
-### 3. Platform Differences Are Real
-iOS and Android handle things differently. Keyboard behavior, status bars, safe areas - you can't ignore these.
-
-## The Tech Stack
-
-- **Expo** - Build tooling and development
-- **Expo Router** - File-based routing
-- **NativeWind** - Tailwind for React Native
-- **Supabase** - Backend and auth
-- **TanStack Query** - Data fetching
-- **Zustand** - State management
-- **React Native Maps** - Location features
-
-## What I'd Do Differently
-
-1. **Start with Expo from day one** - I initially tried bare React Native. Don't.
-2. **Design mobile-first** - Web thinking doesn't translate directly
-3. **Test on real devices early** - Simulators lie
-
-## The Result
-
-Get Barber now has:
-- Real-time appointment booking
-- Location-based barber discovery
-- Apple authentication
-- Push notifications
-
-## Should You Learn React Native?
-
-If you know React, the barrier is lower than you think. The hardest part isn't the technology - it's thinking in mobile patterns.
-
-Start with a small project. Use Expo. Ship something.
-
----
-
-*Mobile development opened up a whole new world of possibilities. The skills transfer more than you'd expect.*
- `,
-    coverImage: '/screenshots/get-barber.png',
-    category: 'tutorials',
-    tags: ['React Native', 'Expo', 'mobile development', 'NativeWind'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2024-11-28',
-    readingTime: 7,
+Turns out "I only did one course" and "I shipped it to production" can both be true at once. You don't wait until you're ready. Nobody's ever ready. You take the job and you become ready by the deadline.`,
+    coverImage: '/blog/smallbites.png',
+    category: 'projects',
+    tags: ['React Native', 'Expo', 'iOS', 'App Store', 'freelance'],
+    author: AUTHOR,
+    publishedAt: '2026-05-02',
+    readingTime: 3,
   },
   {
     id: '7',
-    slug: 'mcp-protocol-future-of-ai-tools',
-    title: 'The MCP Protocol: Why I Built Two MCP Servers',
+    slug: 'i-got-hired-as-qa-not-a-dev',
+    title: 'I got hired as QA, not a dev',
     excerpt:
-      "Model Context Protocol is changing how AI assistants interact with the world. Here's why I went all-in on building MCP servers.",
-    content: `
-# The Rise of MCP
+      'I wanted full-stack. They offered me QA. I said yes so fast it looked desperate — and it was the smartest move I made.',
+    content: `I wanted to be a full-stack developer. I got hired as QA. And I said yes so fast it probably looked desperate.
 
-When Anthropic released the Model Context Protocol, I immediately saw the potential. This wasn't just another API standard - it was a way to give AI assistants real capabilities.
+It wasn't desperation. Not only, anyway. After the years I'd put in — the failed SaaS, the security guard chair, teaching myself in the dark — walking into a real tech company and having them want me at all felt like a dream. My internship's first day, I remember thinking: I'm actually in. Then Predicto hired me and it hit different. I wasn't the outsider clawing at the window anymore. I was inside. Blending in. One of them.
 
-## What is MCP?
+So no, being "just QA" didn't sting. QA was the door, and I'd have taken a smaller one. I tested, I broke things on purpose, I learned how the platform actually held together from the inside. A few months in, I moved to the frontend — real features on the buying platform, CMS templates built to lift revenue. Then they handed me the migration: ten years of production data moving to Cloudflare, and my job was to not lose a single byte. We didn't.
 
-In simple terms: MCP lets AI assistants use tools. Instead of just generating text, Claude can now:
-- Search databases
-- Call APIs
-- Read files
-- Execute actions
-
-## Why I Built Two MCP Servers
-
-### 1. eBay MCP Server
-387 tools for eBay's selling APIs. Sellers can now ask their AI assistant to manage inventory, track orders, run marketing campaigns - all through natural language.
-
-### 2. Chrome Extension API Reference MCP
-This one helps AI assistants write better Chrome extensions. Instead of hallucinating API details, they can look up the actual documentation.
-
-## The Architecture Pattern
-
-Both servers follow similar patterns:
-
-\`\`\`typescript
-// Tool definition
-const tool = {
- name: "get_inventory_item",
- description: "Retrieves inventory item by SKU",
- inputSchema: z.object({
- sku: z.string()
- }),
- handler: async (input) => {
- // API call
- return result;
- }
-};
-\`\`\`
-
-## Key Learnings
-
-### 1. Documentation is Everything
-AI assistants need to understand when and how to use each tool. Vague descriptions lead to misuse.
-
-### 2. Error Handling Matters More
-When a human uses an API, they can interpret error messages. AI needs structured, clear error responses.
-
-### 3. Test Coverage is Non-Negotiable
-The eBay MCP has 958+ tests. When you're building something AI will use autonomously, you need confidence.
-
-## The Future
-
-MCP is still early. But I believe this pattern - giving AI assistants access to real tools - is how we'll interact with software in the future.
-
-Instead of learning 100 different UIs, you'll just ask your AI assistant to handle it.
-
-## Getting Started with MCP
-
-If you want to build your own MCP server:
-
-1. Start with the [MCP SDK](https://github.com/modelcontextprotocol/sdk)
-2. Pick an API you know well
-3. Build incrementally - start with 5 tools, not 50
-4. Write tests for every tool
-5. Document extensively
-
----
-
-*The best time to learn MCP was when it launched. The second best time is now.*
- `,
-    coverImage: '/screenshots/chrome-extension-mcp.png',
-    category: 'engineering',
-    tags: ['MCP', 'AI tools', 'TypeScript', 'open source'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2024-11-15',
-    readingTime: 6,
-    featured: true,
+That's what I'd tell anyone hunting their first job. Stop being precious about the title. Get in the building. The distance from QA to frontend is short once you're inside. The distance from outside to inside is the whole war. I took the smallest door they'd open. Then I didn't stop walking.`,
+    coverImage: '/blog/qa-to-frontend.png',
+    category: 'career',
+    tags: ['career', 'first job', 'QA', 'Predicto'],
+    author: AUTHOR,
+    publishedAt: '2026-04-20',
+    readingTime: 3,
   },
   {
     id: '8',
-    slug: 'from-zero-to-predicto-ai',
-    title: 'Landing My First Dev Job: From Bootcamp to Predicto AI',
+    slug: 'bolt-asins-the-saas-i-put-in-a-drawer',
+    title: 'Bolt ASINs: the SaaS I put in a drawer',
     excerpt:
-      'The job search, the interviews, the rejections, and finally the offer. An honest look at breaking into tech in 2024.',
-    content: `
-# The Job Hunt Reality
+      'Everyone confesses their failures now. Mine wasn’t a failure. I put it in a drawer — and that’s a different thing entirely.',
+    content: `Everyone wants to tell you about their failures now. It's a whole genre. So let me be precise: Bolt ASINs didn't fail. I put it in a drawer.
 
-Let me be honest: the job search was brutal. Here's what actually happened between finishing my bootcamp and starting at Predicto AI.
+The idea was a system that pulls winning products off Amazon and feeds them to dropshipping sellers, automatically. I couldn't build it back then, couldn't afford anyone who could, and the money ran out before the code did. So it went in the drawer. Not dead. Filed.
 
-## The Numbers
+The difference matters. A failure is a thing you tried fully and it beat you. Bolt ASINs I just never got to execute — I ran out of runway before I ran out of belief. There's a version of me that's bitter about that. I'm not him. That drawer is where I keep proof that I saw the problem years before I had the hands to solve it.
 
-- **Applications sent**: 150+
-- **Responses received**: ~30
-- **Technical interviews**: 12
-- **Final round interviews**: 4
-- **Offers**: 1
+Would I open it today? Not for that exact idea. I can build it now, easily — which is exactly why it bores me now. If I went back into dropshipping it'd be for a different problem, a sharper one the AutoDS's of the world haven't flattened yet. The old idea already did its job. It pointed me at a whole industry of manual pain and said: learn to kill this.
 
-Those numbers aren't pretty. But they're real.
-
-## What Didn't Work
-
-### Mass Applying
-Sending generic applications to every job posting was a waste of time. Maybe 2% response rate.
-
-### Focusing Only on Big Companies
-The competition for entry-level roles at established companies is fierce. Hundreds of applicants per position.
-
-### Underselling My Background
-I initially downplayed my military experience and trading bot projects. Mistake.
-
-## What Actually Worked
-
-### 1. Building in Public
-My GitHub was active. Real projects, not just tutorial clones. When recruiters looked, they saw:
-- The eBay MCP server
-- Browser extensions
-- Full-stack applications
-
-### 2. The "Different" Background
-Turns out, "IDF commander who taught himself Python to build trading bots" is memorable. It became my story.
-
-### 3. Targeting Startups
-Startups care less about years of experience and more about:
-- Can you ship?
-- Will you learn fast?
-- Do you have initiative?
-
-I could demonstrate all three.
-
-### 4. Networking (The Real Kind)
-Not LinkedIn spam. Actually talking to developers, attending meetups, engaging in communities. One conversation led to the Predicto AI opportunity.
-
-## The Predicto AI Interview
-
-The interview process:
-1. Initial call - culture fit, background discussion
-2. Technical assessment - take-home project
-3. Technical interview - code review and system design
-4. Final conversation with founders
-
-The take-home was building a feature I actually found interesting. I over-delivered - not because I was trying to impress, but because I was genuinely curious.
-
-## Lessons for Job Seekers
-
-**1. Quality over quantity**
-5 thoughtful applications beat 50 generic ones.
-
-**2. Build things you'd actually use**
-Passion shows. If you're bored building it, interviewers will be bored hearing about it.
-
-**3. Your "weakness" might be your strength**
-Non-traditional background? That's differentiation.
-
-**4. Keep building during the search**
-Every week without a job is a week to add to your portfolio.
-
-**5. It only takes one yes**
-150 rejections don't matter if application 151 is the one.
-
----
-
-*The job search tested my resilience more than the bootcamp did. But every rejection was just data pointing me toward the right opportunity.*
- `,
-    coverImage: '/screenshots/ally-ai-calendar.png',
-    category: 'career',
-    tags: ['job search', 'career advice', 'interviews', 'bootcamp'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2024-11-01',
-    readingTime: 7,
+I learned. The drawer can keep the blueprint. I moved on to bigger buildings.`,
+    coverImage: '/blog/bolt-asins.png',
+    category: 'thoughts',
+    tags: ['startup', 'dropshipping', 'automation', 'lessons'],
+    author: AUTHOR,
+    publishedAt: '2026-04-08',
+    readingTime: 2,
   },
   {
     id: '9',
-    slug: 'supabase-vs-firebase-real-experience',
-    title: 'Supabase vs Firebase: My Real-World Experience',
+    slug: 'falling-for-agentic-workflows',
+    title: 'Falling for agentic workflows',
     excerpt:
-      "After using both extensively in production projects, here's my honest comparison of Supabase and Firebase for full-stack applications.",
-    content: `
-# The Backend-as-a-Service Decision
+      'Everyone thinks agentic coding is about the model. It’s not. It’s about context, the assignment, and knowing what good code even looks like.',
+    content: `The thing I'm obsessed with right now isn't a language or a framework. It's how you talk to an agent so it hands you back code you'd actually ship.
 
-Every new project starts with the same question: what's the backend going to be?
+Everyone thinks agentic coding is about the model. It's not. It's about context and the assignment. Give an agent a vague task and a blind view of your codebase and it'll confidently write garbage that runs — the worst kind, because it passes and it's wrong underneath. Give it the right context, a sharp assignment, and real taste for how your code should be shaped, and it writes something you'd sign your name to.
 
-I've shipped projects with both Supabase and Firebase. Here's what I actually experienced.
+That's the whole game I'm playing now. Not "make the AI write it." Make the AI write it the way I would. Readable. Structured like a human who cares built it, not a machine that guessed. I spend my effort upstream — on the context I feed it and the instructions I give it — because that's where the quality is decided, long before a line gets generated.
 
-## Projects Built
+And here's what the hype crowd skips: none of this works without the fundamentals. You can't judge whether an agent's output is good if you don't know what good looks like. You can't steer it through a codebase you couldn't navigate yourself. The agents didn't make engineering obsolete. They made it matter more — because now I'm not just writing the code, I'm the standard it gets measured against.
 
-**With Firebase:**
-- AutoBay SaaS platform
-- Early trading bot dashboards
-
-**With Supabase:**
-- Ally AI Calendar
-- Get Barber mobile app
-- Facebook Lead AI Extension
-
-## The Comparison
-
-### Authentication
-
-**Firebase Auth**
-- More providers out of the box
-- Better documentation
-- Google integration is seamless (obviously)
-
-**Supabase Auth**
-- Simpler API
-- Row Level Security integration
-- Better for Postgres-centric apps
-
-**Winner**: Tie - depends on your needs
-
-### Database
-
-**Firebase (Firestore)**
-- NoSQL - flexible schema
-- Real-time by default
-- Pricing can surprise you at scale
-
-**Supabase (PostgreSQL)**
-- SQL - structured and powerful
-- Real-time as an option
-- Predictable pricing
-
-**Winner**: Supabase - PostgreSQL is just more capable
-
-### Real-time
-
-**Firebase**
-- Built into the core product
-- Works great, just expensive
-
-**Supabase**
-- Requires explicit subscription
-- More control, less magic
-
-**Winner**: Firebase for simplicity, Supabase for control
-
-### Developer Experience
-
-**Firebase**
-- Mature tooling
-- Sometimes feels heavy
-- Google Cloud integration
-
-**Supabase**
-- Modern, clean dashboard
-- Open source
-- SQL is a superpower
-
-**Winner**: Supabase
-
-## When I Choose What
-
-**Choose Firebase when:**
-- Deep Google Cloud integration needed
-- Team is already familiar with it
-- NoSQL fits your data model
-
-**Choose Supabase when:**
-- You want PostgreSQL power
-- Budget is a concern
-- You prefer open source
-- Row Level Security is important
-
-## The Real Answer
-
-For my personal projects now, I default to Supabase. The PostgreSQL foundation means I'm not fighting the database - I'm working with it.
-
-But Firebase isn't bad. It's just different. The right choice depends on your project, your team, and your preferences.
-
-## Code Comparison
-
-**Supabase query:**
-\`\`\`typescript
-const { data, error } = await supabase
- .from('appointments')
- .select('*, barber:barbers(*)')
- .eq('user_id', userId)
- .order('date', { ascending: true });
-\`\`\`
-
-**Firebase query:**
-\`\`\`typescript
-const snapshot = await db.collection('appointments')
- .where('userId', '==', userId)
- .orderBy('date')
- .get();
-const data = snapshot.docs.map(doc => doc.data());
-\`\`\`
-
-Both work. Supabase feels more like writing SQL (because it is).
-
----
-
-*Don't overthink the BaaS decision. Pick one, learn it well, and ship. You can always migrate later (though you probably won't).*
- `,
-    coverImage: '/screenshots/facebook-lead-ai.png',
-    category: 'tutorials',
-    tags: ['Supabase', 'Firebase', 'backend', 'comparison'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2024-10-20',
-    readingTime: 6,
+That's the hybrid I'm building myself into. Agentic speed on top of real judgment. Anyone can generate a thousand lines now. Knowing which thousand deserve to exist — that's the job.`,
+    coverImage: '/blog/agentic-workflows.png',
+    category: 'engineering',
+    tags: ['AI agents', 'agentic', 'context engineering', 'SDLC'],
+    author: AUTHOR,
+    publishedAt: '2026-06-28',
+    readingTime: 3,
+    featured: true,
   },
   {
     id: '10',
-    slug: 'ai-assisted-development-workflow',
-    title: 'My AI-Assisted Development Workflow in 2025',
+    slug: 'idf-to-high-tech-what-actually-transfers',
+    title: 'IDF → high-tech: what actually transfers',
     excerpt:
-      'How I use Claude, Cursor, and custom MCP servers to ship code faster. A practical guide to AI pair programming.',
-    content: `
-# The New Development Reality
+      'Every “military to tech” story sells the same clean lie. Here’s what actually transferred from commanding soldiers to writing code — and what I had to leave at the door.',
+    content: `Every "military to tech" story sells the same clean lie: that everything transferred, that leading soldiers made me a natural at leading code. Most of it is nonsense. Let me tell you what actually carried and what I left at the door.
 
-I write more code than ever, but I type less. Here's how AI has changed my development workflow.
+What carried is smaller than people want and stronger than they think. Discipline — the real kind. Showing up and doing the boring rep when nobody's watching and there's no medal in it. In Gdud 931 I learned you don't rise to the moment, you sink to your training, so you train until the floor is high. That's the most useful thing I own. And under it, a stubborn belief that anything is achievable if you're willing to suffer for it long enough. That belief taught me to code. That belief is why I'm here.
 
-## The Tools
+Now what didn't transfer. Command. In the army I gave an order and bodies moved. In engineering, rank is a joke — the compiler has never once cared that I was a commander. The machine doesn't respect you or fear you. It does exactly what you wrote, not what you meant. I had to unlearn authority and relearn humility. You don't command a codebase into working. You listen to it. You get it wrong, it tells you, you fix it. No salute involved.
 
-### Claude (via API and Claude Code)
-My thinking partner. Architecture decisions, code review, debugging complex issues.
-
-### Cursor
-Daily driver IDE. Tab completion that actually understands context.
-
-### Custom MCP Servers
-My eBay MCP and Chrome Extension API MCP give Claude access to real documentation and APIs.
-
-## The Workflow
-
-### 1. Planning Phase
-Before writing code, I discuss architecture with Claude:
-
-\`\`\`
-"I need to build a queue system for prompt submissions.
-Users should be able to add, reorder, and remove prompts.
-It needs to persist across sessions.
-What patterns would you suggest?"
-\`\`\`
-
-Claude suggests options, I evaluate trade-offs, we refine together.
-
-### 2. Implementation Phase
-In Cursor, I write the skeleton and let AI fill in the details:
-
-\`\`\`typescript
-// I write this
-function processQueue(queue: Prompt[]): void {
- // Process each prompt in order
- // Handle errors gracefully
- // Update progress state
-}
-
-// AI completes the implementation
-\`\`\`
-
-### 3. Review Phase
-After a feature is complete, I ask Claude to review:
-
-\`\`\`
-"Review this code for:
-- Edge cases I might have missed
-- Performance issues
-- Security concerns
-- Better patterns"
-\`\`\`
-
-### 4. Documentation Phase
-AI generates first drafts of documentation that I refine.
-
-## What AI Is Good At
-
-- Boilerplate code
-- Remembering syntax details
-- Exploring API options
-- Catching obvious bugs
-- Explaining unfamiliar code
-
-## What AI Is Bad At
-
-- Understanding full system context
-- Making product decisions
-- Knowing your codebase conventions
-- Catching subtle business logic errors
-
-## The 80/20 Rule
-
-AI handles ~80% of the mechanical work. The remaining 20% - architecture, decisions, reviews - still requires human judgment.
-
-That 20% is also where the value is.
-
-## Practical Tips
-
-### 1. Be Specific
-Bad: "Write a function to handle users"
-Good: "Write a TypeScript function that validates user input against this Zod schema and returns typed errors"
-
-### 2. Provide Context
-Share relevant code, explain constraints, describe the system.
-
-### 3. Verify Everything
-AI makes confident mistakes. Always read the generated code.
-
-### 4. Learn the Patterns
-Over time, you'll know what prompts work best. Build that intuition.
-
-## The Controversial Take
-
-Using AI doesn't make you a worse developer. It makes you a more productive one.
-
-The developers who resist AI tools will write less code, ship slower, and eventually wonder why they're being left behind.
-
----
-
-*The question isn't whether to use AI in development. It's how to use it effectively.*
- `,
-    coverImage: '/screenshots/vision-agent-mas.png',
-    category: 'engineering',
-    tags: ['AI', 'productivity', 'Cursor', 'Claude', 'workflow'],
-    author: {
-      name: 'Joseph Sabag',
-      avatar: '/images-of-me/hero-image.svg',
-    },
-    publishedAt: '2024-10-05',
-    readingTime: 8,
-    featured: true,
+That was the hard part. Not learning to code. Learning that being right about people didn't make me right about systems. I earned Excellence twice in uniform. Then I sat at a keyboard and started again from private.`,
+    coverImage: '/blog/idf-transfer.png',
+    category: 'career',
+    tags: ['IDF', 'discipline', 'career change', 'military'],
+    author: AUTHOR,
+    publishedAt: '2026-03-25',
+    readingTime: 3,
   },
 ];
 

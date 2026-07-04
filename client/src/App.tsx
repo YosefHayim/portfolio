@@ -8,6 +8,8 @@ import { useReturnVisitor } from './hooks/useReturnVisitor.ts';
 import '@/index.css';
 
 const OnePagePortfolio = lazy(() => import('./Pages/OnePage/OnePagePortfolio.tsx'));
+const BlogList = lazy(() => import('./Pages/Blog/BlogList.tsx'));
+const BlogPost = lazy(() => import('./Pages/Blog/BlogPost.tsx'));
 
 const AIChatSidebar = lazy(() => import('./Components/AIChatSidebar/AIChatSidebar.tsx'));
 
@@ -31,6 +33,8 @@ const App = () => {
           <Suspense fallback={<PageLoader />}>
             <Routes key={location.pathname} location={location}>
               <Route element={<OnePagePortfolio />} path="/" />
+              <Route element={<BlogList />} path="/blog" />
+              <Route element={<BlogPost />} path="/blog/:slug" />
               <Route element={<OnePagePortfolio />} path="*" />
             </Routes>
           </Suspense>
