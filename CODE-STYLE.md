@@ -334,6 +334,20 @@ Write new code like these:
 > is newly adopted (ADR 0001). The canonical example is the target until the first migrated
 > slice ships.
 
+## Scripts layout
+
+```txt
+scripts/
+├── build-all.sh         # Production build (committed, used by deploy)
+└── dev/                 # Local dev-only scripts (gitignored)
+    ├── generate-blog-covers.sh
+    └── generate-hero.sh
+```
+
+**Rule:** scripts needed for the build/deploy pipeline stay at the `scripts/` root (committed). Scripts for local asset generation, AI-driven experiments, or one-off dev tasks go in `scripts/dev/`. This folder is **gitignored** — it never reaches the remote.
+
+When creating a new script, ask: _"Is this needed to build or deploy the site?"_ If **no** → `scripts/dev/`.
+
 ## Never
 
 The AI-slop fingerprint for THIS repo — concrete banned patterns, each with a real offender and how it is caught:
