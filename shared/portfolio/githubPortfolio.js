@@ -6,6 +6,93 @@ const MAX_PROJECTS_IN_CONTEXT = 6;
 const CACHE_TTL_MS = 1000 * 60 * 10;
 const EXCLUDED_REPO_NAMES = new Set(["yosefhayim", "template", "portfolio"]);
 
+/**
+ * Regex to find the first image in a README markdown file.
+ * Matches both `![alt](url)` and `<img src="url"` patterns.
+ * Only accepts .png, .svg, .jpg, .jpeg, .gif, .webp extensions.
+ */
+const MD_IMAGE_REGEX =
+  /!\[[^\]]*\]\(([^)]+\.(?:png|svg|jpg|jpeg|gif|webp)[^)]*)\)|<img[^>]+src=["']([^"']+\.(?:png|svg|jpg|jpeg|gif|webp)[^"']*)["']/i;
+
+/**
+ * Common logo file paths to check in the repo root when README has no image.
+ */
+const LOGO_FILE_CANDIDATES = [
+  "logo.png",
+  "logo.svg",
+  "icon.png",
+  "icon.svg",
+  "assets/logo.png",
+  "assets/logo.svg",
+  "assets/icon.png",
+  "assets/icon.svg",
+  "public/logo.png",
+  "public/logo.svg",
+  "public/icon.png",
+  "public/icon.svg",
+  ".github/logo.png",
+  ".github/logo.svg",
+];
+
+/**
+ * Fetches a repo's README, extracts the first image URL (PNG/SVG/JPG/GIF/WebP).
+ * Falls back to probing common logo file paths in the repo.
+ * Returns null if no logo is found.
+ */
+export async function fetchRepoLogoUrl(fetcher, owner, repoName) {
+  try {
+    // Step 1: Try README
+    const readmeUrl = `${GITHUB_API_BASE}/repos/${owner}/${repoName}/readme`;
+    const readmeResponse = await fetcher(readmeUrl, {
+      headers: {
+        Accept: "application/vnd.github.raw+json",
+        "User-Agent": "portfolio",
+      },
+    });
+
+    if (readmeResponse.ok) {
+      const readmeContent = await readmeResponse.text();
+      const match = readmeContent.match(MD_IMAGE_REGEX);
+      if (match) {
+        const rawUrl = match[1] || match[2];
+        return resolveGitHubImageUrl(rawUrl, owner, repoName);
+      }
+    }
+
+    // Step 2: Probe common logo file paths
+    for (const candidate of LOGO_FILE_CANDIDATES) {
+      const fileUrl = `https://raw.githubusercontent.com/${owner}/${repoName}/main/${candidate}`;
+      const probeResponse = await fetcher(fileUrl, {
+        method: "HEAD",
+        headers: { "User-Agent": "portfolio" },
+      });
+      if (probeResponse.ok) {
+        return fileUrl;
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Resolves a potentially relative image URL from a README into an absolute URL.
+ */
+function resolveGitHubImageUrl(url, owner, repoName) {
+  if (!url) return null;
+
+  // Already absolute
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+
+  // Relative path — resolve to raw.githubusercontent.com
+  const cleanPath = url.replace(/^\.?\//, "");
+  return `https://raw.githubusercontent.com/${owner}/${repoName}/main/${cleanPath}`;
+}
+
 let contextCache = null;
 
 export function isExcludedRepoName(repoName) {
@@ -101,6 +188,29 @@ export function createGitHubProjectPreviews(
       };
     })
     .slice(0, maxProjects);
+}
+
+/**
+ * Enriches project previews with auto-detected avatar URLs by fetching each
+ * repo's README for its first image. Runs all fetches in parallel.
+ * Non-destructive: projects that fail detection keep avatarUrl undefined.
+ */
+export async function enrichProjectsWithLogos(
+  fetcher,
+  owner,
+  projects,
+) {
+  const results = await Promise.allSettled(
+    projects.map(async (project) => {
+      const repoName = project.name;
+      const logoUrl = await fetchRepoLogoUrl(fetcher, owner, repoName);
+      return { ...project, avatarUrl: logoUrl ?? undefined };
+    }),
+  );
+
+  return results.map((result, index) =>
+    result.status === "fulfilled" ? result.value : projects[index],
+  );
 }
 
 export function createGitHubStatsSnapshot({

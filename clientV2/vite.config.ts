@@ -36,20 +36,27 @@ export default defineConfig(({ mode }) => ({
     // Chunk splitting for better caching
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React - rarely changes
-          "vendor-react": ["react", "react-dom", "react-router", "react-router-dom"],
-          // Animation libraries - can be loaded after initial paint
-          "vendor-motion": ["framer-motion", "motion"],
-          // UI components
-          "vendor-radix": [
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-separator",
-            "@radix-ui/react-slot",
-            "@radix-ui/react-tooltip",
-          ],
-          // Utilities
-          "vendor-utils": ["clsx", "tailwind-merge", "class-variance-authority", "date-fns"],
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+
+          if (id.includes("@radix-ui")) return "vendor-radix";
+          if (id.includes("framer-motion") || id.includes("node_modules/motion"))
+            return "vendor-motion";
+          if (
+            id.includes("clsx") ||
+            id.includes("tailwind-merge") ||
+            id.includes("class-variance-authority") ||
+            id.includes("date-fns")
+          )
+            return "vendor-utils";
+
+          if (
+            id.includes("node_modules/react-dom") ||
+            id.includes("node_modules/react-router") ||
+            id.match(/node_modules\/react\//)
+          ) {
+            return "vendor-react";
+          }
         },
         // Optimize chunk file names for caching
         chunkFileNames: "assets/js/[name]-[hash].js",

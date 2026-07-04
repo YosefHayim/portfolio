@@ -51,6 +51,7 @@ export type GitHubProjectPreview = {
   status: ProjectStatus | ProjectStatus[];
   stars: number;
   updatedAt: string;
+  avatarUrl?: string;
 };
 
 export type VisitorStats = {

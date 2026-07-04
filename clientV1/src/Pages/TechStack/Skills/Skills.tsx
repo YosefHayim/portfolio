@@ -8,7 +8,7 @@ const langaugesStack = [
   { name: 'Git', icon: <FaGitAlt size={20} /> },
   { name: 'Postman', icon: <SiPostman size={20} /> },
   { name: 'Docker', icon: <GrDocker size={20} /> },
-  { name: 'Monday Work Management', icon: <></> },
+  { name: 'Monday Work Management', icon: <></> }
 ];
 
 const Skills = () => {

@@ -6,7 +6,7 @@ import { GrDocker } from 'react-icons/gr';
 const devopsTech = [
   { name: 'GitHub Actions', icon: <VscGithubAction size={20} /> },
   { name: 'AWS', icon: <FaAws size={20} /> },
-  { name: 'Docker', icon: <GrDocker size={20} /> },
+  { name: 'Docker', icon: <GrDocker size={20} /> }
 ];
 
 const Devops = () => {

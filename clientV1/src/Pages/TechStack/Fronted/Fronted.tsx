@@ -34,9 +34,8 @@ const TechStack = [
   { name: 'Storybook', icon: <SiStorybook size={20} /> },
   { name: 'Playwright', icon: <FaTheaterMasks size={20} /> },
   {
-    name: 'Zod',
-    icon: <SiZod size={20} />,
-  },
+    name: 'Zod', icon: <SiZod size={20} />
+  }
 ];
 
 const Fronted = () => {

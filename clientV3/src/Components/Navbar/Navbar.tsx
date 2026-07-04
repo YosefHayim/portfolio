@@ -6,13 +6,6 @@ import { NavMobileDrawer } from './NavMobileDrawer.tsx';
 import { SECTION_LINKS } from './navLinks.ts';
 import { VersionSwitch } from './VersionSwitch.tsx';
 
-const initials = recruiterProfile.name
-  .split(' ')
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((part) => part[0]?.toUpperCase() ?? '')
-  .join('');
-
 export const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,10 +16,7 @@ export const Navbar = () => {
       <header className="fixed inset-x-0 top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-void)]/80 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-3 sm:px-4">
           <Link className="flex items-center gap-2 font-semibold" to="/">
-            <span className="inline-flex size-7 items-center justify-center rounded-lg bg-[#05df72] text-xs font-bold text-black">
-              {initials}
-            </span>
-            <span className="hidden truncate text-sm sm:inline">{recruiterProfile.name}</span>
+            <span className="truncate text-sm">{recruiterProfile.name}</span>
           </Link>
 
           {isHome && (

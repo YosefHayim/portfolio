@@ -15,9 +15,9 @@ type Era = {
 // v1/v2 are frozen snapshots served by the same worker at /v1/ and /v2/ (full
 // page loads); v3 is the app you're already in, so it routes with react-router.
 const ERAS: Era[] = [
-  { id: 'v1', hint: 'First edition — where it started', href: '/v1/', external: true },
-  { id: 'v2', hint: 'Second edition — the rebuild', href: '/v2/', external: true },
-  { id: 'v3', hint: "Current — you're here", href: '/', external: false },
+  { id: 'v1', hint: 'First edition where it started', href: '/v1/', external: true },
+  { id: 'v2', hint: 'Second edition the rebuild', href: '/v2/', external: true },
+  { id: 'v3', hint: "Current you're here", href: '/', external: false },
 ];
 
 const CURRENT_ERA = 'v3';

@@ -1,21 +1,13 @@
-import { motion } from 'framer-motion';
+import LastTimeUpdatedBy from "@/Components/LastTimeUpdatedBy/LastTimeUpdatedBy";
 
 const ProjectsHeader = () => {
   return (
-    <motion.header
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="mb-12 pt-32 text-center"
-    >
-      <h1 className="mb-4 text-4xl font-medium tracking-tight text-[var(--text-primary)] md:text-5xl">
-        Projects
+    <div className="flex w-full items-center justify-center pt-[10%] text-center text-3xl flex flex-col gap-2">
+      <h1 className="w-full text-center">
+        Explore my latest work and personal projects
       </h1>
-      <p className="mx-auto max-w-md text-lg text-[var(--text-secondary)]">
-        A collection of things I've built, from automation tools to full-stack
-        applications
-      </p>
-    </motion.header>
+      <LastTimeUpdatedBy />
+    </div>
   );
 };
 

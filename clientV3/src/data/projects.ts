@@ -109,7 +109,7 @@ export const projects: Project[] = [
     description:
       'A browser extension that introduces an automated prompt-queuing system for AI-driven workflows with clarity, flow, and openness.',
     longDescription:
-      "A browser extension that introduces an automated prompt-queuing system inspired by the concept of 'Sora'—clarity, flow, and openness. It streamlines how prompts are submitted, organizes them into a controlled queue, and ensures consistent, uninterrupted task execution for AI-driven workflows. Features a complete UI redesign in v2.0.0 with reusable components.",
+      "A browser extension that introduces an automated prompt-queuing system inspired by the concept of 'Sora' clarity, flow, and openness. It streamlines how prompts are submitted, organizes them into a controlled queue, and ensures consistent, uninterrupted task execution for AI-driven workflows. Features a complete UI redesign in v2.0.0 with reusable components.",
     techStack: [
       'TypeScript',
       'React',
@@ -444,7 +444,7 @@ export const projects: Project[] = [
     description:
       'Automated tool that extracts data from PDF invoices using AI, converting messy paperwork into organized data.',
     longDescription:
-      'Developed an automated tool that extracts data from PDF invoices using AI. By leveraging OpenAI technology, the system accurately identifies and pulls key details—like total quantities, prices, and supplier names—converting messy paperwork into organized data. This solves a major workflow bottleneck and significantly speeds up invoice processing.',
+      'Developed an automated tool that extracts data from PDF invoices using AI. By leveraging OpenAI technology, the system accurately identifies and pulls key details like total quantities, prices, and supplier names converting messy paperwork into organized data. This solves a major workflow bottleneck and significantly speeds up invoice processing.',
     techStack: [
       'React',
       'TypeScript',
@@ -512,7 +512,7 @@ export const projects: Project[] = [
     description:
       'Python automation for extracting and processing customer files from government site.',
     longDescription:
-      'At an insurance company in Holon, I spotted a manual process slowing things down. With zero coding background, I used ChatGPT to guide me in building a Python automation that extracted and processed customer files—saving time and cutting costs for the business.',
+      'At an insurance company in Holon, I spotted a manual process slowing things down. With zero coding background, I used ChatGPT to guide me in building a Python automation that extracted and processed customer files saving time and cutting costs for the business.',
     techStack: ['Selenium', 'Python'],
     deployedUrl: 'projects',
     repoUrl:
@@ -531,7 +531,7 @@ export const projects: Project[] = [
     name: 'Stocks Trading Bots',
     description: 'Modular Python bots running MACD, RSI, SMA, and Wyckoff strategies.',
     longDescription:
-      'Started with zero coding—used ChatGPT to build modular Python bots running MACD, RSI, SMA, and Wyckoff strategies. Fully automated for live trading via Interactive Brokers API.',
+      'Started with zero coding used ChatGPT to build modular Python bots running MACD, RSI, SMA, and Wyckoff strategies. Fully automated for live trading via Interactive Brokers API.',
     techStack: ['Selenium', 'Interactive Brokers API', 'Telegram API', 'Python'],
     deployedUrl: 'projects',
     repoUrl:
@@ -550,7 +550,7 @@ export const projects: Project[] = [
     name: 'Crypto Trading Bots',
     description: 'Python bots for automated trading on Binance with RSI, MACD, and SMA strategies.',
     longDescription:
-      'With no coding background, I built Python bots using ChatGPT to automate trading on Binance. Strategies included RSI, MACD, and SMA—fully hands-off and data-driven.',
+      'With no coding background, I built Python bots using ChatGPT to automate trading on Binance. Strategies included RSI, MACD, and SMA fully hands-off and data-driven.',
     techStack: ['Selenium', 'Binance API', 'Telegram API', 'Python'],
     deployedUrl: 'projects',
     repoUrl:

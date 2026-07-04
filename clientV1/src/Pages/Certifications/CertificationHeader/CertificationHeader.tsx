@@ -1,10 +1,10 @@
-import LastTimeUpdatedBy from '@/Components/LastTimeUpdatedBy/LastTimeUpdatedBy';
+import LastTimeUpdatedBy from "@/Components/LastTimeUpdatedBy/LastTimeUpdatedBy";
 
 const CertificationHeader = () => {
   return (
     <div className="flex flex-col items-start justify-center gap-5">
-      <div className="flex w-full items-center gap-2">
-        <div className="flex w-full flex-col items-center gap-2">
+      <div className="gap-2 flex items-center w-full">
+        <div className="gap-2 items-center w-full flex flex-col">
           <h2 className="w-full pt-[10%] text-center text-3xl">
             Professional Certifications
           </h2>

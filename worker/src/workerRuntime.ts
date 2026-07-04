@@ -96,6 +96,12 @@ async function handleWorkerRequest(
       return fetchStaticProductPage(request, env, staticProductPage);
     }
 
+    const eraSpaFallback = findEraSpaFallback(url.pathname);
+    if (eraSpaFallback) {
+      const redirectUrl = new URL("/", url.origin);
+      return Response.redirect(redirectUrl.toString(), 301);
+    }
+
     return env.ASSETS.fetch(request);
   } catch (error) {
     const message =
@@ -393,6 +399,23 @@ function isAllowedOrigin(origin: string, env: Env): boolean {
 
 function isApiPath(pathname: string): boolean {
   return pathname === "/health" || pathname.startsWith("/api/");
+}
+
+const ERA_SPA_PREFIXES = ["v1", "v2"];
+
+function findEraSpaFallback(pathname: string): boolean {
+  const segments = pathname.split("/").filter(Boolean);
+  const era = segments[0];
+  if (!era || !ERA_SPA_PREFIXES.includes(era)) {
+    return false;
+  }
+
+  const lastSegment = segments.at(-1) ?? "";
+  if (lastSegment.includes(".")) {
+    return false;
+  }
+
+  return true;
 }
 
 function fetchStaticProductPage(

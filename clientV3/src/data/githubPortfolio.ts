@@ -3,6 +3,7 @@ import type { GitHubProjectPreview, GitHubStats } from '@/db/types';
 import {
   createGitHubProjectPreviews,
   createGitHubStatsSnapshot,
+  enrichProjectsWithLogos,
   fetchGitHubRepos,
   GITHUB_API_BASE,
   GITHUB_USERNAME,
@@ -40,7 +41,8 @@ export async function fetchGitHubProjectPreviews(
   username: string,
 ): Promise<GitHubProjectPreview[]> {
   const repos = await fetchGitHubRepos(fetch, username);
-  return createGitHubProjectPreviews(repos, MAX_PROJECTS);
+  const previews = createGitHubProjectPreviews(repos, MAX_PROJECTS);
+  return enrichProjectsWithLogos(fetch, username, previews);
 }
 
 export async function fetchGitHubStats(): Promise<GitHubStats> {

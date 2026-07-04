@@ -19,7 +19,7 @@ type BlogCoverProps = {
 /**
  * Post cover with a graceful fallback. If the generated image is missing (or
  * 404s), it renders an on-brand gradient keyed to the post's category color
- * instead of a broken image — mirrors the LogoBadge `onError` pattern used
+ * instead of a broken image mirrors the LogoBadge `onError` pattern used
  * elsewhere in the portfolio, so a cover-less post still looks intentional.
  */
 export const BlogCover = ({ post, className, priority = false }: BlogCoverProps) => {

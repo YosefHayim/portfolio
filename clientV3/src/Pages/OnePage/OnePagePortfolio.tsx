@@ -53,7 +53,7 @@ const formatDate = (isoDate: string): string => {
 
 /**
  * Total months between two "YYYY-MM" ISO month strings, inclusive of both
- * months — matches how tenure is usually counted on a CV ("Feb–Apr 2025" is
+ * months matches how tenure is usually counted on a CV ("Feb–Apr 2025" is
  * three months, not two).
  */
 const monthsInclusive = (startIso: string, endIso: string): number => {
@@ -511,6 +511,8 @@ const OnePagePortfolio = () => {
           <div className="grid gap-2 md:grid-cols-2">
             {projects.map((project) => {
               const logoOverride = findRepoLogoOverride(project.name);
+              const logoSrc = logoOverride?.src ?? project.avatarUrl;
+              const logoAlt = logoOverride?.alt ?? `${project.name} logo`;
               return (
                 <motion.article
                   className="min-w-0 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 sm:p-4"
@@ -529,12 +531,29 @@ const OnePagePortfolio = () => {
                           rel="noreferrer"
                           target="_blank"
                         >
-                          {logoOverride ? (
-                            <img
-                              alt={logoOverride.alt}
-                              className="mt-0.5 size-4 shrink-0 object-contain"
-                              src={logoOverride.src}
-                            />
+                          {logoSrc ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild={true}>
+                                <span>
+                                  <LogoBadge
+                                    alt={logoAlt}
+                                    icon={<Github size={14} />}
+                                    src={logoSrc}
+                                  />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="top"
+                                sideOffset={8}
+                                className="overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-1.5 shadow-lg"
+                              >
+                                <img
+                                  src={logoSrc}
+                                  alt={logoAlt}
+                                  className="size-[200px] rounded-lg object-contain"
+                                />
+                              </TooltipContent>
+                            </Tooltip>
                           ) : (
                             <Github className="mt-0.5 shrink-0" size={16} />
                           )}
@@ -581,7 +600,7 @@ const OnePagePortfolio = () => {
         </SectionBlock>
 
         <SectionBlock
-          description="Real stories from building things that ship — no fluff, no listicles."
+          description="Real stories from building things that ship no fluff, no listicles."
           id="writing"
           title="Latest Writing"
         >

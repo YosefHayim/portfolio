@@ -12,7 +12,7 @@ type ServerResponse = {
 
 /**
  * Fetches the public Chrome Web Store user count for each extension id.
- * Failures are skipped silently — the badge just won't render for that id.
+ * Failures are skipped silently the badge just won't render for that id.
  * One in-flight request per id; runs once per `ids` set change.
  */
 export const useChromeExtensionUsers = (ids: readonly string[]): ChromeExtensionUsersMap => {

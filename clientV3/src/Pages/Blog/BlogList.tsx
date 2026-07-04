@@ -78,7 +78,7 @@ export const BlogList = () => {
   return (
     <>
       <SEO
-        description="Real stories from building things that ship — the failed SaaS, the 3am fixes, and what actually worked. Writing by Joseph Sabag."
+        description="Real stories from building things that ship the failed SaaS, the 3am fixes, and what actually worked. Writing by Joseph Sabag."
         keywords={[
           'Joseph Sabag',
           'blog',
@@ -102,7 +102,7 @@ export const BlogList = () => {
           </Link>
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Writing</h1>
           <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-secondary)] md:text-base">
-            No fluff, no listicles. Real stories from building things that actually ship — the
+            No fluff, no listicles. Real stories from building things that actually ship the
             failures, the 3am fixes, and the stubbornness in between.
           </p>
         </header>
