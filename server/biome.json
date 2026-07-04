@@ -59,11 +59,7 @@
         "noUndeclaredVariables": "warn",
         "noUnresolvedImports": "off",
         "useQwikValidLexicalScope": "off",
-        "useHookAtTopLevel": "off",
-        "useExhaustiveDependencies": "warn",
-        "useUniqueElementIds": "warn",
-        "useImageSize": "warn",
-        "useJsxKeyInIterable": "warn"
+        "useHookAtTopLevel": "off"
       },
       "performance": {
         "useSolidForComponent": "off",
@@ -78,22 +74,10 @@
         "noControlCharactersInRegex": "off",
         "noNonNullAssertedOptionalChain": "warn",
         "noAssignInExpressions": "off",
-        "noReturnAssign": "off",
-        "noArrayIndexKey": "warn",
-        "noReactSpecificProps": "off"
+        "noReturnAssign": "off"
       },
       "security": {
-        "noSecrets": "warn",
-        "noDangerouslySetInnerHtml": "warn"
-      },
-      "a11y": {
-        "useAnchorContent": "warn",
-        "noAriaHiddenOnFocusable": "warn",
-        "noSvgWithoutTitle": "warn",
-        "useKeyWithClickEvents": "warn",
-        "noStaticElementInteractions": "warn",
-        "useAriaPropsSupportedByRole": "warn",
-        "noNoninteractiveElementInteractions": "warn"
+        "noSecrets": "warn"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",
@@ -102,8 +86,6 @@
       }
     },
     "domains": {
-      "react": "all",
-      "solid": "none",
       "test": "all",
       "project": "all"
     }

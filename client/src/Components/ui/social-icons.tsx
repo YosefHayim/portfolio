@@ -103,12 +103,11 @@ export function SocialIcons({
   const displayItems = items ?? socials;
   const sides = labelSides ?? ['top'];
 
-  const containerStyles =
-    variant === 'nav'
-      ? 'w-full justify-around'
-      : variant === 'default'
-        ? 'w-fit gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 p-2'
-        : 'w-fit gap-2';
+  const nonNavStyles =
+    variant === 'default'
+      ? 'w-fit gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 p-2'
+      : 'w-fit gap-2';
+  const containerStyles = variant === 'nav' ? 'w-full justify-around' : nonNavStyles;
 
   return (
     <div className={cn('relative flex items-center', containerStyles, className)}>

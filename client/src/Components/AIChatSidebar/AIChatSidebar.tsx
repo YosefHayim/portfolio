@@ -98,12 +98,18 @@ export const AIChatSidebar = () => {
 
   const handleAutoSpeakToggle = useCallback(() => setAutoSpeak((prev) => !prev), [setAutoSpeak]);
 
+  const mobileDock = isOpen ? 'right-3 bottom-6 left-3' : 'right-3 bottom-6';
+  const dockPosition = isMobile ? mobileDock : 'right-4 bottom-6';
+  const panelWidth = isMobile ? '100%' : PANEL_WIDTH;
+  const animateWidth = isOpen ? panelWidth : 'auto';
+  const expandedHeight = isMobile ? PANEL_HEIGHT_EXPANDED_MOBILE : PANEL_HEIGHT_EXPANDED;
+  const animateHeight = isOpen ? expandedHeight : PANEL_HEIGHT_COLLAPSED;
+  const expandedRadius = isMobile ? 12 : 16;
+  const animateRadius = isOpen ? expandedRadius : 26;
+
   return (
     <div
-      className={cn(
-        'fixed z-50 flex items-end justify-end',
-        isMobile ? (isOpen ? 'right-3 bottom-6 left-3' : 'right-3 bottom-6') : 'right-4 bottom-6',
-      )}
+      className={cn('fixed z-50 flex items-end justify-end', dockPosition)}
       style={{ width: isMobile ? 'auto' : PANEL_WIDTH }}
     >
       <motion.div
@@ -115,13 +121,9 @@ export const AIChatSidebar = () => {
         )}
         initial={false}
         animate={{
-          width: isOpen ? (isMobile ? '100%' : PANEL_WIDTH) : 'auto',
-          height: isOpen
-            ? isMobile
-              ? PANEL_HEIGHT_EXPANDED_MOBILE
-              : PANEL_HEIGHT_EXPANDED
-            : PANEL_HEIGHT_COLLAPSED,
-          borderRadius: isOpen ? (isMobile ? 12 : 16) : 26,
+          width: animateWidth,
+          height: animateHeight,
+          borderRadius: animateRadius,
         }}
         transition={{
           type: 'spring',

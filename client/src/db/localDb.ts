@@ -30,7 +30,9 @@ const getItem = <T>(key: string): T | null => {
 const setItem = <T>(key: string, value: T): void => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
-  } catch {}
+  } catch {
+    // ignore: cache write is best-effort (quota / disabled storage)
+  }
 };
 
 const isCacheValid = (key: string): boolean => {

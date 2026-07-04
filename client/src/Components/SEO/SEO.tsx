@@ -45,11 +45,8 @@ export const SEO = ({
   appendSiteName = true,
   structuredData,
 }: SEOProps) => {
-  const pageTitle = title
-    ? appendSiteName
-      ? `${title} | ${SITE_NAME}`
-      : title
-    : `${SITE_NAME} | AI Software Engineer`;
+  const titledLabel = appendSiteName ? `${title} | ${SITE_NAME}` : title;
+  const pageTitle = title ? titledLabel : `${SITE_NAME} | AI Software Engineer`;
   const pageUrl = canonicalUrl ?? (url ? `${SITE_URL}${url}` : SITE_URL);
   const imageUrl = image.startsWith('http') ? image : `${SITE_URL}${image}`;
 

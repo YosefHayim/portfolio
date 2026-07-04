@@ -69,6 +69,41 @@ export function VoiceRecordButton({
     lg: 20,
   };
 
+  const stopIcon = (
+    <motion.div
+      key="stop"
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.5 }}
+    >
+      <FiSquare size={iconSizes[size]} />
+    </motion.div>
+  );
+  const idleIcon = (
+    <motion.div
+      key="mic"
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.5 }}
+    >
+      <FiMic size={iconSizes[size]} />
+    </motion.div>
+  );
+  const processingIcon = (
+    <motion.div
+      key="processing"
+      initial={{ opacity: 0, rotate: 0 }}
+      animate={{ opacity: 1, rotate: 360 }}
+      exit={{ opacity: 0 }}
+      transition={{
+        rotate: { duration: 1, repeat: Number.POSITIVE_INFINITY, ease: 'linear' },
+      }}
+      className="h-4 w-4 rounded-sm border-2 border-current border-t-transparent"
+    />
+  );
+  const recordingStateIcon = isRecording ? stopIcon : idleIcon;
+  const voiceStateIcon = isProcessing ? processingIcon : recordingStateIcon;
+
   return (
     <motion.button
       type="button"
@@ -85,38 +120,7 @@ export function VoiceRecordButton({
       whileHover={{ scale: disabled ? 1 : 1.05 }}
       whileTap={{ scale: disabled ? 1 : 0.95 }}
     >
-      <AnimatePresence mode="wait">
-        {isProcessing ? (
-          <motion.div
-            key="processing"
-            initial={{ opacity: 0, rotate: 0 }}
-            animate={{ opacity: 1, rotate: 360 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              rotate: { duration: 1, repeat: Number.POSITIVE_INFINITY, ease: 'linear' },
-            }}
-            className="h-4 w-4 rounded-sm border-2 border-current border-t-transparent"
-          />
-        ) : isRecording ? (
-          <motion.div
-            key="stop"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-          >
-            <FiSquare size={iconSizes[size]} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="mic"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.5 }}
-          >
-            <FiMic size={iconSizes[size]} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <AnimatePresence mode="wait">{voiceStateIcon}</AnimatePresence>
 
       {isRecording && (
         <motion.div

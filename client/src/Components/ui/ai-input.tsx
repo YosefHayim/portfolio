@@ -44,10 +44,12 @@ export const ColorOrb: React.FC<OrbProps> = ({
   const shadowRange =
     dimValue < 50 ? Math.max(dimValue * 0.004, 0.5) : Math.max(dimValue * 0.008, 2);
 
-  const maskRadius = dimValue < 30 ? '0%' : dimValue < 50 ? '5%' : dimValue < 100 ? '15%' : '25%';
+  const maskAbove50 = dimValue < 100 ? '15%' : '25%';
+  const maskAbove30 = dimValue < 50 ? '5%' : maskAbove50;
+  const maskRadius = dimValue < 30 ? '0%' : maskAbove30;
 
-  const adjustedContrast =
-    dimValue < 30 ? 1.1 : dimValue < 50 ? Math.max(contrastStrength * 1.2, 1.3) : contrastStrength;
+  const contrastAbove30 = dimValue < 50 ? Math.max(contrastStrength * 1.2, 1.3) : contrastStrength;
+  const adjustedContrast = dimValue < 30 ? 1.1 : contrastAbove30;
 
   return (
     <div

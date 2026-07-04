@@ -57,6 +57,29 @@ export const ChatInput = memo(
     ) => {
       const isInputDisabled = isStreaming || isTyping || isTranscribing || isRecording;
 
+      const activeInputPlaceholder = isRecording ? 'Recording...' : 'Ask anything...';
+      const inputPlaceholder = isTranscribing ? 'Transcribing...' : activeInputPlaceholder;
+      const activeVoiceTooltip = isRecording ? 'Stop recording' : 'Record voice message';
+      const voiceTooltipLabel = isTranscribing ? 'Processing voice...' : activeVoiceTooltip;
+      const recordingIcon = isRecording ? (
+        <FiSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+      ) : (
+        <FiMic className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+      );
+      const voiceButtonIcon = isTranscribing ? (
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{
+            duration: 1,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: 'linear',
+          }}
+          className="h-4 w-4 rounded-md border-2 border-current border-t-transparent"
+        />
+      ) : (
+        recordingIcon
+      );
+
       return (
         <div className="border-t border-[var(--border-subtle)] p-2 sm:p-2">
           <AnimatePresence>
@@ -120,13 +143,7 @@ export const ChatInput = memo(
                 disabled={isInputDisabled}
                 onChange={(e) => onInputChange(e.target.value)}
                 onKeyDown={onKeyDown}
-                placeholder={
-                  isTranscribing
-                    ? 'Transcribing...'
-                    : isRecording
-                      ? 'Recording...'
-                      : 'Ask anything...'
-                }
+                placeholder={inputPlaceholder}
                 ref={ref}
                 value={inputValue}
               />
@@ -150,29 +167,11 @@ export const ChatInput = memo(
                   }}
                   whileTap={{ scale: isStreaming || isTyping ? 1 : 0.98 }}
                 >
-                  {isTranscribing ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 1,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: 'linear',
-                      }}
-                      className="h-4 w-4 rounded-md border-2 border-current border-t-transparent"
-                    />
-                  ) : isRecording ? (
-                    <FiSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  ) : (
-                    <FiMic className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  )}
+                  {voiceButtonIcon}
                 </motion.button>
               </TooltipTrigger>
               <TooltipContent side="top" sideOffset={8}>
-                {isTranscribing
-                  ? 'Processing voice...'
-                  : isRecording
-                    ? 'Stop recording'
-                    : 'Record voice message'}
+                {voiceTooltipLabel}
               </TooltipContent>
             </Tooltip>
 

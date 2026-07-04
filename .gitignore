@@ -4,7 +4,14 @@
 *.md
 !AGENTS.md
 !CLAUDE.md
+!CODE-STYLE.md
+!CONTEXT.md
+!LANGUAGE.md
+!PRODUCT.md
 !docs/agents/*.md
+!docs/adr/current/*.md
+!client/biome.json
+!server/biome.json
 !.gitignore
 !.github
 .dedup.json
