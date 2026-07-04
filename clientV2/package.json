@@ -61,5 +61,6 @@
     "ultracite": "5.2.14",
     "vite": "^6.2.0",
     "vite-plugin-compression2": "^2.4.0"
-  }
+  },
+  "packageManager": "pnpm@10.33.2"
 }

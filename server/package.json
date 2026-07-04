@@ -1,36 +1,37 @@
 {
-	"name": "portfolio-api",
-	"version": "1.0.0",
-	"description": "Backend API for portfolio AI chat",
-	"main": "dist/index.js",
-	"type": "module",
-	"scripts": {
-		"dev": "tsx watch src/index.ts",
-		"build": "tsc",
-		"test": "tsx --test src/**/*.test.ts",
-		"start": "node dist/index.js",
-		"lint": "biome check .",
-		"lint:fix": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true .",
-		"format": "biome format --write ."
-	},
-	"dependencies": {
-		"compression": "^1.8.1",
-		"cors": "^2.8.5",
-		"dotenv": "^16.4.5",
-		"express": "^4.21.0",
-		"nodemailer": "^7.0.12",
-		"openai": "^4.73.0",
-		"typescript": "^5.7.2",
-		"winston": "^3.17.0",
-		"zod": "^3.23.8"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.4.16",
-		"@types/compression": "^1.8.1",
-		"@types/cors": "^2.8.17",
-		"@types/express": "^5.0.0",
-		"@types/node": "^22.19.17",
-		"@types/nodemailer": "^7.0.5",
-		"tsx": "^4.19.2"
-	}
+  "name": "portfolio-api",
+  "version": "1.0.0",
+  "description": "Backend API for portfolio AI chat",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "test": "tsx --test src/**/*.test.ts",
+    "start": "node dist/index.js",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true .",
+    "format": "biome format --write ."
+  },
+  "dependencies": {
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "nodemailer": "^7.0.12",
+    "openai": "^4.73.0",
+    "typescript": "^5.7.2",
+    "winston": "^3.17.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.16",
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.19.17",
+    "@types/nodemailer": "^7.0.5",
+    "tsx": "^4.19.2"
+  },
+  "packageManager": "pnpm@10.33.2"
 }

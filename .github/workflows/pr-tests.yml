@@ -34,6 +34,8 @@ jobs:
             echo "No test script found in root, client, or server. Skipping tests."
           fi
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Setup Node.js
         if: steps.check-tests.outputs.has_tests == 'true'
         uses: actions/setup-node@v4
@@ -44,7 +46,7 @@ jobs:
       - name: Install and test root
         if: steps.check-tests.outputs.has_tests == 'true' && hashFiles('package.json') != ''
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           if grep -q '"test"' package.json && ! grep -q '"test": "echo' package.json; then
             npm test
           fi
@@ -53,7 +55,7 @@ jobs:
         if: steps.check-tests.outputs.has_tests == 'true' && hashFiles('client/package.json') != ''
         working-directory: client
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           if grep -q '"test"' package.json && ! grep -q '"test": "echo' package.json; then
             npm test
           fi
@@ -62,7 +64,7 @@ jobs:
         if: steps.check-tests.outputs.has_tests == 'true' && hashFiles('server/package.json') != ''
         working-directory: server
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           if grep -q '"test"' package.json && ! grep -q '"test": "echo' package.json; then
             npm test
           fi

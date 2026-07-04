@@ -34,7 +34,7 @@ jobs:
 
       # Playwright: install the browser before the suite.
       # - name: Install Playwright browsers
-      #   run: npx playwright install --with-deps chromium
+      #   run: pnpm exec playwright install --with-deps chromium
 
       - name: Run E2E tests
-        run: pnpm run test:e2e
+        run: ppnpm test:e2e
