@@ -10,7 +10,7 @@ list names the current offenders so `deslop` can close the gap per-diff.
 
 For framework/library best-practices, follow these skills (do not restate them here):
 
-- Cloudflare Worker (serves `client/dist`, routes) → `workers-best-practices`, `cloudflare`
+- Cloudflare Worker (serves the unified `dist/`, routes) → `workers-best-practices`, `cloudflare`
 - `wrangler` dev/deploy → `wrangler`
 - **Effect** (typed errors, Schema, services, logging) → the Effect docs at
   <https://effect.website> are the SSOT; this file covers only how *this* repo wires it.
@@ -39,7 +39,7 @@ _Why:_ `function` signals a pure, hoisted helper; arrow marks a component/hook/c
 Each React component gets its own file. Helpers may still share a file — this rule is about components.
 ```tsx
 // ✓ chosen        SectionBlock.tsx · TechIconChip.tsx · LogoBadge.tsx (own files)
-// ✗ not this      client/src/Pages/OnePage/OnePagePortfolio.tsx — SectionBlock,
+// ✗ not this      clientV3/src/Pages/OnePage/OnePagePortfolio.tsx — SectionBlock,
 //                 TechIconChip, LogoBadge all inlined in one 620-line file
 ```
 _Why:_ greppable, lazy-friendly, readable.
@@ -61,7 +61,7 @@ One ternary level max; lift nested ones to flat `const`s, a `switch`, or an earl
 // ✓ chosen
 const mobileDock = isOpen ? 'right-3 bottom-6 left-3' : 'right-3 bottom-6';
 const dockClass = isMobile ? mobileDock : 'right-4 bottom-6';
-// ✗ not this  (client/src/Components/AIChatSidebar/AIChatSidebar.tsx:105)
+// ✗ not this  (clientV3/src/Components/AIChatSidebar/AIChatSidebar.tsx:105)
 const dockClass = isMobile ? (isOpen ? 'right-3 bottom-6 left-3' : 'right-3 bottom-6') : 'right-4 bottom-6';
 ```
 _Why:_ readability beats terse cleverness.
@@ -92,7 +92,7 @@ _Why:_ reusable, greppable, clean signatures.
 ### `type` over `interface` · `[taste]`
 type-first; `interface` only for genuinely extendable / declaration-merged shapes.
 ```ts
-// ✓ chosen  (client/src/utils/chatUtils.ts:9)
+// ✓ chosen  (clientV3/src/utils/chatUtils.ts:9)
 type Message = { role: 'user' | 'assistant'; content: string };
 // ✗ not this
 interface Message { role: 'user' | 'assistant'; content: string }
@@ -104,7 +104,7 @@ Effect's typed error channel through one unified wrapper. Never swallow — log 
 ```ts
 // ✓ chosen
 Effect.tryPromise({ try: () => read(key), catch: (e) => new CacheError({ cause: e }) });
-// ✗ not this  (client/src/db/localDb.ts:25 · hooks/useChromeExtensionUsers.ts:35,40)
+// ✗ not this  (clientV3/src/db/localDb.ts:25 · hooks/useChromeExtensionUsers.ts:35,40)
 try { return JSON.parse(item); } catch { return null; } // error vanishes
 ```
 _Why:_ errors become typed and visible instead of disappearing.
@@ -167,7 +167,7 @@ A single `useEffectQuery(program)` → `{ data, isLoading, error, refetch }`; ev
 ```ts
 // ✓ chosen
 export const useGitHubStats = () => useEffectQuery(loadGitHubStats);
-// ✗ not this  (client/src/hooks/useGitHubStats.ts ≈ useGitHubProjects.ts — duplicated scaffolding)
+// ✗ not this  (clientV3/src/hooks/useGitHubStats.ts ≈ useGitHubProjects.ts — duplicated scaffolding)
 const [data, setData] = useState(null); const [loading, setLoading] = useState(true);
 useEffect(() => { fetch(...).then(setData).finally(() => setLoading(false)); }, []);
 ```
@@ -176,7 +176,7 @@ _Why:_ ~20 copy-pasted lines collapse to one reused hook.
 ### Named exports; default only for lazy pages · `[taste]`
 Named export everywhere; `export default` only on `React.lazy` page components.
 ```tsx
-// ✓ chosen                              // ✗ not this (client/src/Components/ui/ai-input.tsx)
+// ✓ chosen                              // ✗ not this (clientV3/src/Components/ui/ai-input.tsx)
 export const AnimatedPage = () => ...;   export const AnimatedPage = () => ...;
 // default only on a lazy page           export default AnimatedPage; // redundant double export
 ```
@@ -202,7 +202,7 @@ _Why:_ honest runtime imports; better bundling.
 ### Barrel files · `[taste]`
 One `index.ts` `export *` per feature/leaf folder for clean call sites. Never import a folder's own barrel from inside that folder (cycle risk).
 ```ts
-// ✓ chosen   client/src/Components/Blog/index.ts → export * from './BlogCard'; ...
+// ✓ chosen   clientV3/src/Components/Blog/index.ts → export * from './BlogCard'; ...
 //            consumer: import { BlogCard, BlogList } from '@/Components/Blog';
 // ✗ not this  import { BlogCard } from '@/Components/Blog/BlogCard'; // deep path per file
 ```
@@ -325,7 +325,7 @@ Write new code like these:
 - **`CODE-STYLE.md` → Canonical example** — the composed target. Until the Effect
   migration lands, it is the exemplar: the chat Effect core + `useEffectQuery` hook are the
   first files to write in this style.
-- `client/src/utils/chatUtils.ts` — closest current file for **type-first + named exports**
+- `clientV3/src/utils/chatUtils.ts` — closest current file for **type-first + named exports**
   (but see `Never`: it also carries one-use re-export aliases to remove).
 - `server/src/` layered layout (`adapters / core / middleware / routes`) — the target
   server shape the Effect rules slot into.
@@ -338,11 +338,11 @@ Write new code like these:
 
 The AI-slop fingerprint for THIS repo — concrete banned patterns, each with a real offender and how it is caught:
 
-- **Silent `catch { return null }` / empty `catch {}`** — errors vanish · `client/src/db/localDb.ts:25,33`, `client/src/hooks/useChromeExtensionUsers.ts:35,40` · `[lint: noEmptyBlockStatements]` for empty blocks; the swallow itself is `[taste]` → Effect typed errors.
-- **Nested ternaries** — unreadable branching · `client/src/Components/AIChatSidebar/AIChatSidebar.tsx:105,118,124` · `[lint: noNestedTernary]`.
+- **Silent `catch { return null }` / empty `catch {}`** — errors vanish · `clientV3/src/db/localDb.ts:25,33`, `clientV3/src/hooks/useChromeExtensionUsers.ts:35,40` · `[lint: noEmptyBlockStatements]` for empty blocks; the swallow itself is `[taste]` → Effect typed errors.
+- **Nested ternaries** — unreadable branching · `clientV3/src/Components/AIChatSidebar/AIChatSidebar.tsx:105,118,124` · `[lint: noNestedTernary]`.
 - **Hand-rolled type guards** (`isRecord`, `asString`, `asEnum`) — reimplement what a schema gives free · `server/src/core/requestValidation.ts:31,45,46` · `[taste]` → Effect Schema.
-- **Twin fetch hooks** — duplicated `useState`/`useEffect` scaffolding · `client/src/hooks/useGitHubStats.ts` ≈ `useGitHubProjects.ts` · `[taste]` → `useEffectQuery`.
-- **One-use re-export aliases** — indirection with no caller · `client/src/utils/chatUtils.ts:20-22` (`parseEmailMarker = parseContactEmailMarker`) · `[taste]`.
-- **Redundant double export** — `export const X; export default X;` on non-lazy components · `client/src/Components/ui/ai-input.tsx` · `[taste]`.
+- **Twin fetch hooks** — duplicated `useState`/`useEffect` scaffolding · `clientV3/src/hooks/useGitHubStats.ts` ≈ `useGitHubProjects.ts` · `[taste]` → `useEffectQuery`.
+- **One-use re-export aliases** — indirection with no caller · `clientV3/src/utils/chatUtils.ts:20-22` (`parseEmailMarker = parseContactEmailMarker`) · `[taste]`.
+- **Redundant double export** — `export const X; export default X;` on non-lazy components · `clientV3/src/Components/ui/ai-input.tsx` · `[taste]`.
 - **Inline hex color literals** — ≈145 bracketed `[#hex]` utilities across `.tsx` (`text-[#7ff7af]`, `from-[#05df72]`) · `[taste]` → brand tokens.
 - **String-interpolated logs** — unkeyed, ungreppable · winston call sites in `server/src/` · `[taste]` → `Effect.logInfo` + `annotateLogs`.

@@ -15,9 +15,13 @@ If `docs/adr/` exists, read ADRs that touch the area being changed. If the direc
 ├── CONTEXT.md
 ├── docs/
 │   └── agents/
-└── client/
-└── server/
-└── worker/
+├── clientV3/   living app, served at /
+├── clientV1/   frozen snapshot, served at /v1/
+├── clientV2/   frozen snapshot, served at /v2/
+├── server/
+├── worker/
+├── shared/
+└── scripts/    build-all.sh → assembles dist/
 ```
 
 ## Vocabulary

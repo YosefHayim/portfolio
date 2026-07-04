@@ -10,13 +10,13 @@ this before non-trivial work. For **why** it exists see `PRODUCT.md`; for **name
 A personal portfolio web app that works as a proof-of-work journey for recruiters — not a
 static resume. One repository, four cooperating parts, deployed on Cloudflare via `wrangler`:
 
-- **`client/`** — React 19 + Vite 6 + Tailwind v4 single-page app (the portfolio UI, blog,
-  and the Portfolio Assistant chat surface).
+- **`clientV3/`** — React 19 + Vite 6 + Tailwind v4 single-page app (the portfolio UI, blog,
+  and the Portfolio Assistant chat surface); served at `/`, with the `[v1][v2][v3]` toggle.
 - **`server/`** — Express API for the AI chat and contact email; layered into
   `adapters / core / middleware / routes / config / utils`. Adopting **Effect** at its edges
   (see ADR 0001).
-- **`worker/`** — Cloudflare Worker that serves `client/dist` and honors the Product Route
-  Registry (product pages, extension legal redirects, `/v1 /v2 /v3` version routes).
+- **`worker/`** — one Cloudflare Worker that serves the unified `dist/` (v3 at `/`, v1+v2
+  nested) and honors the Product Route Registry (product pages, extension legal redirects).
 - **`shared/`** — precompiled JS modules shared by client, server, and worker (Product Route
   Registry, GitHub Portfolio Snapshot, contact-email + assistant-stream helpers).
 
@@ -42,18 +42,21 @@ static resume. One repository, four cooperating parts, deployed on Cloudflare vi
 
 ## Version showcase — clientV1 / clientV2 / clientV3
 
-The site preserves three eras for recruiters to compare (see `LANGUAGE.md`):
+The site preserves three eras for recruiters to compare (see `LANGUAGE.md`), all on **one site
+served by one worker** — the eras are paths, not separate deployments:
 
-- **clientV3** — the living app, the only one governed by `CODE-STYLE.md`.
-- **clientV1 / clientV2** — frozen snapshots, **exempt** from the style rules; they stay
-  authentic to their era rather than being restyled.
-- The Worker serves them at `/v1`, `/v2`, `/v3`; the navbar and mobile sidebar carry the
-  `v1 / v2 / v3` toggle. The physical `client/ → clientV3/` split is the Step 8 reorg.
+- **clientV3** — the living app at `/`, the only one governed by `CODE-STYLE.md`.
+- **clientV1 / clientV2** — frozen buildable snapshots at `/v1/` and `/v2/` (each built with a
+  Vite `base`), **exempt** from the style rules; they stay authentic to their era rather than
+  being restyled, and build with their own pinned deps (e.g. clientV2 pins `react-icons@5.6.0`).
+- `scripts/build-all.sh` builds all three and assembles `dist/` (clientV3 at root, clientV1→
+  `dist/v1/`, clientV2→`dist/v2/`); the Navbar + mobile sidebar carry the `[v1][v2][v3]` toggle.
 
 ## Where things live
 
-- Client entry: `client/src/App.tsx` (routes, global chat sidebar, scroll progress).
-- Portfolio page: `client/src/Pages/OnePage/OnePagePortfolio.tsx`.
+- Client entry: `clientV3/src/App.tsx` (routes, Navbar, global chat sidebar, scroll progress).
+- Portfolio page: `clientV3/src/Pages/OnePage/OnePagePortfolio.tsx`.
+- Version toggle: `clientV3/src/Components/Navbar/` (Navbar, VersionSwitch, NavMobileDrawer).
 - Server entry: `server/src/index.ts`; core in `server/src/core/`, I/O in `server/src/adapters/`.
 - Worker + deploy: `worker/`, `wrangler.jsonc`.
 - Shared modules: `shared/portfolio/`.

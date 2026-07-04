@@ -10,11 +10,18 @@
 !PRODUCT.md
 !docs/agents/*.md
 !docs/adr/current/*.md
-!client/biome.json
+!clientV3/biome.json
 !server/biome.json
+# Frozen version snapshots (clientV1/clientV2): track source + build configs.
+# Their nested .gitignore still excludes node_modules/ and dist/, and git cannot
+# re-include a file whose parent dir is excluded — so these only surface real config.
+!clientV1/**/*.json
+!clientV2/**/*.json
 !.gitignore
 !.github
 .dedup.json
+# Assembled deploy artifact (scripts/build-all.sh): v3 at /, v1+v2 nested
+/dist/
 infra/aws/keys/*.pem
 .ai-guard/
 .cursor/

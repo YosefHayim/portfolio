@@ -31,11 +31,16 @@ Load-bearing rules only; `CODE-STYLE.md` is the source with ✓/✗ examples and
 ## Repo layout
 
 ```
-client/   React 19 + Vite 6 + Tailwind v4 SPA — the living app (→ clientV3; clientV1/V2 = frozen snapshots)
+clientV3/ React 19 + Vite 6 + Tailwind v4 SPA — the living app, served at / ; its Navbar [v1][v2][v3] toggle links the eras
+clientV1/ First-era portfolio — frozen buildable snapshot, served at /v1/ (Vite base '/v1/'); exempt from CODE-STYLE.md
+clientV2/ Second-era portfolio — frozen buildable snapshot, served at /v2/ (Vite base '/v2/'); exempt from CODE-STYLE.md
 server/   Express AI chat + contact-email API — adapters / core / middleware / routes / config / utils; Effect at the edges
-worker/   Cloudflare Worker — serves client/dist + Product Route Registry routes (/v1 /v2 /v3)
-shared/   precompiled JS modules shared by client / server / worker (portfolio/*)
-docs/adr/ decisions — 0001 adopt-Effect · 0002 CLI surface · 0003 dependency-cleanup
+worker/   ONE Cloudflare Worker (one wrangler.jsonc) — serves the unified dist/ + Product Route Registry static pages
+shared/   precompiled JS modules shared by clientV3 / server / worker (portfolio/*)
+scripts/  build-all.sh — builds all three eras and assembles dist/ (v3 at /, clientV1→dist/v1/, clientV2→dist/v2/)
+docs/adr/ decisions — 0001 adopt-Effect · 0002 CLI surface · 0003 dependency-cleanup · 0004 version-showcase reorg
 ```
 
-The `client/ → clientV3/` split (frozen `clientV1`/`clientV2` + the `v1/v2/v3` navbar toggle) is the pending Step 8 reorg.
+The three eras are one site: v1/v2/v3 are **paths** served by the single worker's assets binding, not separate workers.
+Deploy = `bash scripts/build-all.sh && wrangler deploy`. Only `clientV3` follows `CODE-STYLE.md`; `clientV1`/`clientV2`
+are frozen snapshots that build with their own pinned deps (e.g. clientV2 pins `react-icons@5.6.0`) and are Biome-exempt.
