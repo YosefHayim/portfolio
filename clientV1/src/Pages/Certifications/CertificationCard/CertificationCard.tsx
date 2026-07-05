@@ -1,52 +1,30 @@
-import { motion } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Link } from 'react-router';
-import { FiExternalLink } from 'react-icons/fi';
 
-type CertificationCardProps = {
+const CertificationCard: React.FC<{
   icon: ReactNode;
   certificateTitle: string;
   yearEarnedCertificate: string;
   certificateLink: string;
-};
-
-const CertificationCard: React.FC<CertificationCardProps> = ({
+  children?: ReactNode;
+}> = ({
   icon,
   yearEarnedCertificate,
   certificateTitle,
   certificateLink,
+  children,
 }) => {
   return (
-    <motion.article
-      whileHover={{ scale: 1.01, y: -2 }}
-      transition={{ duration: 0.2 }}
-      className="group w-full"
-    >
-      <Link
-        to={certificateLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex w-full items-center gap-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 transition-all duration-300 hover:border-[var(--border-hover)] hover:bg-[var(--bg-card-hover)]"
-      >
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] text-[#05df72] transition-all duration-300 group-hover:bg-[#05df72]/10 group-hover:shadow-[0_0_20px_rgba(5,223,114,0.2)]">
-          {icon}
+    <section className="flex w-full flex-col items-start justify-start rounded-sm bg-gray-800 p-2 text-sm hover:bg-gray-700">
+      <Link to={certificateLink} className="flex items-center">
+        <div className="flex w-full justify-center gap-2">
+          <p>{icon}</p>
+          <p className="text-center">{certificateTitle}</p>
+          <p>{yearEarnedCertificate}</p>
         </div>
-
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <h3 className="truncate font-medium text-[var(--text-primary)] transition-colors group-hover:text-[#05df72]">
-            {certificateTitle}
-          </h3>
-          <span className="text-sm text-[#00d9ff]">
-            {yearEarnedCertificate}
-          </span>
-        </div>
-
-        <FiExternalLink
-          size={18}
-          className="shrink-0 text-[var(--text-muted)] transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#05df72]"
-        />
+        {children}
       </Link>
-    </motion.article>
+    </section>
   );
 };
 

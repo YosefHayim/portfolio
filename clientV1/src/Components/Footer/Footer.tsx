@@ -1,84 +1,48 @@
-import { motion } from 'framer-motion';
-import { Link } from 'react-router';
+import DiscordSocialButton from '../Discord/DiscordSocialButton';
+import GithubSocialButton from '../GithubSocialButton/GithubSocialButton';
+import LinkedinSocialButton from '../LinkedinSocialButton/LinkedinSocialButton';
 import Logo from '../Logo/Logo';
-import { SocialIcons } from '../ui/social-icons';
-
-const CURRENT_YEAR = new Date().getFullYear();
-const ANIMATION_DELAY_STEP = 0.1;
-const ANIMATION_Y_OFFSET = 20;
-
-const navLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/about', label: 'About' },
-  { to: '/techStack', label: 'Tech Stack' },
-  { to: '/projects', label: 'Projects' },
-  { to: '/certifications', label: 'Certifications' },
-];
+import NavigationButton from '../Navbar/NavigationButton/NavigationButton';
 
 const Footer = () => {
+  const year = new Date().getFullYear();
   return (
-    <footer className="w-full max-w-full overflow-hidden border-t border-[var(--border-subtle)] bg-gradient-to-b from-transparent to-[var(--bg-card)]/30">
-      <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
-          <motion.section
-            initial={{ opacity: 0, y: ANIMATION_Y_OFFSET }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col items-start gap-4"
-          >
-            <Logo />
-            <p className="max-w-xs text-sm leading-relaxed text-[var(--text-muted)]">
-              Just trying to get better{' '}
-              <span className="font-semibold text-[#05df72]">everyday.</span>
-            </p>
-          </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: ANIMATION_Y_OFFSET }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: ANIMATION_DELAY_STEP }}
-            className="flex flex-col gap-4"
-          >
-            <h3 className="text-sm font-semibold tracking-wider text-[var(--text-secondary)] uppercase">
-              Navigation
-            </h3>
-            <nav className="flex flex-col gap-2 md:flex-row md:flex-wrap md:gap-x-6 md:gap-y-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className="text-sm text-[var(--text-muted)] transition-colors hover:text-[#05df72]"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </motion.section>
-
-          <motion.section
-            initial={{ opacity: 0, y: ANIMATION_Y_OFFSET }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: ANIMATION_DELAY_STEP * 2 }}
-            className="flex flex-col gap-4"
-          >
-            <h3 className="text-sm font-semibold tracking-wider text-[var(--text-secondary)] uppercase">
-              Connect
-            </h3>
-            <div className="w-auto">
-              <SocialIcons showLabels />
-            </div>
-          </motion.section>
-        </div>
-      </div>
-
-      <div className="border-t border-[var(--border-subtle)] px-4 py-4 sm:px-6">
-        <p className="text-center text-xs text-[var(--text-dim)]">
-          © {CURRENT_YEAR} Joseph Sabag. All rights reserved.
+    <div className="w-full">
+      <footer className="relative flex w-full flex-col items-start justify-start gap-8 p-5 md:flex-row">
+        <section className="flex w-full flex-col items-start justify-center md:items-center">
+          <Logo />
+          <p className="w-full text-sm text-gray-400 md:text-center">
+            Just trying to get better{' '}
+            <span className="font-bold text-green-400">everyday.</span>
+          </p>
+        </section>
+        <section className="flex w-full flex-col items-center justify-center gap-2">
+          <h2 className="w-full sm:text-start md:text-center">
+            Navigation menu
+          </h2>
+          <nav className="flex w-full flex-col items-center justify-center gap-2">
+            <NavigationButton to="/" pageName="Home" />
+            <NavigationButton to="/about" pageName="About" />
+            <NavigationButton to="/techStack" pageName="Tech Stack" />
+            <NavigationButton to="/projects" pageName="Projects" />
+            <NavigationButton to="/certifications" pageName="Certifications" />
+          </nav>
+        </section>
+        <section className="flex w-full flex-col gap-4">
+          <h2 className="w-full md:text-center">Get in touch</h2>
+          <nav className="flex w-full items-center gap-4 sm:justify-start md:justify-center">
+            <LinkedinSocialButton />
+            <GithubSocialButton />
+            <DiscordSocialButton />
+          </nav>
+        </section>
+      </footer>
+      <section className="flex w-full items-center justify-center border-t border-gray-800 p-3">
+        <p className="text-center text-sm text-gray-400">
+          © {year} - Yosef Portfolio. All rights reserved
         </p>
-      </div>
-    </footer>
+      </section>
+    </div>
   );
 };
 

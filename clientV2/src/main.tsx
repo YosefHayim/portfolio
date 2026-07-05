@@ -6,7 +6,7 @@ import { SidebarProvider } from "./Components/ui/sidebar.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
-    <BrowserRouter>
+    <BrowserRouter basename="/v2">
       <SidebarProvider>
         <App />
       </SidebarProvider>

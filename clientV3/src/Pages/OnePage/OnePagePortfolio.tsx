@@ -341,7 +341,7 @@ const OnePagePortfolio = () => {
                 <img
                   alt="Joseph Sabag"
                   className="h-full w-full rounded-2xl object-contain object-bottom"
-                  src="/images-of-me/hero-image.svg"
+                  src="/images-of-me/hero-image.png"
                 />
               </div>
             </div>

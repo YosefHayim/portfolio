@@ -1,158 +1,133 @@
-import { motion } from 'framer-motion';
-import { FiBriefcase, FiAward, FiBook, FiShield } from 'react-icons/fi';
+import { IoMdTrophy } from 'react-icons/io';
+import CardJourney from '../CardJourney/CardJourney';
+import { FaUserTie } from 'react-icons/fa';
+import LastTimeUpdatedBy from '@/Components/LastTimeUpdatedBy/LastTimeUpdatedBy';
+import { FaSchoolCircleCheck } from "react-icons/fa6";
 import { IoSchoolOutline } from 'react-icons/io5';
-
-const ICON_SIZE = 16;
-const STAGGER_DELAY = 0.1;
-
-const journeyData = [
-  {
-    year: '2025 - Present',
-    title: 'Predicto AI',
-    role: 'Frontend & Automation Developer',
-    description:
-      'Building the frontend with React, Zod, Tailwind. CI/CD pipelines with Jest and RTL. Leading QA efforts.',
-    icon: FiBriefcase,
-    color: '#05df72',
-  },
-  {
-    year: 'Feb - Apr 2025',
-    title: 'Wotch Health Startup',
-    role: 'Internship',
-    description:
-      'Built real-time debugger, E2E tests with Playwright. WebSocket automation infrastructure.',
-    icon: FiBriefcase,
-    color: '#05df72',
-  },
-  {
-    year: '2025 - Present',
-    title: 'Open University of Israel',
-    role: 'B.Sc. Computer Science',
-    description: 'Pursuing degree while working full-time.',
-    icon: IoSchoolOutline,
-    color: '#00d9ff',
-  },
-  {
-    year: '2024 - 2025',
-    title: 'IITC College',
-    role: 'Fullstack Bootcamp',
-    description:
-      'Graduated with excellence. 796-hour program. GPA 93. React, Node.js, MongoDB.',
-    icon: FiAward,
-    color: '#fdc700',
-    highlight: true,
-  },
-  {
-    year: '2021 - 2024',
-    title: 'IDF - 931st Battalion',
-    role: 'Combat Commander',
-    description:
-      'Top 10 in training. Excellence awards in both basic training and Commanders Course.',
-    icon: FiShield,
-    color: '#fdc700',
-    highlight: true,
-  },
-  {
-    year: '2012 - 2018',
-    title: 'Peres Campus',
-    role: 'High School Diploma',
-    description: 'High-tech oriented program. Full Bagrut Certificate.',
-    icon: FiBook,
-    color: '#71717a',
-  },
-];
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: STAGGER_DELAY,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.5, ease: 'easeOut' as const },
-  },
-};
 
 const MyJourney = () => {
   return (
-    <section className="w-full">
-      <motion.h2
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="mb-12 text-center text-2xl font-medium text-[var(--text-primary)]"
-      >
-        My Journey
-      </motion.h2>
+    <div>
+      <div className="gap-2 items-center w-full flex flex-col">
+        <h1 className="w-full text-center text-3xl">
+          My Journey
+        </h1>
+        <LastTimeUpdatedBy />
+      </div>
+      <div className="flex w-full flex-col items-center justify-center gap-8 pt-10">
+        <CardJourney
+          icon={<FaUserTie size={20} className="text-[#05df72]" />}
+          colorIconHover={`group-hover:text-[#05df72]`}
+          years={`2025 - Present`}
+          title={`Predicto AI - Frontend & Automation developer`}
+          textChildren={
+            <p className="text-gray-400">
+              Developed and maintained Predicto’s frontend using React, Zod,
+              Tailwind, Shadcn UI, and high-performance delivery. Built CI/CD
+              pipelines with Jest and RTL for automated testing and release
+              validation. Led QA efforts, resolving UI and logic issues to
+              ensure production stability. Managed API documentation and agile
+              workflows via Monday.com for efficient cross-team delivery.
+            </p>
+          }
+        ></CardJourney>
+        <CardJourney
+          icon={<FaUserTie size={20} className="text-[#05df72]" />}
+          colorIconHover={`group-hover:text-[#05df72]`}
+          years={`Feb 2025 - April 2025`}
+          title={`Wotch Health Startup - Internship`}
+          textChildren={
+            <div>
+              <p className="text-gray-400">
+                Developed end-to-end features, enhancing developer workflow, and
+                implementing Storybook unit tests. Built automation
+                infrastructure using WebSockets for seamless real-time
+                communication using Playwright. Independently managed tasks
+                using Jira and Git within an Agile team environment. Delivered
+                tasks under tight deadlines.
+              </p>
+              <p className="text-gray-400">
+                Built a real-time debugger, expanded E2E tests, and integrated
+                external data in a fast-paced healthcare startup.
+              </p>
+            </div>
+          }
+        ></CardJourney>
+        <CardJourney
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-50px' }}
-        className="relative"
-      >
-        <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-[#05df72] via-[var(--border-default)] to-transparent md:left-1/2" />
-
-        {journeyData.map((item, index) => {
-          const Icon = item.icon;
-          const isLeft = index % 2 === 0;
-
-          return (
-            <motion.div
-              key={item.title}
-              variants={itemVariants}
-              className={`relative mb-8 flex w-full ${isLeft ? 'md:justify-start' : 'md:justify-end'}`}
-            >
-              <div
-                className={`w-full pl-8 md:w-[45%] md:pl-0 ${isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}
-              >
-                <div
-                  className={`group rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-5 transition-all hover:border-[var(--border-hover)] ${item.highlight ? 'ring-1 ring-[#fdc700]/20' : ''}`}
-                >
-                  <div
-                    className={`mb-3 flex items-center gap-3 ${isLeft ? 'md:flex-row-reverse' : ''}`}
-                  >
-                    <div
-                      className="flex h-8 w-8 items-center justify-center rounded-lg"
-                      style={{ backgroundColor: `${item.color}15` }}
-                    >
-                      <Icon size={ICON_SIZE} style={{ color: item.color }} />
-                    </div>
-                    <span className="text-xs text-[var(--text-muted)]">
-                      {item.year}
-                    </span>
-                  </div>
-
-                  <h3 className="mb-1 font-medium text-[var(--text-primary)]">
-                    {item.title}
-                  </h3>
-                  <p className="mb-2 text-sm" style={{ color: item.color }}>
-                    {item.role}
-                  </p>
-                  <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-
-              <div
-                className="absolute top-6 left-0 -ml-1 size-2 rounded-full md:left-1/2 md:ml-0 md:-translate-x-1/2"
-                style={{ backgroundColor: item.color }}
-              />
-            </motion.div>
-          );
-        })}
-      </motion.div>
-    </section>
+          icon={<IoSchoolOutline size={20} className="text-white" />
+          }
+          colorIconHover={`group-hover:text-white`}
+          years={`2025 - ∞`}
+          title={`Open University of Israel – Tel Aviv - B.Sc. Computer Science (In progress)`}
+          textChildren={
+            <p className="text-gray-400">
+              Currently pursuing a B.Sc. in Computer Science at the Open
+              University while working full-time.
+            </p>
+          }
+        ></CardJourney>
+        <CardJourney
+          icon={<IoMdTrophy size={20} className="text-[#fdc700]" />}
+          colorIconHover={`group-hover:text-[#fdc700]`}
+          years={`2024 July - 2025 Feb`}
+          title={`IITC College - Fullstack Web Development Bootcamp`}
+          textChildren={
+            <p className="text-gray-400">
+              <span className="font-bold text-[#fdc700] delay-150 duration-300 ease-in-out group-hover:text-[#fdc700]">
+                Graduated with excellence
+              </span>{' '}
+              796-hour bootcamp program Full-Stack web development with HTML,
+              CSS, JavaScript, React, Node.js, Express, MongoDB and SQL.
+              Concurrently completed five Udemy backend courses, graduating with
+              a GPA of 93.
+            </p>
+          }
+        ></CardJourney>
+        <CardJourney
+          icon={<IoMdTrophy size={20} className="text-[#fdc700]" />}
+          colorIconHover={`group-hover:text-[#fdc700]`}
+          years={`2024 July - 2025 Feb`}
+          title={`Veteran Commander - IDF - 931st Battalion - Negevist`}
+          textChildren={
+            <div>
+              <p className="text-gray-400">
+                Served in the IDF as a combat soldier (Negevist) in the Nahal
+                Brigade.
+              </p>
+              <p className="text-gray-400">
+                Completed my training as one of the top{' '}
+                <span className="font-bold text-[#fdc700] delay-150 duration-300 ease-in-out group-hover:font-bold group-hover:text-[#fdc700]">
+                  ten
+                </span> combat soldiers and was awarded{' '}
+                <span className="font-bold text-[#fdc700] delay-150 duration-300 ease-in-out group-hover:text-[#fdc700] hover:text-[#fdc700]">
+                  excellence twice
+                </span>{' '}
+                once during basic training and again in the Commanders’ Course.
+              </p>
+            </div>
+          }
+        >
+          <p
+            className={`absolute top-3 left-7 text-sm font-bold text-[#fdc700] delay-150 duration-300 ease-in-out group-hover:block md:hidden`}
+          >
+            2x
+          </p>
+        </CardJourney>
+        <CardJourney
+          icon={<FaSchoolCircleCheck size={20} className="text-white" />
+          }
+          colorIconHover={`group-hover:text-white`}
+          years={`2012 - 2018`}
+          title={`High School Diploma - Full Bagrut Certificate - Peres Campus`}
+          textChildren={
+            <p className="text-gray-400">
+              Completed a high-tech-oriented program with a focus on technology
+              and innovation.</p>
+          }
+        ></CardJourney>
+      </div>
+    </div>
   );
 };
 

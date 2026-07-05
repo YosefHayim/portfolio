@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router';
 import { SidebarProvider } from './Components/ui/sidebar.tsx';
 
 createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
+  <BrowserRouter basename="/v1">
     <SidebarProvider>
       <App />
     </SidebarProvider>

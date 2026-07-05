@@ -96,6 +96,27 @@ async function handleWorkerRequest(
       return fetchStaticProductPage(request, env, staticProductPage);
     }
 
+    // SPA fallback for v1/v2: if the path is a client-side route (no file
+    // extension), serve the era's own index.html so its React Router boots.
+    // Cloudflare's built-in SPA fallback would serve the root index.html (v3).
+    if (url.pathname.startsWith("/v1/") || url.pathname.startsWith("/v2/")) {
+      const era = url.pathname.startsWith("/v1/") ? "v1" : "v2";
+      const lastSegment = url.pathname.split("/").pop() ?? "";
+      const hasExtension = lastSegment.includes(".");
+
+      if (!hasExtension) {
+        // Client-side route — serve the era's index.html
+        const eraIndexUrl = new URL(request.url);
+        eraIndexUrl.pathname = `/${era}/index.html`;
+        return env.ASSETS.fetch(
+          new Request(eraIndexUrl.toString(), {
+            headers: request.headers,
+            method: request.method,
+          }),
+        );
+      }
+    }
+
     return env.ASSETS.fetch(request);
   } catch (error) {
     const message =

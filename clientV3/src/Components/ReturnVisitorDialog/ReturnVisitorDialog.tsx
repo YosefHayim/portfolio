@@ -40,7 +40,7 @@ const ReturnVisitorDialog: React.FC<ReturnVisitorDialogProps> = ({ isOpen, onClo
                     alt="Joseph Sabag"
                     className="h-full w-full object-cover object-top sm:object-center"
                     height={340}
-                    src="/images-of-me/hero-image.svg"
+                    src="/images-of-me/hero-image.png"
                     width={192}
                   />
                 </div>

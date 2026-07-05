@@ -4,16 +4,11 @@ import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router';
 import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
 import { BlogCover } from '@/Components/Blog/BlogCover';
+import { BlogContent } from '@/Components/Blog/BlogContent';
 import { SEO } from '@/Components/SEO/SEO';
 import { blogPosts, getCategoryConfig, getPostBySlug } from '@/data/blog';
 
 const SITE_URL = 'https://josephsabag.dev';
-
-const toParagraphs = (content: string): string[] =>
-  content
-    .split(/\n{2,}/)
-    .map((block) => block.trim())
-    .filter(Boolean);
 
 export const BlogPost = () => {
   const { slug } = useParams();
@@ -55,7 +50,6 @@ export const BlogPost = () => {
   }
 
   const category = getCategoryConfig(post.category);
-  const paragraphs = toParagraphs(post.content);
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -129,11 +123,7 @@ export const BlogPost = () => {
           priority={true}
         />
 
-        <article className="flex flex-col gap-5 text-[15px] leading-8 text-[var(--text-secondary)] md:text-base">
-          {paragraphs.map((paragraph) => (
-            <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-          ))}
-        </article>
+        <BlogContent content={post.content} />
 
         <div className="flex flex-wrap gap-2 border-t border-[var(--border-subtle)] pt-5">
           {post.tags.map((tag) => (

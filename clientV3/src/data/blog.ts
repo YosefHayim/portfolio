@@ -51,7 +51,7 @@ export const getCategoryConfig = (category: BlogCategory) => categoryConfig[cate
 
 const AUTHOR = {
   name: 'Joseph Sabag',
-  avatar: '/images-of-me/hero-image.svg',
+  avatar: '/images-of-me/hero-image.png',
 };
 
 export const blogPosts: BlogPost[] = [
@@ -302,6 +302,110 @@ That was the hard part. Not learning to code. Learning that being right about pe
     author: AUTHOR,
     publishedAt: '2026-03-25',
     readingTime: 3,
+  },
+  {
+    id: '11',
+    slug: 'effect-the-library-that-looks-weird-until-it-doesnt',
+    title: 'Effect: the library that looks weird until it doesn\'t',
+    excerpt:
+      'Effect replaces try/catch, zod, and async/await boilerplate with one system that composes. It looks alien on first read — then you realize how much noise it deleted.',
+    content: `I resisted [Effect](https://github.com/Effect-TS/effect) for months. The syntax looked alien. Generators instead of async/await? Pipe everywhere? Who writes TypeScript like that?
+
+Then I used it on a real project and something clicked. Every piece of boilerplate I'd been copy-pasting for years — try/catch wrappers, zod schemas, manual error threading, retry logic — gone. Not hidden. *Gone.* Replaced by one composable system that types your errors, validates your boundaries, and never lets you forget to handle a failure.
+
+## The try/catch noise is over
+
+Here's what most TypeScript code looks like:
+
+\`\`\`typescript
+async function getUser(id: string) {
+  try {
+    const response = await fetch(\`/api/users/\${id}\`);
+    if (!response.ok) throw new Error('Fetch failed');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    // what even is this error? string? Error? unknown?
+    console.error('Something went wrong', error);
+    throw error;
+  }
+}
+\`\`\`
+
+You've written this a thousand times. The catch swallows type information. The error could be anything. If you call three functions that each throw, your catch is a graveyard of unknowns.
+
+Effect makes errors *typed and tracked*:
+
+\`\`\`typescript
+import { Effect } from 'effect';
+
+class FetchError { readonly _tag = 'FetchError'; }
+class ParseError { readonly _tag = 'ParseError'; }
+
+const getUser = (id: string) =>
+  Effect.tryPromise({
+    try: () => fetch(\`/api/users/\${id}\`).then(r => r.json()),
+    catch: () => new FetchError(),
+  });
+\`\`\`
+
+The return type *tells you* what can fail. No guessing. No \`unknown\`. The compiler tracks every error channel through your whole program.
+
+## Schemas that replace zod — and do more
+
+I loved zod. Then I used [Effect Schema](https://github.com/Effect-TS/effect/tree/main/packages/schema) and realized zod is half a solution. Effect Schema gives you validation *and* encoding *and* transformation in one declaration. You define the shape once and get a decoder, an encoder, a type guard, and a JSON Schema — all derived, all consistent.
+
+\`\`\`typescript
+import { Schema } from 'effect';
+
+const User = Schema.Struct({
+  id: Schema.String,
+  name: Schema.String,
+  createdAt: Schema.DateFromString,  // parses string → Date automatically
+});
+
+type User = typeof User.Type;  // inferred TypeScript type
+\`\`\`
+
+No more \`.parse()\` that throws. No more writing the type *and* the validator separately and hoping they don't drift. One source of truth, compile-time and runtime.
+
+## yield > await
+
+This is the one that looks weird until it saves you. Instead of \`async/await\`, Effect uses generators:
+
+\`\`\`typescript
+const program = Effect.gen(function* () {
+  const user = yield* getUser('123');
+  const posts = yield* getUserPosts(user.id);
+  return { user, posts };
+});
+\`\`\`
+
+Why? Because \`yield*\` composes with the type system in a way \`await\` never could. Each \`yield*\` propagates the error type upward. The final program's type signature tells you *every error* that can happen inside it — automatically, without you manually unioning anything.
+
+With \`async/await\`, errors vanish into \`catch\`. With generators, errors *compose through the type system*. You get the same linear readability as async/await but with full error tracking.
+
+## It removes boilerplate, not readability
+
+Here's the thing people miss: Effect doesn't add complexity. It *moves* complexity from scattered try/catch blocks and ad-hoc error handling into one predictable system. Your code gets shorter. Your error handling gets explicit. Your types get honest.
+
+The first time you look at an Effect program you think "this is over-engineered." The tenth time you think "why did I ever write \`catch (e: unknown)\` and pretend that was engineering?"
+
+## My recommendation
+
+If you're writing TypeScript that talks to the network, validates data, or handles errors (so… all TypeScript), look at Effect seriously. Start with [Effect.gen](https://effect.website/docs/getting-started/using-generators) and [Schema](https://effect.website/docs/schema/introduction). Give it a weekend. The syntax stops being weird in about two hours.
+
+The repo: [github.com/Effect-TS/effect](https://github.com/Effect-TS/effect)
+The docs: [effect.website](https://effect.website)
+
+It's not a framework. It's the missing standard library TypeScript should have shipped with.`,
+    coverImage: '/blog/effect-ts.png',
+    category: 'engineering',
+    tags: ['Effect', 'TypeScript', 'schemas', 'error handling', 'functional programming'],
+    author: AUTHOR,
+    publishedAt: '2026-07-05',
+    readingTime: 4,
+    featured: true,
   },
 ];
 

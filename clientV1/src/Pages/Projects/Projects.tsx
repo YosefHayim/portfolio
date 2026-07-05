@@ -1,355 +1,386 @@
-import { useEffect, useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, Grid3X3, FolderOpen } from 'lucide-react';
-import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
+import { useEffect } from 'react';
+import { BsFileEarmarkPdfFill } from 'react-icons/bs';
+import { FaAmazon, FaEbay, FaNpm } from 'react-icons/fa';
+import { GiPopcorn } from 'react-icons/gi';
+import { RiStockLine } from 'react-icons/ri';
+import { SiAlwaysdata, SiBinance, SiOpenai, SiUdemy } from 'react-icons/si';
+import { TbBrandReactNative } from 'react-icons/tb';
+import amazonScreenshot from '/screenshots/amazon.png';
+import autoBaySaasScreenshot from '/screenshots/auto-bay-saas.png';
+import binanceScreenshot from '/screenshots/binance.png';
+import ebayScreenshot from '/screenshots/ebay.png';
+import ebayMcpScreenshot from '/screenshots/ebay-mcp.png';
+import harABituahScreenshot from '/screenshots/har-a-bituah.png';
+import interactiveBrokersScreenshot from '/screenshots/interactive-brokers.png';
+import momToolScreenshot from '/screenshots/MomTool.png';
+import quizAiOnBoardingScreenshot from '/screenshots/quiz-ai-on-boarding.png';
+import telegramScreenshot from '/screenshots/telegram.png';
+import timScreenshot from '/screenshots/tim-trailer.png';
+import udemyScreenshot from '/screenshots/udemy.png';
+import Collaborators from './ProjectCard/Collaborators/Collaborators';
 import ProjectCard from './ProjectCard/ProjectCard';
-import { projects as projectsData } from '@/data/projects';
-import { staggerContainer, staggerItem } from '@/animations/variants';
-import { useDebounce } from '@/hooks/useDebounce';
-import {
-  AnimatedFolder,
-  type FolderProject,
-} from '@/Components/ui/project-folder';
-
-type FilterStatus = 'all' | 'live' | 'development' | 'completed';
-type ViewMode = 'grid' | 'folders';
-
-const filterOptions: { value: FilterStatus; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'live', label: 'Live' },
-  { value: 'development', label: 'In Progress' },
-  { value: 'completed', label: 'Completed' },
-];
-
-const DEBOUNCE_DELAY_MS = 300;
-
-const folderConfig: {
-  status: FilterStatus;
-  title: string;
-  gradient: string;
-}[] = [
-  {
-    status: 'live',
-    title: 'Live Projects',
-    gradient: 'linear-gradient(135deg, #05df72 0%, #04a859 100%)',
-  },
-  {
-    status: 'development',
-    title: 'In Development',
-    gradient: 'linear-gradient(135deg, #fdc700 0%, #f59e0b 100%)',
-  },
-  {
-    status: 'completed',
-    title: 'Completed',
-    gradient: 'linear-gradient(135deg, #00d9ff 0%, #0072ff 100%)',
-  },
-];
+import ProjectsHeader from './ProjectsHeader/ProjectsHeader';
 
 const Projects = () => {
-  const [filter, setFilter] = useState<FilterStatus>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<ViewMode>('folders');
-  const debouncedSearchQuery = useDebounce(searchQuery, DEBOUNCE_DELAY_MS);
-
   useEffect(() => {
     document.title = 'Projects';
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  const filteredProjects = useMemo(() => {
-    let result = projectsData;
-
-    if (filter !== 'all') {
-      result = result.filter((p) => p.status === filter);
-    }
-
-    if (debouncedSearchQuery.trim()) {
-      const query = debouncedSearchQuery.toLowerCase().trim();
-      result = result.filter((project) => {
-        const nameMatch = project.name.toLowerCase().includes(query);
-        const descriptionMatch = project.description
-          .toLowerCase()
-          .includes(query);
-        const techMatch = project.techStack.some((tech) =>
-          tech.toLowerCase().includes(query)
-        );
-        return nameMatch || descriptionMatch || techMatch;
-      });
-    }
-
-    return result;
-  }, [filter, debouncedSearchQuery]);
-
-  const projectsByStatus = useMemo(() => {
-    const grouped: Record<string, FolderProject[]> = {
-      live: [],
-      development: [],
-      completed: [],
-    };
-
-    const projectsToGroup = debouncedSearchQuery.trim()
-      ? filteredProjects
-      : projectsData;
-
-    projectsToGroup.forEach((project) => {
-      const status = project.status || 'completed';
-      if (grouped[status]) {
-        grouped[status].push({
-          id: project.id,
-          image: project.image,
-          title: project.name,
-          description: project.description,
-          techStack: project.techStack,
-          deployedUrl: project.deployedUrl,
-          repoUrl: project.repoUrl,
-          status: project.status,
-        });
-      }
-    });
-
-    return grouped;
-  }, [filteredProjects, debouncedSearchQuery]);
-
-  const getFilterCount = (status: FilterStatus): number => {
-    if (status === 'all') {
-      return debouncedSearchQuery.trim()
-        ? filteredProjects.length
-        : projectsData.length;
-    }
-    const baseFiltered = debouncedSearchQuery.trim()
-      ? projectsData.filter((p) => {
-          const query = debouncedSearchQuery.toLowerCase().trim();
-          const nameMatch = p.name.toLowerCase().includes(query);
-          const descriptionMatch = p.description.toLowerCase().includes(query);
-          const techMatch = p.techStack.some((tech) =>
-            tech.toLowerCase().includes(query)
-          );
-          return nameMatch || descriptionMatch || techMatch;
-        })
-      : projectsData;
-    return baseFiltered.filter((p) => p.status === status).length;
-  };
-
-  const clearSearch = () => {
-    setSearchQuery('');
-  };
-
+  });
   return (
-    <AnimatedPage className="flex w-full flex-col items-center px-4 pb-20">
-      <motion.header
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="mb-12 w-full max-w-2xl pt-32 text-center"
-      >
-        <h1 className="mb-4 text-4xl font-medium tracking-tight text-[var(--text-primary)] md:text-5xl">
-          Projects
-        </h1>
-        <p className="mx-auto py-4 text-lg text-[var(--text-secondary)]">
-          A collection of things I've built, from automation tools to full-stack
-          applications
-        </p>
-
-        <div className="mb-6 flex items-center gap-4">
-          <div className="relative flex-1">
-            <Search
-              size={20}
-              className="absolute top-1/2 left-4 -translate-y-1/2 text-[var(--text-muted)]"
+    <div>
+      <ProjectsHeader />
+      <div className="grid w-full grid-cols-1 gap-10 p-5 pt-[15%] md:grid-cols-3 md:pt-[5%]">
+        <ProjectCard
+          childrenProjectIcon={
+            <FaNpm
+              className={'rounded-sm bg-white p-1 text-red-600'}
+              size={30}
             />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by name, description, or tech stack..."
-              className="h-12 w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] pr-10 pl-12 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[#05df72] focus:ring-1 focus:ring-[#05df72]/50 focus:outline-none"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={clearSearch}
-                className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full p-1 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
-              >
-                <X size={18} />
-              </button>
-            )}
-          </div>
-
-          <div className="flex h-12 items-center gap-1 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-1.5">
-            <button
-              type="button"
-              onClick={() => setViewMode('folders')}
-              className={`flex h-full items-center justify-center rounded-lg px-3 transition-all ${
-                viewMode === 'folders'
-                  ? 'bg-[#05df72] text-black'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-              }`}
-              title="Folder View"
-            >
-              <FolderOpen size={20} />
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('grid')}
-              className={`flex h-full items-center justify-center rounded-lg px-3 transition-all ${
-                viewMode === 'grid'
-                  ? 'bg-[#05df72] text-black'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-              }`}
-              title="Grid View"
-            >
-              <Grid3X3 size={20} />
-            </button>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-3 py-4">
-          {filterOptions.map((option) => (
-            <motion.button
-              key={option.value}
-              type="button"
-              onClick={() => setFilter(option.value)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
-                filter === option.value
-                  ? 'bg-[#05df72] text-black'
-                  : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)]'
-              }`}
-            >
-              {option.label}
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs ${
-                  filter === option.value
-                    ? 'bg-black/20 text-black'
-                    : 'grid grid-cols-2 gap-2 bg-[var(--bg-elevated)] py-2 text-[var(--text-muted)]'
-                }`}
-              >
-                {getFilterCount(option.value)}
-              </span>
-            </motion.button>
-          ))}
-        </div>
-
-        {debouncedSearchQuery && (
-          <motion.p
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-4 text-sm text-[var(--text-muted)]"
-          >
-            Showing {filteredProjects.length} result
-            {filteredProjects.length !== 1 ? 's' : ''} for "
-            {debouncedSearchQuery}"
-          </motion.p>
-        )}
-      </motion.header>
-
-      <AnimatePresence mode="wait">
-        {viewMode === 'folders' ? (
-          <motion.div
-            key="folders"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
-            className="grid w-full max-w-5xl grid-cols-1 justify-items-center gap-8 py-4 md:grid-cols-2 lg:grid-cols-3"
-          >
-            {filter === 'all' ? (
-              folderConfig.map(
-                (folder) =>
-                  projectsByStatus[folder.status].length > 0 && (
-                    <motion.div
-                      key={folder.status}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5 }}
-                      className="w-full"
-                    >
-                      <AnimatedFolder
-                        title={folder.title}
-                        projects={projectsByStatus[folder.status]}
-                        gradient={folder.gradient}
-                        className="w-full"
-                        forceHover={
-                          debouncedSearchQuery.trim().length > 0 &&
-                          projectsByStatus[folder.status].length > 0
-                        }
-                      />
-                    </motion.div>
-                  )
-              )
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="col-span-full w-full max-w-sm"
-              >
-                <AnimatedFolder
-                  title={
-                    folderConfig.find((f) => f.status === filter)?.title ||
-                    'Projects'
-                  }
-                  projects={filteredProjects.map((p) => ({
-                    id: p.id,
-                    image: p.image,
-                    title: p.name,
-                    description: p.description,
-                    techStack: p.techStack,
-                    deployedUrl: p.deployedUrl,
-                    repoUrl: p.repoUrl,
-                    status: p.status,
-                  }))}
-                  gradient={
-                    folderConfig.find((f) => f.status === filter)?.gradient
-                  }
-                  className="w-full"
-                  forceHover={debouncedSearchQuery.trim().length > 0}
-                />
-              </motion.div>
-            )}
-          </motion.div>
-        ) : (
-          <motion.div
-            key={`grid-${filter}-${debouncedSearchQuery}`}
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-            exit={{ opacity: 0, y: -20 }}
-            className="grid w-full max-w-7xl grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3"
-          >
-            {filteredProjects.map((project) => (
-              <motion.div key={project.id} variants={staggerItem}>
-                <ProjectCard
-                  project={project}
-                  searchQuery={debouncedSearchQuery}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {filteredProjects.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-12 flex flex-col items-center gap-4"
+          }
+          deployedUrl="https://www.npmjs.com/package/ebay-api-mcp-server"
+          projectImg={ebayMcpScreenshot}
+          projectName="eBay MCP API Server"
+          techStackForProject={[
+            'modelcontextprotocol',
+            'axios',
+            'cors',
+            'dotenv',
+            'express',
+            'jose',
+            'jsonwebtoken',
+            'TypeScript',
+            'Node.js',
+            'Vitest',
+            'OAuth 2.1',
+          ]}
+          visitRepoUrl="https://github.com/YosefHayim/ebay-api-mcp-server"
         >
-          <p className="text-[var(--text-muted)]">
-            No projects found matching your criteria.
+          <div className="flex w-full flex-col items-center justify-start gap-2">
+            <p className="w-full text-gray-400">
+              An open-source Model Context Protocol (MCP) server that provides LLMs
+              with enhanced schema readability and implementation for eBay API.
+              Integrates with Claude Desktop and Gemini CLI, featuring OAuth 2.1
+              authentication and automated schema conversion from OpenAPI specs to
+              TypeScript types. Published on npm for easy integration.
+            </p>
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={<></>}
+          deployedUrl="projects"
+          projectImg={autoBaySaasScreenshot}
+          projectName="AutoBay DropShipping Saas Platform (Under development)"
+          techStackForProject={[
+            'Next.js',
+            'TypeScript',
+            'Zod',
+            'Playwright',
+            'AWS',
+            'GitHub Actions',
+            'Jest',
+            'Firebase',
+            'Nodemailer',
+            'OAuth',
+            'eBay API',
+            'Amazon SP-API',
+            'USA USPTO Trademarks API',
+            'International WIPO Patents API',
+            'Stripe API',
+            'PayPal API',
+            'Postman',
+          ]}
+          visitRepoUrl="https://github.com/orgs/AutoBay/repositories"
+        >
+          <p>
+            Leveraging my prior experience as an eBay seller, I am developing an
+            Amazon to eBay dropshipping SaaS platform. This platform is
+            engineered to mitigate common pain points encountered by sellers,
+            integrating advanced optimizations and novel features to enhance the
+            dropshipping workflow and maximize profit margins.
           </p>
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={clearSearch}
-              className="text-sm text-[#05df72] transition-colors hover:text-[#04c566]"
-            >
-              Clear search
-            </button>
-          )}
-        </motion.div>
-      )}
-    </AnimatedPage>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <TbBrandReactNative
+              className={'rounded-sm bg-white p-1 text-black'}
+              size={30}
+            />
+          }
+          deployedUrl="projects"
+          projectImg={quizAiOnBoardingScreenshot}
+          projectName="Quiz AI React Native (Under development)"
+          techStackForProject={[
+            'React Native',
+            'Native Tailwind',
+            'Supabase',
+            'Pdf Parse',
+            'Axios',
+            'Open AI Agents',
+            'Open AI API',
+            'Zod',
+            'Express',
+            'Expo',
+            'TanStack',
+          ]}
+          visitRepoUrl="https://github.com/YosefHayim/Quizio-AI-App"
+        >
+          <div className="flex w-full flex-col items-center justify-start gap-2">
+            <p className="w-full text-gray-400">
+              Quiz AI application for IOS and android using React native
+              framework with expo. users can upload image, pdf files and even
+              urls of youtube to parse and get american quiz based on the
+              context provided to the ai. with a tracking system to maintain
+              high motivation.
+            </p>
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <SiOpenai
+              className={'rounded-sm bg-white p-1 text-black'}
+              size={30}
+            />
+          }
+          deployedUrl="projects"
+          projectImg={telegramScreenshot}
+          projectName="Telegram AI Calendar Assistant (Under development)"
+          techStackForProject={[
+            'Node.js',
+            'TypeScript',
+            'Express',
+            'Supabase',
+            'OAuth',
+            'Jest',
+            'Grammy.js',
+            'Google API',
+            'Zod',
+            'Validator',
+            'Open AI Agents',
+            'GitHub Actions',
+          ]}
+          visitRepoUrl="https://github.com/YosefHayim/AI-Calendar-Agent"
+        >
+          <div className="flex w-full flex-col items-center justify-start gap-2">
+            <p className="w-full text-gray-400">
+              A Telegram-based AI assistant that integrates with Google Calendar
+              to manage schedules, create events, send reminders, and provide
+              personal productivity support directly through chat.{' '}
+            </p>
+          </div>
+        </ProjectCard>
+
+        <ProjectCard
+          childrenProjectIcon={
+            <SiUdemy
+              className="rounded-sm bg-white p-1 text-purple-500"
+              size={30}
+            />
+          }
+          deployedUrl="https://udemy-clone-ron-and-ben-front.onrender.com/"
+          projectImg={udemyScreenshot}
+          projectName="Udemy Clone"
+          techStackForProject={[
+            'React',
+            'Node.js',
+            'TypeScript',
+            'Express',
+            'MongoDB',
+            'Tailwind',
+            'Redux',
+          ]}
+          visitRepoUrl="https://github.com/YosefHayim/Udemy-Clone-Ron-Ben-IITC-2025"
+        >
+          <div className="flex w-full flex-col items-center justify-start gap-2">
+            <p className="w-full text-gray-400">
+              This project is a full-featured Udemy clone, built as the final
+              capstone for our course at IITC to showcase everything we’ve
+              learned.
+            </p>
+            <Collaborators
+              collaboratorToProject={[
+                {
+                  name: 'Ron Sherling',
+                  githubProfileLink: 'https://github.com/ron959',
+                },
+                {
+                  name: 'Ben Klinski',
+                  githubProfileLink: 'https://github.com/Ben-Kilinski',
+                },
+              ]}
+            />
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <GiPopcorn
+              className="rounded-sm bg-white p-1 text-red-700"
+              size={30}
+            />
+          }
+          deployedUrl="https://iitc-b-frontend-vanilla-tim-trailers.onrender.com/"
+          projectImg={timScreenshot}
+          projectName="Tim Trailers"
+          techStackForProject={['JavaScript, TMDB API']}
+          visitRepoUrl="https://github.com/YosefHayim/iitc-b/tree/main/full-stack-2024/october-2024/14-10-2024/sukot-assigment"
+        >
+          <div className="flex w-full flex-col items-center justify-start gap-2">
+            <p className="w-full text-gray-400">
+              Tim Trailers is a quirky, vanilla HTML/CSS movie trailer site
+              where you join Tim—a popcorn prophet with a love for laughs—on a
+              cinematic ride through curated picks, cozy vibes, and festival
+              flair.
+            </p>
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <BsFileEarmarkPdfFill
+              className="rounded-sm bg-white p-1 text-black"
+              size={30}
+            />
+          }
+          deployedUrl="https://pdf-extractor-data-helping-mom-fronted.onrender.com/"
+          projectImg={momToolScreenshot}
+          projectName="OCR Parse AI"
+          techStackForProject={[
+            'React',
+            'Tailwind',
+            'Axios',
+            'TanStack Query',
+            'Socket.io',
+            'Playwright',
+            'Husky',
+            'Node.js',
+            'Express',
+            'Multer',
+            'Sharp',
+            'Tesseract.js(OCR)',
+            'OpenAI API',
+            'Morgan',
+          ]}
+          visitRepoUrl="https://github.com/YosefHayim/OCR-Parse-AI"
+        >
+          <div className="flex w-full flex-col items-center justify-start gap-2">
+            <p className="w-full text-gray-400">
+              Built an AI-powered OCR tool to help my mom extract structured
+              data from messy PDF invoices.
+            </p>
+            <ul className="text-gray-400">
+              <h3 className="pb-1 font-bold">Flow of the project is:</h3>
+              <li>Converted PDFs to images using Sharp</li>
+              <li>Ran OCR with Tesseract.js</li>
+              <li>Parsed invoice data via OpenAI</li>
+            </ul>
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <FaAmazon
+              className="rounded-sm bg-white p-1 text-black"
+              size={30}
+            />
+          }
+          deployedUrl="projects"
+          projectImg={amazonScreenshot}
+          projectName="Amazon ASIN Scraper W/CAPTCHA"
+          techStackForProject={['Selenium', '2Captcha API']}
+          visitRepoUrl="https://github.com/YosefHayim/p-w-gpt/tree/main/Python/09.08.2024%20-%20Amazon%20ASIN%20Collector%20%2B%20normal%20captcha"
+        >
+          <div className="group relative flex flex-col items-start justify-start gap-2">
+            <p className="w-full text-gray-400">
+              Python bot using Selenium to grab ASINs from Amazon, bypass
+              CAPTCHAs with 2Captcha, switch ZIP codes, and export to CSV.
+            </p>
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <FaEbay className="rounded-sm bg-white p-1 text-black" size={30} />
+          }
+          deployedUrl="projects"
+          projectImg={ebayScreenshot}
+          projectName="eBay Sellers Title Scraper"
+          techStackForProject={['Selenium']}
+          visitRepoUrl="https://github.com/YosefHayim/p-w-gpt/tree/main/Python/11.08.2024%20-%20eBay%20Titles%20Collector"
+        >
+          <div className="group relative flex flex-col items-start justify-start gap-2">
+            <p className="w-full text-gray-400">
+              Python bot that scrapes product titles across pages and saves them
+              to CSV.
+            </p>
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <SiAlwaysdata
+              className="rounded-sm bg-white p-1 text-black"
+              size={30}
+            />
+          }
+          deployedUrl="projects"
+          projectImg={harABituahScreenshot}
+          projectName="HarABituah Government Scraper"
+          techStackForProject={['Selenium']}
+          visitRepoUrl="https://github.com/YosefHayim/p-w-gpt/tree/main/Python/19.02.2024%20-%20HarABituh-data%20read%20and%20extraction%20with%20manual%20captcha%20automation"
+        >
+          <div className="group relative flex flex-col items-start justify-start gap-2">
+            <p className="w-full text-gray-400">
+              At an insurance company in Holon, I spotted a manual process
+              slowing things down. With zero coding background, I used ChatGPT
+              to guide me in building a Python automation that extracted and
+              processed customer files—saving time and cutting costs for the
+              business.{' '}
+            </p>
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <RiStockLine
+              className="rounded-sm bg-white p-1 text-black"
+              size={30}
+            />
+          }
+          deployedUrl="projects"
+          projectImg={interactiveBrokersScreenshot}
+          projectName="Stocks Trading Bots"
+          techStackForProject={[
+            'Selenium',
+            'Interactive Brokers API',
+            'Telegram API',
+          ]}
+          visitRepoUrl="https://github.com/YosefHayim/p-w-gpt/tree/main/Python/19.11.2023%20-%20Interactive%20broker%20API%20trading%20bots"
+        >
+          <div className="group relative flex flex-col items-start justify-start gap-2">
+            <p className="w-full text-gray-400">
+              Started with zero coding—used ChatGPT to build modular Python bots
+              running MACD, RSI, SMA, and Wyckoff strategies. Fully automated
+              for live trading via Interactive Brokers API.
+            </p>
+          </div>
+        </ProjectCard>
+        <ProjectCard
+          childrenProjectIcon={
+            <SiBinance
+              className="rounded-sm bg-white p-1 text-black"
+              size={30}
+            />
+          }
+          deployedUrl="projects"
+          projectImg={binanceScreenshot}
+          projectName="Crypto Trading Bots"
+          techStackForProject={['Selenium', 'Binance API', 'Telegram API']}
+          visitRepoUrl="https://github.com/YosefHayim/p-w-gpt/tree/main/Python/10.28.2023%20-%20Binance%20API%20trading%20bots"
+        >
+          <div className="group relative flex flex-col items-start justify-start gap-2">
+            <p className="w-full text-gray-400">
+              With no coding background, I built Python bots using ChatGPT to
+              automate trading on Binance. Strategies included RSI, MACD, and
+              SMA—fully hands-off and data-driven.
+            </p>
+          </div>
+        </ProjectCard>
+      </div>
+    </div>
   );
 };
 
