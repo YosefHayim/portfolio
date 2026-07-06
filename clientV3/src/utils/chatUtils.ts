@@ -4,7 +4,7 @@ import {
   type ContactEmailStatus,
   parseContactEmailMarker,
   stripContactEmailMarker,
-} from '../../../shared/portfolio/contactEmail.js';
+} from '@shared/portfolio/contactEmail.js';
 
 export type Message = {
   id: string;

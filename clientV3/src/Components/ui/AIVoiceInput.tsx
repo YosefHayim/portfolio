@@ -1,22 +1,23 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { FiMic, FiPause, FiPlay, FiSquare, FiVolume2 } from 'react-icons/fi';
 import { cn } from '@/lib/utils';
 
-interface AudioVisualizerProps {
+type AudioVisualizerProps = {
   levels: number[];
   isActive: boolean;
   className?: string;
   barCount?: number;
   color?: string;
-}
+};
 
-export function AudioVisualizer({
+export const AudioVisualizer = ({
   levels,
   isActive,
   className,
   barCount = 24,
-  color = '#05df72',
-}: AudioVisualizerProps) {
+  color = 'var(--brand-primary)',
+}: AudioVisualizerProps) => {
   const displayLevels = levels.slice(0, barCount);
 
   return (
@@ -40,23 +41,23 @@ export function AudioVisualizer({
       ))}
     </div>
   );
-}
+};
 
-interface VoiceRecordButtonProps {
+type VoiceRecordButtonProps = {
   isRecording: boolean;
   isProcessing?: boolean;
   onClick: () => void;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
-}
+};
 
-export function VoiceRecordButton({
+export const VoiceRecordButton = ({
   isRecording,
   isProcessing,
   onClick,
   disabled,
   size = 'md',
-}: VoiceRecordButtonProps) {
+}: VoiceRecordButtonProps) => {
   const sizeClasses = {
     sm: 'h-8 w-8',
     md: 'h-10 w-10',
@@ -113,8 +114,8 @@ export function VoiceRecordButton({
         'relative flex items-center justify-center rounded-full transition-colors',
         sizeClasses[size],
         isRecording
-          ? 'bg-[#ff6467] text-white hover:bg-[#ff5457]'
-          : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-[#05df72]',
+          ? 'bg-brand-danger text-white hover:bg-brand-danger-hover'
+          : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-brand',
         (disabled || isProcessing) && 'cursor-not-allowed opacity-50',
       )}
       whileHover={{ scale: disabled ? 1 : 1.05 }}
@@ -124,7 +125,7 @@ export function VoiceRecordButton({
 
       {isRecording && (
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-[#ff6467]"
+          className="absolute inset-0 rounded-full border-2 border-brand-danger"
           initial={{ scale: 1, opacity: 0.5 }}
           animate={{ scale: 1.3, opacity: 0 }}
           transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }}
@@ -132,23 +133,25 @@ export function VoiceRecordButton({
       )}
     </motion.button>
   );
-}
+};
 
-interface SpeakingIndicatorProps {
+type SpeakingIndicatorProps = {
   isPlaying: boolean;
   isPaused?: boolean;
   onPause?: () => void;
   onResume?: () => void;
   onStop?: () => void;
-}
+};
 
-export function SpeakingIndicator({
+export const SpeakingIndicator = ({
   isPlaying,
   isPaused,
   onPause,
   onResume,
   onStop,
-}: SpeakingIndicatorProps) {
+}: SpeakingIndicatorProps) => {
+  const { t } = useTranslation();
+
   if (!(isPlaying || isPaused)) return null;
 
   return (
@@ -162,11 +165,11 @@ export function SpeakingIndicator({
         animate={{ scale: isPaused ? 1 : [1, 1.2, 1] }}
         transition={{ duration: 0.5, repeat: isPaused ? 0 : Number.POSITIVE_INFINITY }}
       >
-        <FiVolume2 size={14} className="text-[#05df72]" />
+        <FiVolume2 size={14} className="text-brand" />
       </motion.div>
 
       <span className="text-xs text-[var(--text-muted)]">
-        {isPaused ? 'Paused' : 'Speaking...'}
+        {isPaused ? t('chat.paused') : t('chat.speaking')}
       </span>
 
       <div className="flex gap-2">
@@ -174,7 +177,7 @@ export function SpeakingIndicator({
           <button
             type="button"
             onClick={onResume}
-            className="rounded p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[#05df72]"
+            className="rounded p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-brand"
           >
             <FiPlay size={12} />
           </button>
@@ -182,7 +185,7 @@ export function SpeakingIndicator({
           <button
             type="button"
             onClick={onPause}
-            className="rounded p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[#05df72]"
+            className="rounded p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-brand"
           >
             <FiPause size={12} />
           </button>
@@ -190,22 +193,30 @@ export function SpeakingIndicator({
         <button
           type="button"
           onClick={onStop}
-          className="rounded p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[#ff6467]"
+          className="rounded p-2 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-brand-danger"
         >
           <FiSquare size={12} />
         </button>
       </div>
     </motion.div>
   );
-}
+};
 
-function formatDuration(seconds: number): string {
+/**
+ * Formats recorder duration as a compact timer label.
+ *
+ * @param seconds - Whole seconds elapsed while recording.
+ * @returns Timer label in `mm:ss` format.
+ * @example
+ * formatDuration(65) // '01:05'
+ */
+const formatDuration = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
+};
 
-interface AIVoiceInputProps {
+type AIVoiceInputProps = {
   isRecording: boolean;
   isProcessing?: boolean;
   duration: number;
@@ -214,9 +225,9 @@ interface AIVoiceInputProps {
   onStopRecording: () => void;
   disabled?: boolean;
   className?: string;
-}
+};
 
-export function AIVoiceInput({
+export const AIVoiceInput = ({
   isRecording,
   isProcessing,
   duration,
@@ -225,7 +236,9 @@ export function AIVoiceInput({
   onStopRecording,
   disabled,
   className,
-}: AIVoiceInputProps) {
+}: AIVoiceInputProps) => {
+  const { t } = useTranslation();
+
   const handleRecordToggle = () => {
     if (isRecording) {
       onStopRecording();
@@ -252,29 +265,29 @@ export function AIVoiceInput({
             exit={{ opacity: 0, height: 0 }}
             className="flex flex-col items-center gap-2"
           >
-            <span className="font-mono text-sm text-[#ff6467]">{formatDuration(duration)}</span>
+            <span className="font-mono text-sm text-brand-danger">{formatDuration(duration)}</span>
 
             <AudioVisualizer
               levels={audioLevels}
               isActive={isRecording}
               barCount={32}
-              color="#ff6467"
+              color="var(--brand-danger)"
             />
 
-            <span className="text-xs text-[var(--text-muted)]">Recording... Click to stop</span>
+            <span className="text-xs text-[var(--text-muted)]">
+              {t('chat.recordingClickToStop')}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
 
       {!(isRecording || isProcessing) && (
-        <span className="text-xs text-[var(--text-muted)]">Click to speak</span>
+        <span className="text-xs text-[var(--text-muted)]">{t('chat.clickToSpeak')}</span>
       )}
 
       {isProcessing && (
-        <span className="text-xs text-[var(--text-muted)]">Processing audio...</span>
+        <span className="text-xs text-[var(--text-muted)]">{t('chat.processingAudio')}</span>
       )}
     </div>
   );
-}
-
-export default AIVoiceInput;
+};

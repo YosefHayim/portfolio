@@ -1,15 +1,15 @@
-export const ASSISTANT_STREAM_DONE_EVENT = "data: [DONE]\n\n";
+export const ASSISTANT_STREAM_DONE_EVENT = 'data: [DONE]\n\n';
 
-export function encodeAssistantSseEvent(event) {
-  if (event.type === "error") {
+export const encodeAssistantSseEvent = (event) => {
+  if (event.type === 'error') {
     return `data: ${JSON.stringify({ error: event.error })}\n\n`;
   }
 
   return `data: ${JSON.stringify({ content: event.content })}\n\n`;
-}
+};
 
-export function createAssistantStreamParser() {
-  let buffer = "";
+export const createAssistantStreamParser = () => {
+  let buffer = '';
   let done = false;
 
   return {
@@ -20,8 +20,10 @@ export function createAssistantStreamParser() {
 
       buffer += chunk;
       const events = [];
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
+      // Raw row example: "data: {\"content\":\"hi\"}\n\ndata: [DONE]\n\n" splits into SSE rows.
+      const lines = buffer.split('\n');
+      const nextBuffer = lines.pop();
+      buffer = nextBuffer === undefined ? '' : nextBuffer;
 
       for (const line of lines) {
         const parsed = parseAssistantStreamLine(line);
@@ -29,7 +31,7 @@ export function createAssistantStreamParser() {
           continue;
         }
 
-        if (parsed.type === "done") {
+        if (parsed.type === 'done') {
           done = true;
           return { events, done: true };
         }
@@ -45,12 +47,12 @@ export function createAssistantStreamParser() {
       }
 
       const parsed = parseAssistantStreamLine(buffer);
-      buffer = "";
+      buffer = '';
       if (!parsed) {
         return { events: [], done };
       }
 
-      if (parsed.type === "done") {
+      if (parsed.type === 'done') {
         done = true;
         return { events: [], done: true };
       }
@@ -58,31 +60,38 @@ export function createAssistantStreamParser() {
       return { events: [parsed], done };
     },
   };
-}
+};
 
-function parseAssistantStreamLine(line) {
+const parseAssistantStreamLine = (line) => {
   const trimmed = line.trim();
-  if (!trimmed.startsWith("data: ")) {
+  if (!trimmed.startsWith('data: ')) {
     return null;
   }
 
   const data = trimmed.slice(6);
-  if (data === "[DONE]") {
-    return { type: "done" };
+  if (data === '[DONE]') {
+    return { type: 'done' };
   }
 
   try {
     const parsed = JSON.parse(data);
-    if (typeof parsed.error === "string") {
-      return { type: "error", error: parsed.error };
+    if (!isRecord(parsed)) {
+      return null;
     }
 
-    if (typeof parsed.content === "string") {
-      return { type: "content", content: parsed.content };
+    if (typeof parsed.error === 'string') {
+      return { type: 'error', error: parsed.error };
+    }
+
+    if (typeof parsed.content === 'string') {
+      return { type: 'content', content: parsed.content };
     }
   } catch {
     return null;
   }
 
   return null;
-}
+};
+
+const isRecord = (value) =>
+  Boolean(value) && typeof value === 'object' && !Array.isArray(value);

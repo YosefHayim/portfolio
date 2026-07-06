@@ -4,7 +4,7 @@
 # through ai-browser-bridge with Joseph's likeness attached. Fresh single-image
 # conversation so the download is unambiguous.
 #
-# Run:  bash scripts/generate-hero.sh
+# Run:  bash scripts/generateHero.sh
 # Out:  client/public/images-of-me/hero-2d.png
 #
 set -uo pipefail

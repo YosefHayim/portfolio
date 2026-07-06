@@ -3,14 +3,14 @@ import { API_BASE_URL } from '@/utils/apiBaseUrl';
 
 type SpeechState = 'idle' | 'loading' | 'playing' | 'paused';
 
-interface UseSpeechSynthesisOptions {
+type UseSpeechSynthesisOptions = {
   apiUrl?: string;
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (error: Error) => void;
-}
+};
 
-interface UseSpeechSynthesisReturn {
+type UseSpeechSynthesisReturn = {
   state: SpeechState;
   isPlaying: boolean;
   isLoading: boolean;
@@ -21,11 +21,19 @@ interface UseSpeechSynthesisReturn {
   resume: () => void;
   stop: () => void;
   speakWithBrowserTTS: (text: string) => void;
-}
+};
 
-export function useSpeechSynthesis(
+/**
+ * Plays assistant text with server TTS and falls back to browser TTS.
+ *
+ * @param options - TTS API URL and lifecycle callbacks.
+ * @returns Speech state and playback controls.
+ * @example
+ * const speech = useSpeechSynthesis({ onError: console.error })
+ */
+export const useSpeechSynthesis = (
   options: UseSpeechSynthesisOptions = {},
-): UseSpeechSynthesisReturn {
+): UseSpeechSynthesisReturn => {
   const { apiUrl = API_BASE_URL, onStart, onEnd, onError } = options;
 
   const [state, setState] = useState<SpeechState>('idle');
@@ -211,4 +219,4 @@ export function useSpeechSynthesis(
     stop,
     speakWithBrowserTTS,
   };
-}
+};

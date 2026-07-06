@@ -1,9 +1,9 @@
+import { isExcludedRepoName } from '@shared/portfolio/githubPortfolio.js';
 import {
   fallbackGitHubStats,
   fallbackProjectPreviews,
   fetchGitHubProjectPreviews,
   fetchGitHubStats,
-  isExcludedRepoName,
 } from '@/data/githubPortfolio';
 import { localDb } from '@/db/localDb';
 import type { GitHubProjectPreview, GitHubStats } from '@/db/types';
@@ -30,7 +30,15 @@ export const localGitHubSnapshotStorage: GitHubSnapshotStorage = {
   setStats: (stats) => localDb.gitHubStats.set(stats),
 };
 
-export async function loadGitHubProjectSnapshot({
+/**
+ * Loads portfolio project previews from cache, live GitHub, or fallback data.
+ *
+ * @param input - Username, storage adapter, and fetch adapter.
+ * @returns Project previews plus source metadata.
+ * @example
+ * await loadGitHubProjectSnapshot({ username: 'YosefHayim' })
+ */
+export const loadGitHubProjectSnapshot = async ({
   username,
   storage = localGitHubSnapshotStorage,
   fetchProjects = fetchGitHubProjectPreviews,
@@ -38,7 +46,7 @@ export async function loadGitHubProjectSnapshot({
   username: string;
   storage?: GitHubSnapshotStorage;
   fetchProjects?: (username: string) => Promise<GitHubProjectPreview[]>;
-}): Promise<GitHubSnapshotResult<GitHubProjectPreview[]>> {
+}): Promise<GitHubSnapshotResult<GitHubProjectPreview[]>> => {
   const normalizedUsername = username.trim();
   if (!normalizedUsername) {
     return { value: fallbackProjectPreviews, source: 'fallback', error: null };
@@ -73,15 +81,23 @@ export async function loadGitHubProjectSnapshot({
       error: error instanceof Error ? error.message : 'Failed to fetch GitHub projects',
     };
   }
-}
+};
 
-export async function loadGitHubStatsSnapshot({
+/**
+ * Loads portfolio GitHub stats from cache, live GitHub, or fallback data.
+ *
+ * @param input - Optional storage and fetch adapters.
+ * @returns GitHub stats plus source metadata.
+ * @example
+ * await loadGitHubStatsSnapshot()
+ */
+export const loadGitHubStatsSnapshot = async ({
   storage = localGitHubSnapshotStorage,
   fetchStats = fetchGitHubStats,
 }: {
   storage?: GitHubSnapshotStorage;
   fetchStats?: () => Promise<GitHubStats>;
-} = {}): Promise<GitHubSnapshotResult<GitHubStats>> {
+} = {}): Promise<GitHubSnapshotResult<GitHubStats>> => {
   const cachedStats = storage.getStats();
   if (cachedStats) {
     return { value: cachedStats, source: 'cache', error: null };
@@ -99,10 +115,8 @@ export async function loadGitHubStatsSnapshot({
       error: error instanceof Error ? error.message : 'Failed to fetch stats',
     };
   }
-}
+};
 
-function filterPortfolioProjects(
+const filterPortfolioProjects = (
   projects: readonly GitHubProjectPreview[],
-): GitHubProjectPreview[] {
-  return projects.filter((project) => !isExcludedRepoName(project.name));
-}
+): GitHubProjectPreview[] => projects.filter((project) => !isExcludedRepoName(project.name));

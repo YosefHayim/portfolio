@@ -1,19 +1,23 @@
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router';
 import { recruiterProfile } from '@/content/profile';
+import { LanguageSwitch } from './LanguageSwitch.tsx';
 import { NavMobileDrawer } from './NavMobileDrawer.tsx';
 import { SECTION_LINKS } from './navLinks.ts';
 import { VersionSwitch } from './VersionSwitch.tsx';
 
 const initials = recruiterProfile.name
+  // Raw row example: "Joseph Sabag" splits into ["Joseph", "Sabag"].
   .split(' ')
   .filter(Boolean)
   .slice(0, 2)
-  .map((part) => part[0]?.toUpperCase() ?? '')
+  .map((part) => part.charAt(0).toUpperCase())
   .join('');
 
 export const Navbar = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isHome = location.pathname === '/';
@@ -23,7 +27,7 @@ export const Navbar = () => {
       <header className="fixed inset-x-0 top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-void)]/80 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-3 sm:px-4">
           <Link className="flex items-center gap-2 font-semibold" to="/">
-            <span className="inline-flex size-7 items-center justify-center rounded-lg bg-[#05df72] text-xs font-bold text-black">
+            <span className="inline-flex size-7 items-center justify-center rounded-lg bg-brand text-xs font-bold text-black">
               {initials}
             </span>
             <span className="hidden truncate text-sm sm:inline">{recruiterProfile.name}</span>
@@ -37,16 +41,17 @@ export const Navbar = () => {
                   href={`#${section.id}`}
                   key={section.id}
                 >
-                  {section.label}
+                  {t(`nav.${section.id}`)}
                 </a>
               ))}
             </nav>
           )}
 
           <div className="flex items-center gap-2">
+            <LanguageSwitch />
             <VersionSwitch />
             <button
-              aria-label="Open menu"
+              aria-label={t('nav.openMenu')}
               className="inline-flex size-9 items-center justify-center rounded-lg border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] md:hidden"
               onClick={() => setIsMenuOpen(true)}
               type="button"

@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Effect } from 'effect';
 import { loadGitHubStatsSnapshot } from '@/data/githubPortfolioSnapshot';
 import type { GitHubStats } from '@/db/types';
+import { useEffectQuery } from './useEffectQuery.ts';
 
 type UseGitHubStatsResult = {
   stats: GitHubStats | null;
@@ -10,28 +11,21 @@ type UseGitHubStatsResult = {
 };
 
 export const useGitHubStats = (): UseGitHubStatsResult => {
-  const [stats, setStats] = useState<GitHubStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const query = useEffectQuery({
+    queryKey: ['github-stats'],
+    program: Effect.promise(() => loadGitHubStatsSnapshot()),
+  });
 
-  const fetchStats = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    const snapshot = await loadGitHubStatsSnapshot();
-    setStats(snapshot.value);
-    setError(snapshot.error);
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+  const snapshot = query.data;
+  const stats = snapshot ? snapshot.value : null;
+  const error = snapshot ? snapshot.error : null;
 
   return {
     stats,
-    isLoading,
+    isLoading: query.isLoading,
     error,
-    refetch: fetchStats,
+    refetch: async () => {
+      await query.refetch();
+    },
   };
 };

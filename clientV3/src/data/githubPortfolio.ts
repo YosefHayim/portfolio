@@ -1,19 +1,17 @@
-import { projects as fallbackProjects } from '@/data/projects';
-import type { GitHubProjectPreview, GitHubStats } from '@/db/types';
 import {
   createGitHubProjectPreviews,
   createGitHubStatsSnapshot,
   fetchGitHubRepos,
   GITHUB_API_BASE,
   GITHUB_USERNAME,
-  isExcludedRepoName,
-} from '../../../shared/portfolio/githubPortfolio.js';
+} from '@shared/portfolio/githubPortfolio.js';
+import { projects as fallbackProjects } from '@/data/projects';
+import type { GitHubProjectPreview, GitHubStats } from '@/db/types';
 
 const MAX_PROJECTS = 8;
+// Raw row example: '<https://api.github.com/repos/x/y/commits?page=12>; rel="last"'.
 const LAST_PAGE_REGEX = /page=(\d+)>; rel="last"/;
 const RATE_LIMIT_STATUS = 403;
-
-export { GITHUB_USERNAME, isExcludedRepoName };
 
 export const fallbackGitHubStats: GitHubStats = {
   totalCommits: 4500,
@@ -31,19 +29,34 @@ export const fallbackProjectPreviews: GitHubProjectPreview[] = fallbackProjects
     techStack: project.techStack.slice(0, 5),
     repoUrl: project.repoUrl,
     deployedUrl: project.deployedUrl,
-    status: project.status ?? 'completed',
+    status: project.status === undefined ? 'completed' : project.status,
     stars: 0,
     updatedAt: new Date().toISOString(),
   }));
 
-export async function fetchGitHubProjectPreviews(
+/**
+ * Fetches public GitHub repositories and maps them to portfolio previews.
+ *
+ * @param username - GitHub username to load.
+ * @returns Portfolio-ready GitHub project previews.
+ * @example
+ * await fetchGitHubProjectPreviews('YosefHayim')
+ */
+export const fetchGitHubProjectPreviews = async (
   username: string,
-): Promise<GitHubProjectPreview[]> {
+): Promise<GitHubProjectPreview[]> => {
   const repos = await fetchGitHubRepos(fetch, username);
   return createGitHubProjectPreviews(repos, MAX_PROJECTS);
-}
+};
 
-export async function fetchGitHubStats(): Promise<GitHubStats> {
+/**
+ * Fetches GitHub stats used by the portfolio hero.
+ *
+ * @returns Repository, star, and approximate commit totals.
+ * @example
+ * await fetchGitHubStats()
+ */
+export const fetchGitHubStats = async (): Promise<GitHubStats> => {
   const repos = await fetchGitHubRepos(fetch, GITHUB_USERNAME);
   let totalCommits = 0;
 
@@ -62,15 +75,21 @@ export async function fetchGitHubStats(): Promise<GitHubStats> {
       if (linkHeader) {
         const match = linkHeader.match(LAST_PAGE_REGEX);
         if (match) {
-          totalCommits += Number.parseInt(match[1], 10);
+          // Raw row example: match[1] contains "12" from page=12.
+          const pageCount = match.at(1);
+          if (pageCount !== undefined) {
+            totalCommits += Number.parseInt(pageCount, 10);
+          }
         }
       } else {
         const commitsData = await fetch(
           `${GITHUB_API_BASE}/repos/${GITHUB_USERNAME}/${repo.name}/commits?per_page=100`,
         );
         if (commitsData.ok) {
-          const commits = (await commitsData.json()) as unknown[];
-          totalCommits += commits.length;
+          const commits: unknown = await commitsData.json();
+          if (Array.isArray(commits)) {
+            totalCommits += commits.length;
+          }
         }
       }
     } catch {
@@ -79,7 +98,7 @@ export async function fetchGitHubStats(): Promise<GitHubStats> {
   }
 
   return createGitHubStatsSnapshot({
-    totalCommits: totalCommits || fallbackGitHubStats.totalCommits,
+    totalCommits: totalCommits > 0 ? totalCommits : fallbackGitHubStats.totalCommits,
     repos,
   });
-}
+};

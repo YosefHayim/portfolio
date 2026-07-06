@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 const STORAGE_KEYS = {
   FIRST_VISIT: 'portfolio_first_visit',
   DIALOG_DISMISSED: 'portfolio_dialog_dismissed_until',
-} as const;
+};
 
 const COOLDOWN_DAYS = 7;
 const DIALOG_DELAY_MS = 2000;

@@ -1,16 +1,28 @@
 import { Github, Linkedin, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaDiscord, FaWhatsapp } from 'react-icons/fa';
 import { Link } from 'react-router';
 import { cn } from '@/lib/utils';
 
-export type IconItem = {
-  label: string;
+type IconItemBase = {
   icon: React.ReactNode;
   hoverColor?: string;
   href?: string;
   to?: string;
 };
+
+type LocalizedIconItem = IconItemBase & {
+  labelKey: string;
+  label?: never;
+};
+
+type LiteralIconItem = IconItemBase & {
+  label: string;
+  labelKey?: never;
+};
+
+export type IconItem = LocalizedIconItem | LiteralIconItem;
 
 type LabelSide = 'top' | 'bottom' | 'left' | 'right';
 
@@ -49,34 +61,34 @@ const WHATSAPP_NUMBER = '546187549';
 
 const socials: IconItem[] = [
   {
-    label: 'GitHub',
+    labelKey: 'social.github',
     href: 'https://github.com/YosefHayim',
     icon: <Github size={ICON_SIZE} />,
     hoverColor: 'group-hover:text-white',
   },
   {
-    label: 'LinkedIn',
+    labelKey: 'social.linkedin',
     href: 'https://www.linkedin.com/in/yosef-hayim-sabag/',
     icon: <Linkedin size={ICON_SIZE} />,
-    hoverColor: 'group-hover:text-[#0A66C2]',
+    hoverColor: 'group-hover:text-social-linkedin',
   },
   {
-    label: 'WhatsApp',
+    labelKey: 'social.whatsapp',
     href: `https://wa.me/${WHATSAPP_NUMBER}`,
     icon: <FaWhatsapp size={ICON_SIZE} />,
-    hoverColor: 'group-hover:text-[#05df72]',
+    hoverColor: 'group-hover:text-brand',
   },
   {
-    label: 'Discord',
+    labelKey: 'social.discord',
     href: 'https://discord.com/users/josephsabag',
     icon: <FaDiscord size={ICON_SIZE} />,
-    hoverColor: 'group-hover:text-[#5865F2]',
+    hoverColor: 'group-hover:text-social-discord',
   },
   {
-    label: 'Contact',
+    labelKey: 'social.contact',
     href: `https://wa.me/${WHATSAPP_NUMBER}`,
     icon: <MessageCircle size={ICON_SIZE} />,
-    hoverColor: 'group-hover:text-[#00d9ff]',
+    hoverColor: 'group-hover:text-brand-secondary',
   },
 ];
 
@@ -90,7 +102,7 @@ type SocialIconsProps = {
   activePath?: string;
 };
 
-export function SocialIcons({
+export const SocialIcons = ({
   className,
   showLabels = false,
   variant = 'default',
@@ -98,7 +110,8 @@ export function SocialIcons({
   forceShowLabels = false,
   labelSides,
   activePath,
-}: SocialIconsProps) {
+}: SocialIconsProps) => {
+  const { t } = useTranslation();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const displayItems = items ?? socials;
   const sides = labelSides ?? ['top'];
@@ -119,30 +132,33 @@ export function SocialIcons({
         const isHovered = hoveredIndex === index;
         const isItemActive = activePath !== undefined && item.to === activePath;
         const isActive = isHovered || isItemActive;
+        const itemKey = item.labelKey === undefined ? item.label : item.labelKey;
+        const itemLabel = item.labelKey === undefined ? item.label : t(item.labelKey);
         const side = sides[index % sides.length];
         const labelVisible = forceShowLabels || (showLabels && isActive);
+        const shouldRenderLabel = showLabels || forceShowLabels;
 
         if (variant === 'nav') {
           const navCls = cn(
             'relative flex flex-1 flex-col items-center justify-center p-2',
-            isItemActive ? 'text-[#05df72]' : 'text-[var(--text-muted)]',
+            isItemActive ? 'text-brand' : 'text-[var(--text-muted)]',
           );
           const navInner = (
             <>
               <span className={cn('transition-colors duration-200', isItemActive && 'scale-110')}>
                 {item.icon}
               </span>
-              <span className=" text-[10px]" style={{ fontWeight: isItemActive ? 600 : 400 }}>
-                {item.label}
+              <span className="text-[10px]" style={{ fontWeight: isItemActive ? 600 : 400 }}>
+                {itemLabel}
               </span>
             </>
           );
           return item.to ? (
-            <Link className={navCls} key={item.label} to={item.to}>
+            <Link className={navCls} key={itemKey} to={item.to}>
               {navInner}
             </Link>
           ) : (
-            <span className={navCls} key={item.label}>
+            <span className={navCls} key={itemKey}>
               {navInner}
             </span>
           );
@@ -162,7 +178,7 @@ export function SocialIcons({
                 isActive ? 'scale-110' : '',
                 isActive ? '' : 'text-[var(--text-muted)]',
                 item.hoverColor,
-                isItemActive && 'text-[#05df72]',
+                isItemActive && 'text-brand',
               )}
             >
               {item.icon}
@@ -173,17 +189,17 @@ export function SocialIcons({
                 isActive ? 'w-3 opacity-100' : 'w-0 opacity-0',
               )}
             />
-            {(showLabels || forceShowLabels) && (
+            {shouldRenderLabel ? (
               <span
                 className={cn(
-                  'absolute z-50 rounded-lg bg-[var(--text-primary)] p-2 p-2 text-[11px] font-medium whitespace-nowrap text-[var(--bg-void)] transition-all duration-300 ease-out',
+                  'absolute z-50 whitespace-nowrap rounded-lg bg-[var(--text-primary)] p-2 p-2 font-medium text-[11px] text-[var(--bg-void)] transition-all duration-300 ease-out',
                   LABEL_STYLES[side].position,
                   labelVisible
                     ? cn(LABEL_STYLES[side].show, 'opacity-100')
                     : cn('pointer-events-none', LABEL_STYLES[side].hide, 'opacity-0'),
                 )}
               >
-                {item.label}
+                {itemLabel}
                 <span
                   className={cn(
                     'absolute size-2 rotate-45 bg-[var(--text-primary)]',
@@ -191,7 +207,7 @@ export function SocialIcons({
                   )}
                 />
               </span>
-            )}
+            ) : null}
           </>
         );
 
@@ -206,9 +222,9 @@ export function SocialIcons({
         if (item.to) {
           return (
             <Link
-              aria-label={item.label}
+              aria-label={itemLabel}
               className={baseCls}
-              key={item.label}
+              key={itemKey}
               style={size}
               to={item.to}
               {...handlers}
@@ -219,10 +235,10 @@ export function SocialIcons({
         }
         return item.href ? (
           <a
-            aria-label={item.label}
+            aria-label={itemLabel}
             className={baseCls}
             href={item.href}
-            key={item.label}
+            key={itemKey}
             rel="noopener noreferrer"
             style={size}
             target="_blank"
@@ -232,9 +248,10 @@ export function SocialIcons({
           </a>
         ) : (
           <span
-            aria-label={item.label}
+            aria-label={itemLabel}
             className={cn(baseCls, 'cursor-default')}
-            key={item.label}
+            key={itemKey}
+            role="img"
             style={size}
             {...handlers}
           >
@@ -244,4 +261,4 @@ export function SocialIcons({
       })}
     </div>
   );
-}
+};

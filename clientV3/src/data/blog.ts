@@ -1,11 +1,14 @@
+import type { Localized } from '@/i18n/localized';
+import { BLOG_POST_HE } from './blogHebrew.ts';
+
 export type BlogCategory = 'engineering' | 'career' | 'tutorials' | 'thoughts' | 'projects';
 
 export type BlogPost = {
   id: string;
   slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
+  title: Localized<string>;
+  excerpt: Localized<string>;
+  content: Localized<string>;
   coverImage: string;
   category: BlogCategory;
   tags: string[];
@@ -19,31 +22,38 @@ export type BlogPost = {
   featured?: boolean;
 };
 
-const categoryConfig: Record<BlogCategory, { label: string; color: string; bgColor: string }> = {
+/** English-authored source shape; non-English blog overlays can be merged by id later. */
+type RawBlogPost = Omit<BlogPost, 'title' | 'excerpt' | 'content'> & {
+  title: string;
+  excerpt: string;
+  content: string;
+};
+
+type BlogCategoryConfig = {
+  accentClassName: string;
+  bgColor: string;
+};
+
+const categoryConfig: Record<BlogCategory, BlogCategoryConfig> = {
   engineering: {
-    label: 'Engineering',
-    color: '#05df72',
-    bgColor: 'bg-[#05df72]/10 text-[#05df72]',
+    accentClassName: 'blog-category-engineering',
+    bgColor: 'bg-brand/10 text-brand',
   },
   career: {
-    label: 'Career',
-    color: '#00d9ff',
-    bgColor: 'bg-[#00d9ff]/10 text-[#00d9ff]',
+    accentClassName: 'blog-category-career',
+    bgColor: 'bg-brand-secondary/10 text-brand-secondary',
   },
   tutorials: {
-    label: 'Tutorials',
-    color: '#fdc700',
-    bgColor: 'bg-[#fdc700]/10 text-[#fdc700]',
+    accentClassName: 'blog-category-tutorials',
+    bgColor: 'bg-brand-accent/10 text-brand-accent',
   },
   thoughts: {
-    label: 'Thoughts',
-    color: '#a855f7',
-    bgColor: 'bg-[#a855f7]/10 text-[#a855f7]',
+    accentClassName: 'blog-category-thoughts',
+    bgColor: 'bg-category-thoughts/10 text-category-thoughts',
   },
   projects: {
-    label: 'Projects',
-    color: '#f97316',
-    bgColor: 'bg-[#f97316]/10 text-[#f97316]',
+    accentClassName: 'blog-category-projects',
+    bgColor: 'bg-category-projects/10 text-category-projects',
   },
 };
 
@@ -54,7 +64,7 @@ const AUTHOR = {
   avatar: '/images-of-me/hero-image.png',
 };
 
-export const blogPosts: BlogPost[] = [
+const EN_POSTS: RawBlogPost[] = [
   {
     id: '1',
     slug: 'the-security-guard-who-taught-himself-to-code',
@@ -467,6 +477,38 @@ Anyone can generate a thousand lines now. I spent two weeks making sure the thou
     featured: true,
   },
 ];
+
+/**
+ * Looks up the required Hebrew overlay for a raw English blog post.
+ *
+ * @param post - English-authored post source.
+ * @returns Hebrew title, excerpt, and content for the same post id.
+ * @example
+ * requireHebrewPost(EN_POSTS[0])
+ */
+const requireHebrewPost = (
+  post: RawBlogPost,
+): Pick<RawBlogPost, 'title' | 'excerpt' | 'content'> => {
+  const hebrewPost = BLOG_POST_HE[post.id];
+
+  if (hebrewPost === undefined) {
+    throw new Error(`Missing Hebrew blog translation for post ${post.id}`);
+  }
+
+  return hebrewPost;
+};
+
+/** English source exposed through the localized content shape with required Hebrew overlays. */
+export const blogPosts: BlogPost[] = EN_POSTS.map((post) => {
+  const he = requireHebrewPost(post);
+
+  return {
+    ...post,
+    title: { en: post.title, he: he.title },
+    excerpt: { en: post.excerpt, he: he.excerpt },
+    content: { en: post.content, he: he.content },
+  };
+});
 
 export const getFeaturedPosts = (): BlogPost[] => blogPosts.filter((post) => post.featured);
 

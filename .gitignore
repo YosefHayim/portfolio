@@ -7,10 +7,13 @@
 !CODE-STYLE.md
 !CONTEXT.md
 !LANGUAGE.md
-!PRODUCT.md
+!PROJECT.md
 !docs/agents/*.md
 !docs/adr/current/*.md
 !clientV3/biome.json
+!clientV3/src/i18n/locales/
+!clientV3/src/i18n/locales/**/
+!clientV3/src/i18n/locales/**/*.json
 !server/biome.json
 # Frozen version snapshots (clientV1/clientV2): track source + build configs.
 # Their nested .gitignore still excludes node_modules/ and dist/, and git cannot
@@ -20,7 +23,8 @@
 !.gitignore
 !.github
 .dedup.json
-# Assembled deploy artifact (scripts/build-all.sh): v3 at /, v1+v2 nested
+node_modules/
+# Assembled deploy artifact (scripts/buildAll.sh): v3 at /, v1+v2 nested
 /dist/
 infra/aws/keys/*.pem
 .ai-guard/

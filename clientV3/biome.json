@@ -41,16 +41,17 @@
       "style": {
         "noNestedTernary": "error",
         "useImportType": "error",
-        "noDefaultExport": "off",
+        "noDefaultExport": "warn",
         "noJsxLiterals": "off",
         "useComponentExportOnlyModules": "off",
         "noTernary": "off",
         "useNamingConvention": "off",
         "noMagicNumbers": "off",
         "noCommonJs": "off",
-        "useExportsLast": "warn",
+        "useExportsLast": "off",
         "noIncrementDecrement": "off",
         "noProcessEnv": "off",
+        "useConsistentTypeDefinitions": "off",
         "noExcessiveLinesPerFile": "warn"
       },
       "correctness": {

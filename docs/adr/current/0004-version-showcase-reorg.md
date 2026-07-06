@@ -20,9 +20,9 @@ The frozen eras were also committed with slightly drifted deps — e.g. clientV2
   eras as `clientV1/` and `clientV2/` — independent, buildable apps with their own pinned deps
   and configs.
 - **One site, path-scoped.** Each frozen app builds with a Vite `base` (`/v1/`, `/v2/`);
-  `scripts/build-all.sh` builds all three and assembles a unified `dist/` — clientV3 at the
+  `scripts/buildAll.sh` builds all three and assembles a unified `dist/` — clientV3 at the
   root, `clientV1 → dist/v1/`, `clientV2 → dist/v2/`. `wrangler.jsonc` points `assets.directory`
-  at `dist/`. No new worker, no new deployment. Deploy = `build-all.sh` then `wrangler deploy`.
+  at `dist/`. No new worker, no new deployment. Deploy = `buildAll.sh` then `wrangler deploy`.
 - **Freeze, don't restyle.** `clientV1`/`clientV2` are **exempt from `CODE-STYLE.md`** and
   Biome — they stay authentic to their era. Only `clientV3` follows the guide. Pin frozen deps
   to the version that builds rather than editing frozen source (clientV2 pins `react-icons@5.6.0`).
@@ -37,7 +37,7 @@ The frozen eras were also committed with slightly drifted deps — e.g. clientV2
 - **+** Recruiters compare eras with one click; the history is a live artifact, not a changelog.
 - **+** One worker, one deploy, one asset tree — no infra sprawl.
 - **+** Frozen snapshots can't be broken by style churn or dep floats; each rebuilds deterministically.
-- **−** Deploy now has a build step (`build-all.sh`) instead of a single `client` build; the
+- **−** Deploy now has a build step (`buildAll.sh`) instead of a single `client` build; the
   unified `dist/` is a build artifact (git-ignored), rebuilt on deploy.
 - **−** SPA not-found handling falls back to the v3 root, so a hard refresh of a *deep*
   client-side route **inside** a frozen app resolves to v3. The era landing paths (`/v1/`,

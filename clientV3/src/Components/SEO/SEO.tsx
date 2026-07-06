@@ -1,5 +1,3 @@
-import { Helmet } from 'react-helmet-async';
-
 const SITE_URL = 'https://josephsabag.dev';
 const DEFAULT_IMAGE = `${SITE_URL}/screenshots/portfolio-preview.png`;
 const SITE_NAME = 'Joseph Sabag';
@@ -65,7 +63,7 @@ export const SEO = ({
   };
 
   return (
-    <Helmet>
+    <>
       <title>{pageTitle}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords.join(', ')} />
@@ -101,10 +99,8 @@ export const SEO = ({
       <meta name="geo.placename" content="Israel" />
 
       <script type="application/ld+json">
-        {JSON.stringify(structuredData || defaultStructuredData)}
+        {JSON.stringify(structuredData ?? defaultStructuredData)}
       </script>
-    </Helmet>
+    </>
   );
 };
-
-export default SEO;

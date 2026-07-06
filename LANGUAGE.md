@@ -2,7 +2,7 @@
 
 The shared vocabulary for the portfolio — the human↔agent bridge. **Names only:** each term
 gets a definition and the aliases to avoid, so code, commits, PRs, and chat all use the same
-word for the same thing. Orientation lives in `CONTEXT.md`; purpose in `PRODUCT.md`.
+word for the same thing. Orientation lives in `CONTEXT.md`; purpose in `PROJECT.md`.
 
 ## Terms
 
@@ -37,10 +37,15 @@ rules. The Worker serves them at `/v1`, `/v2`, `/v3`; the navbar and mobile side
 `v1 / v2 / v3` toggle.
 _Use:_ "clientV3 (living app)," "clientV1/V2 (frozen snapshots)." _Avoid:_ "old client," "legacy," "the current one."
 
-**Effect edge**
-The boundaries where Effect lives — loaders, services, validation — as opposed to React
-components, which stay idiomatic.
-_Use:_ "the Effect edge," "at the edge." _Avoid:_ "the Effect layer" (ambiguous with Effect `Layer`).
+**Effect program**
+The typed program model for effectful work: validation, I/O, provider access, config,
+logging, retries/timeouts, and typed errors. React components still use idiomatic local UI
+state.
+_Use:_ "Effect program," "Effect runtime." _Avoid:_ "the Effect layer" (ambiguous with Effect `Layer`).
+
+**Client server-state**
+Remote data cached by TanStack Query after an Effect loader decodes it.
+_Use:_ "client server-state." _Avoid:_ "manual fetch state," "the loading booleans."
 
 **Effect Layer**
 An Effect `Layer` that provides a service (e.g. the OpenAI client) to the runtime.

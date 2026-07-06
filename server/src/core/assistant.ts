@@ -1,54 +1,51 @@
-import { getDynamicGitHubProjectsContext } from "./githubPortfolio.js";
-import { createPortfolioSystemPromptBase } from "./portfolioKnowledge.js";
+import { getDynamicGitHubProjectsContext } from '@shared/portfolio/githubPortfolio.js';
+import { createPortfolioSystemPromptBase } from '@shared/portfolio/portfolioKnowledge.js';
 
 export type ChatMessage = {
-	role: "user" | "assistant";
-	content: string;
+  role: 'user' | 'assistant';
+  content: string;
 };
 
-export const AI_CHAT_MODEL = "gpt-4o-mini";
+export const AI_CHAT_MODEL = 'gpt-4o-mini';
 export const AI_CHAT_MAX_TOKENS = 400;
 export const AI_CHAT_TEMPERATURE = 0.7;
 
 const BASE_SYSTEM_PROMPT = createPortfolioSystemPromptBase();
+const DYNAMIC_PORTFOLIO_INTENT_PATTERN =
+  /\b(github|repo|repos|project|projects|recent|latest|newest|updated)\b/i;
 
-export async function getSystemPrompt(): Promise<string> {
-	const githubContext = await getDynamicGitHubProjectsContext();
-	return `${BASE_SYSTEM_PROMPT}\n\n${githubContext}`;
-}
+export const getSystemPrompt = async (): Promise<string> => {
+  const githubContext = await getDynamicGitHubProjectsContext();
+  return `${BASE_SYSTEM_PROMPT}\n\n${githubContext}`;
+};
 
-export function getLastUserMessage(messages: readonly ChatMessage[]): string {
-	return messages[messages.length - 1]?.content ?? "";
-}
+export const getLastUserMessage = (messages: readonly ChatMessage[]): string => {
+  const lastMessage = messages.at(-1);
 
-export function hasDynamicPortfolioIntent(message: string): boolean {
-	return /\b(github|repo|repos|project|projects|recent|latest|newest|updated)\b/i.test(
-		message,
-	);
-}
+  if (lastMessage === undefined) {
+    return '';
+  }
 
-export function shouldBypassAssistantCache(
-	messages: readonly ChatMessage[],
-): boolean {
-	return hasDynamicPortfolioIntent(getLastUserMessage(messages));
-}
+  return lastMessage.content;
+};
 
-export function canUseAssistantResponseCache(
-	messages: readonly ChatMessage[],
-): boolean {
-	return messages.length === 1 && !shouldBypassAssistantCache(messages);
-}
+export const hasDynamicPortfolioIntent = (message: string): boolean =>
+  DYNAMIC_PORTFOLIO_INTENT_PATTERN.test(message);
 
-export function createCachedResponseChunks(response: string): string[] {
-	const words = response.split(" ");
-	const chunks: string[] = [];
+export const shouldBypassAssistantCache = (messages: readonly ChatMessage[]): boolean =>
+  hasDynamicPortfolioIntent(getLastUserMessage(messages));
 
-	for (let index = 0; index < words.length; index += 3) {
-		chunks.push(
-			words.slice(index, index + 3).join(" ") +
-				(index + 3 < words.length ? " " : ""),
-		);
-	}
+export const canUseAssistantResponseCache = (messages: readonly ChatMessage[]): boolean =>
+  messages.length === 1 && !shouldBypassAssistantCache(messages);
 
-	return chunks;
-}
+export const createCachedResponseChunks = (response: string): string[] => {
+  // Raw row example: "one two three four" splits into ["one", "two", "three", "four"].
+  const words = response.split(' ');
+  const chunks: string[] = [];
+
+  for (let index = 0; index < words.length; index += 3) {
+    chunks.push(words.slice(index, index + 3).join(' ') + (index + 3 < words.length ? ' ' : ''));
+  }
+
+  return chunks;
+};

@@ -5,7 +5,7 @@
 # (round glasses, Apple Watch, curly hair), varied outfits, real devices
 # (midnight-blue MacBook Air, iPhone), and select brand logos baked in.
 #
-# Usage:  bash scripts/generate-blog-covers.sh <conversationIdOrUrl>
+# Usage:  bash scripts/generateBlogCovers.sh <conversationIdOrUrl>
 #   Get the id with:  node .../bridge.js chat list --json
 # Prereq: normal Chrome fully quit.
 # Out:    client/public/blog/<slug>.png

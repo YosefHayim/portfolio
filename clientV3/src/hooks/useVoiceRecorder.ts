@@ -2,13 +2,13 @@ import { useCallback, useRef, useState } from 'react';
 
 type RecordingState = 'idle' | 'recording' | 'processing';
 
-interface UseVoiceRecorderOptions {
+type UseVoiceRecorderOptions = {
   onAudioData?: (audioBlob: Blob) => void;
   onError?: (error: Error) => void;
   onVolumeChange?: (volume: number) => void;
-}
+};
 
-interface UseVoiceRecorderReturn {
+type UseVoiceRecorderReturn = {
   isRecording: boolean;
   state: RecordingState;
   duration: number;
@@ -16,12 +16,20 @@ interface UseVoiceRecorderReturn {
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<Blob | null>;
   cancelRecording: () => void;
-}
+};
 
 const AUDIO_LEVELS_COUNT = 32;
 const VOLUME_SMOOTHING = 0.8;
 
-export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoiceRecorderReturn {
+/**
+ * Records microphone audio and exposes simple waveform state.
+ *
+ * @param options - Recorder callbacks for audio, errors, and volume changes.
+ * @returns Recorder state and controls.
+ * @example
+ * const recorder = useVoiceRecorder({ onError: console.error })
+ */
+export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoiceRecorderReturn => {
   const { onAudioData, onError, onVolumeChange } = options;
 
   const [state, setState] = useState<RecordingState>('idle');
@@ -151,7 +159,9 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
       }
 
       mediaRecorderRef.current.onstop = () => {
-        const mimeType = mediaRecorderRef.current?.mimeType || 'audio/webm';
+        const recorderMimeType = mediaRecorderRef.current?.mimeType;
+        const mimeType =
+          recorderMimeType && recorderMimeType.length > 0 ? recorderMimeType : 'audio/webm';
         const audioBlob = new Blob(chunksRef.current, { type: mimeType });
 
         onAudioData?.(audioBlob);
@@ -183,4 +193,4 @@ export function useVoiceRecorder(options: UseVoiceRecorderOptions = {}): UseVoic
     stopRecording,
     cancelRecording,
   };
-}
+};

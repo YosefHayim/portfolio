@@ -1,9 +1,9 @@
 import { cx } from 'class-variance-authority';
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import React, { type CSSProperties } from 'react';
 import { cn } from '@/lib/utils';
 
-interface OrbProps {
+type OrbProps = {
   dimension?: string;
   className?: string;
   tones?: {
@@ -13,14 +13,27 @@ interface OrbProps {
     accent3?: string;
   };
   spinDuration?: number;
-}
+};
 
-export const ColorOrb: React.FC<OrbProps> = ({
+type OrbStyle = CSSProperties & {
+  '--base': string;
+  '--accent1': string;
+  '--accent2': string;
+  '--accent3': string;
+  '--spin-duration': string;
+  '--blur': string;
+  '--contrast': number;
+  '--dot': string;
+  '--shadow': string;
+  '--mask': string;
+};
+
+export const ColorOrb = ({
   dimension = '192px',
   className,
   tones,
   spinDuration = 20,
-}) => {
+}: OrbProps) => {
   const fallbackTones = {
     base: 'oklch(10% 0.02 264.695)',
     accent1: 'oklch(75% 0.2 145)',
@@ -50,57 +63,67 @@ export const ColorOrb: React.FC<OrbProps> = ({
 
   const contrastAbove30 = dimValue < 50 ? Math.max(contrastStrength * 1.2, 1.3) : contrastStrength;
   const adjustedContrast = dimValue < 30 ? 1.1 : contrastAbove30;
+  const orbStyle: OrbStyle = {
+    width: dimension,
+    height: dimension,
+    '--base': palette.base,
+    '--accent1': palette.accent1,
+    '--accent2': palette.accent2,
+    '--accent3': palette.accent3,
+    '--spin-duration': `${spinDuration}s`,
+    '--blur': `${blurStrength}px`,
+    '--contrast': adjustedContrast,
+    '--dot': `${pixelDot}px`,
+    '--shadow': `${shadowRange}px`,
+    '--mask': maskRadius,
+  };
 
-  return (
-    <div
-      className={cn('color-orb', className)}
-      style={
-        {
-          width: dimension,
-          height: dimension,
-          '--base': palette.base,
-          '--accent1': palette.accent1,
-          '--accent2': palette.accent2,
-          '--accent3': palette.accent3,
-          '--spin-duration': `${spinDuration}s`,
-          '--blur': `${blurStrength}px`,
-          '--contrast': adjustedContrast,
-          '--dot': `${pixelDot}px`,
-          '--shadow': `${shadowRange}px`,
-          '--mask': maskRadius,
-        } as React.CSSProperties
-      }
-    />
-  );
+  return <div className={cn('color-orb', className)} style={orbStyle} />;
 };
 
 const SPEED_FACTOR = 1;
 const FORM_WIDTH = 360;
 const FORM_HEIGHT = 240;
 
-interface MorphPanelContextShape {
+type MorphPanelContextShape = {
   showForm: boolean;
   successFlag: boolean;
   triggerOpen: () => void;
   triggerClose: () => void;
-}
+};
 
-const FormContext = React.createContext({} as MorphPanelContextShape);
-const useFormContext = () => React.useContext(FormContext);
+const FormContext = React.createContext<MorphPanelContextShape | null>(null);
 
-interface MorphPanelProps {
+/**
+ * Reads the MorphPanel context after the provider is mounted.
+ *
+ * @returns MorphPanel context actions and state.
+ * @example
+ * const { showForm } = useFormContext()
+ */
+const useFormContext = (): MorphPanelContextShape => {
+  const context = React.useContext(FormContext);
+
+  if (context === null) {
+    throw new Error('MorphPanel context is missing');
+  }
+
+  return context;
+};
+
+type MorphPanelProps = {
   onSubmit?: (message: string) => void;
   isLoading?: boolean;
   placeholder?: string;
   title?: string;
-}
+};
 
-export function MorphPanel({
+export const MorphPanel = ({
   onSubmit,
   isLoading = false,
   placeholder = 'Ask me anything about Joseph...',
   title = 'Ask AI',
-}: MorphPanelProps) {
+}: MorphPanelProps) => {
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
 
@@ -126,11 +149,16 @@ export function MorphPanel({
   }, [triggerClose]);
 
   React.useEffect(() => {
-    function handlePanelOutsideClick(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node) && showForm) {
+    const handlePanelOutsideClick = (event: MouseEvent): void => {
+      const eventTarget = event.target;
+
+      if (!(eventTarget instanceof Node)) return;
+
+      if (wrapperRef.current && !wrapperRef.current.contains(eventTarget) && showForm) {
         triggerClose();
       }
-    }
+    };
+
     document.addEventListener('mousedown', handlePanelOutsideClick);
     return () => document.removeEventListener('mousedown', handlePanelOutsideClick);
   }, [showForm, triggerClose]);
@@ -178,9 +206,9 @@ export function MorphPanel({
       </motion.div>
     </div>
   );
-}
+};
 
-function DockBar({ title }: { title: string }) {
+const DockBar = ({ title }: { title: string }) => {
   const { showForm, triggerOpen } = useFormContext();
   return (
     <footer className=" flex h-[48px] items-center justify-center whitespace-nowrap select-none">
@@ -219,7 +247,7 @@ function DockBar({ title }: { title: string }) {
 
         <button
           type="button"
-          className="flex h-fit flex-1 justify-end rounded-full p-2 p-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-surface)] hover:text-[#05df72]"
+          className="flex h-fit flex-1 justify-end rounded-full p-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-surface)] hover:text-brand"
           onClick={triggerOpen}
         >
           <span className="truncate text-sm font-medium">{title}</span>
@@ -227,36 +255,36 @@ function DockBar({ title }: { title: string }) {
       </div>
     </footer>
   );
-}
+};
 
-interface InputFormProps {
+type InputFormProps = {
   ref: React.Ref<HTMLTextAreaElement>;
   onSubmit?: (message: string) => void;
   onSuccess: () => void;
   isLoading?: boolean;
   placeholder?: string;
-}
+};
 
-function InputForm({ ref, onSubmit, onSuccess, isLoading, placeholder }: InputFormProps) {
+const InputForm = ({ ref, onSubmit, onSuccess, isLoading, placeholder }: InputFormProps) => {
   const { triggerClose, showForm } = useFormContext();
   const btnRef = React.useRef<HTMLButtonElement>(null);
   const [message, setMessage] = React.useState('');
 
-  async function handleInputFormSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const handleInputFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!message.trim() || isLoading) return;
     onSubmit?.(message.trim());
     setMessage('');
     onSuccess();
-  }
+  };
 
-  function handleKeys(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Escape') triggerClose();
-    if (e.key === 'Enter' && e.metaKey) {
-      e.preventDefault();
+  const handleKeys = (event: React.KeyboardEvent<HTMLTextAreaElement>): void => {
+    if (event.key === 'Escape') triggerClose();
+    if (event.key === 'Enter' && event.metaKey) {
+      event.preventDefault();
       btnRef.current?.click();
     }
-  }
+  };
 
   return (
     <form
@@ -290,7 +318,7 @@ function InputForm({ ref, onSubmit, onSuccess, isLoading, placeholder }: InputFo
                 type="submit"
                 ref={btnRef}
                 disabled={!message.trim() || isLoading}
-                className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#05df72] p-2 p-2 text-xs font-medium text-black transition-colors hover:bg-[#04c566] disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-brand p-2 text-xs font-medium text-black transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <KeyHint>Enter</KeyHint>
               </button>
@@ -301,7 +329,7 @@ function InputForm({ ref, onSubmit, onSuccess, isLoading, placeholder }: InputFo
               name="message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="h-full w-full resize-none scroll-py-2 rounded-lg bg-[var(--bg-surface)] p-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none focus:ring-1 focus:ring-[#05df72]/50"
+              className="h-full w-full resize-none scroll-py-2 rounded-lg bg-[var(--bg-surface)] p-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none focus:ring-1 focus:ring-brand/50"
               required={true}
               onKeyDown={handleKeys}
               spellCheck={false}
@@ -334,19 +362,15 @@ function InputForm({ ref, onSubmit, onSuccess, isLoading, placeholder }: InputFo
       </AnimatePresence>
     </form>
   );
-}
+};
 
-function KeyHint({ children, className }: { children: string; className?: string }) {
-  return (
-    <kbd
-      className={cx(
-        'flex h-5 w-fit items-center justify-center rounded-sm border border-black/20 p-2 font-sans text-[10px]',
-        className,
-      )}
-    >
-      {children}
-    </kbd>
-  );
-}
-
-export default MorphPanel;
+const KeyHint = ({ children, className }: { children: string; className?: string }) => (
+  <kbd
+    className={cx(
+      'flex h-5 w-fit items-center justify-center rounded-sm border border-black/20 p-2 font-sans text-[10px]',
+      className,
+    )}
+  >
+    {children}
+  </kbd>
+);

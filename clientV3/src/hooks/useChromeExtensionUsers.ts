@@ -1,62 +1,109 @@
-import { useEffect, useState } from 'react';
+import { Effect, Schema } from 'effect';
 import { API_BASE_URL } from '@/utils/apiBaseUrl';
+import { useEffectQuery } from './useEffectQuery.ts';
 
 /** Map of Chrome Web Store extension id → live user count. */
 export type ChromeExtensionUsersMap = Record<string, number>;
 
-type ServerResponse = {
-  success: boolean;
-  id: string;
-  users: number;
+type UseChromeExtensionUsersResult = {
+  users: ChromeExtensionUsersMap;
+  isLoading: boolean;
+  error: Error | null;
+};
+
+const ChromeExtensionUsersResponseSchema = Schema.Struct({
+  success: Schema.Boolean,
+  id: Schema.String,
+  users: Schema.Number,
+});
+
+class ChromeExtensionUsersError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ChromeExtensionUsersError';
+  }
+}
+
+/**
+ * Fetches a single Chrome Web Store user count.
+ *
+ * @param id - Chrome extension id.
+ * @returns Extension id and live user count when the server response is successful.
+ * @example
+ * fetchChromeExtensionUserCount('abcdefghijklmnopabcdefghijklmnop')
+ */
+const fetchChromeExtensionUserCount = (
+  id: string,
+): Effect.Effect<[string, number] | null, ChromeExtensionUsersError, never> =>
+  Effect.tryPromise({
+    try: async () => {
+      const response = await fetch(`${API_BASE_URL}/api/chrome-extension/${id}/users`);
+
+      if (!response.ok) {
+        throw new ChromeExtensionUsersError(`Chrome user count request failed for ${id}`);
+      }
+
+      const data = Schema.decodeUnknownSync(ChromeExtensionUsersResponseSchema)(
+        await response.json(),
+      );
+
+      if (!data.success) return null;
+
+      const entry: [string, number] = [id, data.users];
+      return entry;
+    },
+    catch: (error) => {
+      if (error instanceof ChromeExtensionUsersError) return error;
+
+      return new ChromeExtensionUsersError(
+        error instanceof Error ? error.message : 'Chrome user count request failed',
+      );
+    },
+  });
+
+/**
+ * Converts successful extension count entries into a lookup map.
+ *
+ * @param entries - Extension count entries from the API.
+ * @returns Extension id keyed user-count map.
+ * @example
+ * toChromeExtensionUsersMap([['abc', 12]]) // { abc: 12 }
+ */
+const toChromeExtensionUsersMap = (
+  entries: ReadonlyArray<[string, number] | null>,
+): ChromeExtensionUsersMap => {
+  const users: ChromeExtensionUsersMap = {};
+
+  for (const entry of entries) {
+    if (entry === null) continue;
+
+    const [id, userCount] = entry;
+    users[id] = userCount;
+  }
+
+  return users;
 };
 
 /**
- * Fetches the public Chrome Web Store user count for each extension id.
- * Failures are skipped silently — the badge just won't render for that id.
- * One in-flight request per id; runs once per `ids` set change.
+ * Fetches public Chrome Web Store user counts through the shared query path.
+ *
+ * @param ids - Chrome extension ids to fetch.
+ * @returns Cached user counts plus query state.
+ * @example
+ * useChromeExtensionUsers(['abcdefghijklmnopabcdefghijklmnop'])
  */
-export const useChromeExtensionUsers = (ids: readonly string[]): ChromeExtensionUsersMap => {
-  const key = ids.join(',');
-  const [users, setUsers] = useState<ChromeExtensionUsersMap>({});
+export const useChromeExtensionUsers = (ids: readonly string[]): UseChromeExtensionUsersResult => {
+  const query = useEffectQuery({
+    enabled: ids.length > 0,
+    queryKey: ['chrome-extension-users', ids.join(',')],
+    program: Effect.all(ids.map(fetchChromeExtensionUserCount), {
+      concurrency: 'unbounded',
+    }).pipe(Effect.map(toChromeExtensionUsersMap)),
+  });
 
-  useEffect(() => {
-    if (ids.length === 0) {
-      return;
-    }
-    const controller = new AbortController();
-
-    Promise.all(
-      ids.map(async (id) => {
-        try {
-          const response = await fetch(`${API_BASE_URL}/api/chrome-extension/${id}/users`, {
-            signal: controller.signal,
-          });
-          if (!response.ok) {
-            return null;
-          }
-          const data = (await response.json()) as ServerResponse;
-          return data.success ? ([id, data.users] as const) : null;
-        } catch {
-          return null;
-        }
-      }),
-    ).then((entries) => {
-      const next: ChromeExtensionUsersMap = {};
-      for (const entry of entries) {
-        if (entry) {
-          next[entry[0]] = entry[1];
-        }
-      }
-      if (Object.keys(next).length > 0) {
-        setUsers(next);
-      }
-    });
-
-    return () => controller.abort();
-    // `key` already encodes the full id list; depending on `ids` directly
-    // would re-run on every render due to new array identity.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
-
-  return users;
+  return {
+    users: query.data ? query.data : {},
+    isLoading: query.isLoading,
+    error: query.error,
+  };
 };

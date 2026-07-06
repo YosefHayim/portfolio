@@ -208,7 +208,7 @@ export const portfolioKnowledge = {
   ],
 };
 
-export function createPortfolioSystemPromptBase() {
+export const createPortfolioSystemPromptBase = () => {
   const experience = portfolioKnowledge.experience
     .map(
       (item) =>
@@ -263,7 +263,7 @@ ${CONTACT_EMAIL_MARKER_EXAMPLE}
 - Keep responses concise (2-3 paragraphs max)
 - Use markdown for readability
 - Redirect salary/availability questions to direct contact`;
-}
+};
 
 export const portfolioOfflineResponses = {
   skills: `Joseph's core technical skills include:

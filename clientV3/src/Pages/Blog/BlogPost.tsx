@@ -1,17 +1,51 @@
-import { format } from 'date-fns';
 import { ArrowLeft, Clock } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
 import { BlogContent } from '@/Components/Blog/BlogContent';
 import { BlogCover } from '@/Components/Blog/BlogCover';
 import { SEO } from '@/Components/SEO/SEO';
 import { blogPosts, getCategoryConfig, getPostBySlug } from '@/data/blog';
+import { useLocale } from '@/i18n/localized';
+import { cn } from '@/lib/utils';
 
 const SITE_URL = 'https://josephsabag.dev';
 
+/**
+ * Formats a full blog publish date for the active UI language.
+ *
+ * @param isoDate - ISO date string from the blog post.
+ * @param language - Normalized app language.
+ * @returns Locale-aware long publish date.
+ * @example
+ * formatArticleDate('2026-07-06', 'he')
+ */
+const formatArticleDate = (isoDate: string, language: string): string =>
+  new Date(isoDate).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
+/**
+ * Builds the canonical not-found URL for a missing blog route.
+ *
+ * @param slug - Optional route slug from React Router params.
+ * @returns Blog detail path used for noindex metadata.
+ * @example
+ * postNotFoundUrl('missing-post') // '/blog/missing-post'
+ */
+const postNotFoundUrl = (slug: string | undefined): string => {
+  if (slug === undefined) return '/blog/';
+
+  return `/blog/${slug}`;
+};
+
 export const BlogPost = () => {
+  const { t } = useTranslation();
   const { slug } = useParams();
+  const { language, localize } = useLocale();
   const post = slug ? getPostBySlug(slug) : undefined;
 
   useEffect(() => {
@@ -31,18 +65,16 @@ export const BlogPost = () => {
   if (!post) {
     return (
       <>
-        <SEO noindex={true} title="Post not found" url={`/blog/${slug ?? ''}`} />
+        <SEO noindex={true} title={t('seo.postNotFoundTitle')} url={postNotFoundUrl(slug)} />
         <AnimatedPage className="mx-auto flex w-full max-w-3xl flex-col items-start gap-4 px-2 py-16">
-          <h1 className="text-2xl font-semibold tracking-tight">That post doesn't exist</h1>
-          <p className="text-sm text-[var(--text-secondary)]">
-            The link may be old or mistyped. Everything I've written is one click away.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">{t('blog.notFoundTitle')}</h1>
+          <p className="text-sm text-[var(--text-secondary)]">{t('blog.notFoundBody')}</p>
           <Link
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#7ff7af] hover:underline"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-readable hover:underline"
             to="/blog"
           >
             <ArrowLeft size={14} />
-            All writing
+            {t('blog.allWriting')}
           </Link>
         </AnimatedPage>
       </>
@@ -50,53 +82,59 @@ export const BlogPost = () => {
   }
 
   const category = getCategoryConfig(post.category);
+  const title = localize(post.title);
+  const excerpt = localize(post.excerpt);
+  const content = localize(post.content);
+  const categoryLabel = t(`categories.${post.category}`);
 
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.excerpt,
+    headline: title,
+    description: excerpt,
     image: `${SITE_URL}${post.coverImage}`,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt ?? post.publishedAt,
     author: { '@type': 'Person', name: post.author.name, url: SITE_URL },
     keywords: post.tags.join(', '),
-    articleSection: category.label,
+    articleSection: categoryLabel,
   };
 
   return (
     <>
       <SEO
         author={post.author.name}
-        description={post.excerpt}
+        description={excerpt}
         image={post.coverImage}
         keywords={post.tags}
         modifiedTime={post.updatedAt}
         publishedTime={post.publishedAt}
         structuredData={structuredData}
-        title={post.title}
+        title={title}
         type="article"
         url={`/blog/${post.slug}`}
       />
 
       <AnimatedPage className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-1 py-3 sm:px-2 sm:py-4 md:gap-7 md:px-3 md:py-6">
         <Link
-          className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)] transition hover:text-[#7ff7af]"
+          className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)] transition hover:text-brand-readable"
           to="/blog"
         >
           <ArrowLeft size={14} />
-          All writing
+          {t('blog.allWriting')}
         </Link>
 
         <header className="flex flex-col gap-3">
           <span
-            className="w-fit rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-medium"
-            style={{ color: category.color }}
+            className={cn(
+              'w-fit rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-[11px] font-medium',
+              category.accentClassName,
+            )}
           >
-            {category.label}
+            {categoryLabel}
           </span>
           <h1 className="text-3xl leading-tight font-semibold tracking-tight text-balance md:text-4xl">
-            {post.title}
+            {title}
           </h1>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[var(--text-muted)]">
             <span className="inline-flex items-center gap-2">
@@ -107,12 +145,10 @@ export const BlogPost = () => {
               />
               {post.author.name}
             </span>
-            <time dateTime={post.publishedAt}>
-              {format(new Date(post.publishedAt), 'MMMM d, yyyy')}
-            </time>
+            <time dateTime={post.publishedAt}>{formatArticleDate(post.publishedAt, language)}</time>
             <span className="inline-flex items-center gap-1">
               <Clock size={12} />
-              {post.readingTime} min read
+              {t('blog.minutesRead', { count: post.readingTime })}
             </span>
           </div>
         </header>
@@ -123,7 +159,7 @@ export const BlogPost = () => {
           priority={true}
         />
 
-        <BlogContent content={post.content} />
+        <BlogContent content={content} />
 
         <div className="flex flex-wrap gap-2 border-t border-[var(--border-subtle)] pt-5">
           {post.tags.map((tag) => (
@@ -138,22 +174,24 @@ export const BlogPost = () => {
 
         {readNext.length > 0 && (
           <section className="flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-6">
-            <h2 className="text-lg font-semibold tracking-tight">Read next</h2>
+            <h2 className="text-lg font-semibold tracking-tight">{t('blog.readNext')}</h2>
             <div className="grid gap-3 sm:grid-cols-3">
               {readNext.map((next) => (
                 <Link
-                  className="group rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 transition hover:border-[#05df72]/40 hover:bg-[var(--bg-card-hover)]"
+                  className="group rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 transition hover:border-brand/40 hover:bg-[var(--bg-card-hover)]"
                   key={next.id}
                   to={`/blog/${next.slug}`}
                 >
                   <span
-                    className="text-xs font-medium"
-                    style={{ color: getCategoryConfig(next.category).color }}
+                    className={cn(
+                      'text-xs font-medium',
+                      getCategoryConfig(next.category).accentClassName,
+                    )}
                   >
-                    {getCategoryConfig(next.category).label}
+                    {t(`categories.${next.category}`)}
                   </span>
-                  <h3 className="mt-1 line-clamp-2 text-sm leading-snug font-medium transition group-hover:text-[#7ff7af]">
-                    {next.title}
+                  <h3 className="mt-1 line-clamp-2 text-sm leading-snug font-medium transition group-hover:text-brand-readable">
+                    {localize(next.title)}
                   </h3>
                 </Link>
               ))}
@@ -164,5 +202,3 @@ export const BlogPost = () => {
     </>
   );
 };
-
-export default BlogPost;

@@ -1,4 +1,11 @@
-import type { GitHubProjectPreview, GitHubStats, SiteConfig, VisitorStats } from './types.ts';
+import { Schema } from 'effect';
+import type {
+  GitHubProjectPreview,
+  GitHubStats,
+  ProjectStatus,
+  SiteConfig,
+  VisitorStats,
+} from './types.ts';
 
 const STORAGE_KEYS = {
   GITHUB_STATS: 'portfolio_github_stats',
@@ -6,7 +13,7 @@ const STORAGE_KEYS = {
   VISITOR_STATS: 'portfolio_visitor_stats',
   SITE_CONFIG: 'portfolio_site_config',
   CACHE_EXPIRY: 'portfolio_cache_expiry',
-} as const;
+};
 
 const HOURS_PER_DAY = 24;
 const MINUTES_PER_HOUR = 60;
@@ -15,14 +22,91 @@ const MS_PER_SECOND = 1000;
 const ONE_DAY_MS = HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND;
 const CACHE_DURATION_MS = ONE_DAY_MS;
 
-const getItem = <T>(key: string): T | null => {
+const ProjectStatusSchema = Schema.Literal('live', 'development', 'completed');
+const ProjectStatusValueSchema = Schema.Union(
+  ProjectStatusSchema,
+  Schema.Array(ProjectStatusSchema),
+);
+
+const GitHubStatsSchema: Schema.Schema<GitHubStats> = Schema.Struct({
+  totalCommits: Schema.Number,
+  totalRepos: Schema.Number,
+  totalStars: Schema.Number,
+  lastUpdated: Schema.String,
+});
+
+const GitHubProjectPreviewSchema = Schema.Struct({
+  id: Schema.String,
+  name: Schema.String,
+  description: Schema.String,
+  techStack: Schema.Array(Schema.String),
+  repoUrl: Schema.String,
+  deployedUrl: Schema.String,
+  status: ProjectStatusValueSchema,
+  stars: Schema.Number,
+  updatedAt: Schema.String,
+});
+
+const GitHubProjectPreviewsSchema = Schema.Array(GitHubProjectPreviewSchema);
+
+type DecodedGitHubProjectPreview = {
+  id: string;
+  name: string;
+  description: string;
+  techStack: readonly string[];
+  repoUrl: string;
+  deployedUrl: string;
+  status: ProjectStatus | readonly ProjectStatus[];
+  stars: number;
+  updatedAt: string;
+};
+
+const toProjectStatus = (
+  status: ProjectStatus | readonly ProjectStatus[],
+): ProjectStatus | ProjectStatus[] => {
+  if (typeof status === 'string') {
+    return status;
+  }
+
+  return [...status];
+};
+
+const toGitHubProjectPreview = (project: DecodedGitHubProjectPreview): GitHubProjectPreview => ({
+  ...project,
+  techStack: [...project.techStack],
+  status: toProjectStatus(project.status),
+});
+
+const VisitorStatsSchema: Schema.Schema<VisitorStats> = Schema.Struct({
+  totalVisits: Schema.Number,
+  uniqueVisitors: Schema.Number,
+  returningVisitors: Schema.Number,
+  lastUpdated: Schema.String,
+});
+
+const SiteConfigSchema: Schema.Schema<SiteConfig> = Schema.Struct({
+  ownerName: Schema.String,
+  ownerTitle: Schema.String,
+  ownerBio: Schema.String,
+  contactEmail: Schema.String,
+  whatsappNumber: Schema.String,
+  githubUsername: Schema.String,
+  linkedinUrl: Schema.String,
+  resumeUrl: Schema.String,
+});
+
+const decodeLocalItem = <T, TEncoded>(
+  key: string,
+  schema: Schema.Schema<T, TEncoded, never>,
+): T | null => {
   try {
     const item = localStorage.getItem(key);
     if (item) {
-      return JSON.parse(item) as T;
+      return Schema.decodeUnknownSync(schema)(JSON.parse(item));
     }
     return null;
-  } catch {
+  } catch (error) {
+    console.warn('localDb.cacheReadFailed', { key, error });
     return null;
   }
 };
@@ -30,8 +114,8 @@ const getItem = <T>(key: string): T | null => {
 const setItem = <T>(key: string, value: T): void => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // ignore: cache write is best-effort (quota / disabled storage)
+  } catch (error) {
+    console.warn('localDb.cacheWriteFailed', { key, error });
   }
 };
 
@@ -56,7 +140,7 @@ export const localDb = {
       if (!isCacheValid(STORAGE_KEYS.GITHUB_STATS)) {
         return null;
       }
-      return getItem<GitHubStats>(STORAGE_KEYS.GITHUB_STATS);
+      return decodeLocalItem(STORAGE_KEYS.GITHUB_STATS, GitHubStatsSchema);
     },
     set: (stats: GitHubStats): void => {
       setItem(STORAGE_KEYS.GITHUB_STATS, stats);
@@ -73,7 +157,8 @@ export const localDb = {
       if (!isCacheValid(STORAGE_KEYS.GITHUB_PROJECTS)) {
         return null;
       }
-      return getItem<GitHubProjectPreview[]>(STORAGE_KEYS.GITHUB_PROJECTS);
+      const projects = decodeLocalItem(STORAGE_KEYS.GITHUB_PROJECTS, GitHubProjectPreviewsSchema);
+      return projects === null ? null : projects.map(toGitHubProjectPreview);
     },
     set: (projects: GitHubProjectPreview[]): void => {
       setItem(STORAGE_KEYS.GITHUB_PROJECTS, projects);
@@ -86,25 +171,29 @@ export const localDb = {
   },
 
   visitorStats: {
-    get: (): VisitorStats | null => getItem<VisitorStats>(STORAGE_KEYS.VISITOR_STATS),
+    get: (): VisitorStats | null => decodeLocalItem(STORAGE_KEYS.VISITOR_STATS, VisitorStatsSchema),
     set: (stats: VisitorStats): void => {
       setItem(STORAGE_KEYS.VISITOR_STATS, stats);
     },
     incrementVisit: (): void => {
-      const current = localDb.visitorStats.get() || {
-        totalVisits: 0,
-        uniqueVisitors: 0,
-        returningVisitors: 0,
-        lastUpdated: new Date().toISOString(),
-      };
-      current.totalVisits += 1;
-      current.lastUpdated = new Date().toISOString();
-      localDb.visitorStats.set(current);
+      const current = localDb.visitorStats.get();
+      const nextStats =
+        current === null
+          ? {
+              totalVisits: 0,
+              uniqueVisitors: 0,
+              returningVisitors: 0,
+              lastUpdated: new Date().toISOString(),
+            }
+          : current;
+      nextStats.totalVisits += 1;
+      nextStats.lastUpdated = new Date().toISOString();
+      localDb.visitorStats.set(nextStats);
     },
   },
 
   siteConfig: {
-    get: (): SiteConfig | null => getItem<SiteConfig>(STORAGE_KEYS.SITE_CONFIG),
+    get: (): SiteConfig | null => decodeLocalItem(STORAGE_KEYS.SITE_CONFIG, SiteConfigSchema),
     set: (config: SiteConfig): void => {
       setItem(STORAGE_KEYS.SITE_CONFIG, config);
     },

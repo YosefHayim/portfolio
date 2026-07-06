@@ -4,7 +4,10 @@ This is a single-context repo.
 
 ## Before Exploring
 
-Read `CONTEXT.md` at the repo root before using engineering skills that depend on domain language, especially `improve-codebase-architecture`, `diagnose`, `tdd`, `to-issues`, `to-prd`, and `zoom-out`.
+Read `CONTEXT.md` at the repo root before using engineering skills that depend on domain
+language, especially `improve-codebase-architecture`, `diagnose`, `tdd`, `to-issues`,
+`to-prd`, and `zoom-out`. Read `PROJECT.md` when the work touches purpose, audience, product
+positioning, publishing workflows, or portfolio content.
 
 If `docs/adr/` exists, read ADRs that touch the area being changed. If the directory does not exist, proceed silently.
 
@@ -13,6 +16,9 @@ If `docs/adr/` exists, read ADRs that touch the area being changed. If the direc
 ```text
 /
 ├── CONTEXT.md
+├── PROJECT.md
+├── LANGUAGE.md
+├── CODE-STYLE.md
 ├── docs/
 │   └── agents/
 ├── clientV3/   living app, served at /
@@ -21,12 +27,13 @@ If `docs/adr/` exists, read ADRs that touch the area being changed. If the direc
 ├── server/
 ├── worker/
 ├── shared/
-└── scripts/    build-all.sh → assembles dist/
+└── scripts/    buildAll.sh → assembles dist/
 ```
 
 ## Vocabulary
 
-Use the domain terms from `CONTEXT.md` when naming issues, PRDs, refactor proposals, hypotheses, and tests.
+Use the domain terms from `CONTEXT.md` and `LANGUAGE.md` when naming issues, PRDs, refactor
+proposals, hypotheses, and tests.
 
 If a needed concept is missing from `CONTEXT.md`, treat that as a signal for `grill-with-docs` or a focused docs update rather than inventing parallel vocabulary.
 

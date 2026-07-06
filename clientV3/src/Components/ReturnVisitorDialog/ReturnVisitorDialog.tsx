@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, X } from 'lucide-react'; // Changed icon to Lightbulb for creativity
+import { useTranslation } from 'react-i18next';
 import { FaWhatsapp } from 'react-icons/fa';
 import { Link } from 'react-router';
 import { Button } from '../ui/button.tsx';
@@ -9,7 +10,9 @@ type ReturnVisitorDialogProps = {
   onClose: () => void;
 };
 
-const ReturnVisitorDialog: React.FC<ReturnVisitorDialogProps> = ({ isOpen, onClose }) => {
+export const ReturnVisitorDialog = ({ isOpen, onClose }: ReturnVisitorDialogProps) => {
+  const { t } = useTranslation();
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -50,7 +53,7 @@ const ReturnVisitorDialog: React.FC<ReturnVisitorDialogProps> = ({ isOpen, onClo
                 <div className="relative flex flex-1 flex-col justify-center p-2 p-2 sm:p-2 sm:p-2">
                   {/* Close Button */}
                   <Button
-                    aria-label="Close dialog"
+                    aria-label={t('dialog.closeDialog')}
                     className="absolute top-2 right-2 h-8 w-8 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                     onClick={onClose}
                     size="icon"
@@ -66,7 +69,7 @@ const ReturnVisitorDialog: React.FC<ReturnVisitorDialogProps> = ({ isOpen, onClo
                     transition={{ delay: 0.1 }}
                   >
                     <h2 className="text-xl leading-tight font-bold tracking-tight text-[var(--text-primary)] sm:text-2xl">
-                      Hey, you're back! <span className="inline-block">👋</span>
+                      {t('dialog.title')} <span className="inline-block">👋</span>
                     </h2>
                   </motion.div>
 
@@ -76,12 +79,12 @@ const ReturnVisitorDialog: React.FC<ReturnVisitorDialogProps> = ({ isOpen, onClo
                     initial={{ opacity: 0, y: 10 }}
                     transition={{ delay: 0.2 }}
                   >
-                    If you're visiting twice, you're either{' '}
-                    <b className="text-[var(--text-primary)]">interested</b> or{' '}
-                    <b className="text-[var(--text-primary)]">hesitating</b>.
+                    {t('dialog.bodyLead')}{' '}
+                    <b className="text-[var(--text-primary)]">{t('dialog.interested')}</b>{' '}
+                    {t('dialog.or')}{' '}
+                    <b className="text-[var(--text-primary)]">{t('dialog.hesitating')}</b>.
                     <br className=" block" />
-                    Either way, let's have a quick chat. I might be exactly what you're looking for,
-                    and there's only one way to find out.
+                    {t('dialog.bodyRest')}
                   </motion.p>
 
                   {/* Buttons */}
@@ -92,13 +95,13 @@ const ReturnVisitorDialog: React.FC<ReturnVisitorDialogProps> = ({ isOpen, onClo
                     transition={{ delay: 0.3 }}
                   >
                     <Link
-                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[#05df72] p-2 p-2 font-semibold text-black transition-all hover:bg-[#04c566] hover:shadow-lg hover:shadow-green-500/20"
+                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-brand p-2 font-semibold text-black transition-all hover:bg-brand-hover hover:shadow-lg hover:shadow-green-500/20"
                       onClick={onClose}
                       target="_blank"
                       to="https://wa.me/546187549"
                     >
                       <FaWhatsapp size={18} />
-                      <span>Let's talk</span>
+                      <span>{t('dialog.letsTalk')}</span>
                       <ArrowRight
                         className="transition-transform group-hover:translate-x-0.5"
                         size={16}
@@ -110,7 +113,7 @@ const ReturnVisitorDialog: React.FC<ReturnVisitorDialogProps> = ({ isOpen, onClo
                       onClick={onClose}
                       type="button"
                     >
-                      Maybe later
+                      {t('dialog.maybeLater')}
                     </button>
                   </motion.div>
                 </div>
@@ -122,5 +125,3 @@ const ReturnVisitorDialog: React.FC<ReturnVisitorDialogProps> = ({ isOpen, onClo
     </AnimatePresence>
   );
 };
-
-export default ReturnVisitorDialog;

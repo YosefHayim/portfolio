@@ -1,0 +1,150 @@
+{
+  "language": {
+    "label": "שפה",
+    "en": "English",
+    "he": "עברית",
+    "switchTo": "החלף ל{{language}}"
+  },
+  "nav": {
+    "home": "בית",
+    "stack": "טכנולוגיות",
+    "experience": "ניסיון",
+    "projects": "פרויקטים",
+    "writing": "כתיבה",
+    "menu": "תפריט",
+    "openMenu": "פתח תפריט",
+    "closeMenu": "סגור תפריט",
+    "backToPortfolio": "חזרה לתיק העבודות",
+    "portfolioVersion": "גרסת התיק"
+  },
+  "version": {
+    "v1": "מהדורה ראשונה — כאן זה התחיל",
+    "v2": "מהדורה שנייה — הבנייה מחדש",
+    "v3": "הנוכחית — אתה כאן"
+  },
+  "hero": {
+    "repositories": "מאגרים",
+    "stars": "כוכבים",
+    "commits": "קומיטים",
+    "repositoriesTooltip": "סך המאגרים הציבוריים ב-GitHub",
+    "starsTooltip": "סך הכוכבים בכל המאגרים הציבוריים",
+    "commitsTooltip": "סך הקומיטים הציבוריים ב-GitHub",
+    "cv": "קורות חיים",
+    "email": "אימייל"
+  },
+  "social": {
+    "linkedin": "לינקדאין",
+    "github": "גיטהאב",
+    "whatsapp": "וואטסאפ",
+    "discord": "דיסקורד",
+    "contact": "יצירת קשר"
+  },
+  "sections": {
+    "techStack": "מחסנית טכנולוגית",
+    "experience": "ניסיון תעסוקתי",
+    "projects": "פרויקטים",
+    "featuredRepositories": "מאגרים נבחרים",
+    "latestWriting": "הכתיבה האחרונה",
+    "latestWritingDescription": "סיפורים אמיתיים מבניית דברים שמגיעים לייצור — בלי מילוי, בלי רשימות."
+  },
+  "tenure": {
+    "year_one": "שנה",
+    "year_two": "שנתיים",
+    "year_other": "{{count}} שנים",
+    "month_one": "חודש",
+    "month_two": "חודשיים",
+    "month_other": "{{count}} חודשים"
+  },
+  "projects": {
+    "live": "לייב",
+    "loadingRepositories": "טוען מאגרים מ-GitHub...",
+    "usingCachedFallback": "משתמש כרגע בנתונים שמורים כגיבוי.",
+    "retry": "נסה שוב",
+    "recently": "לאחרונה",
+    "updated": "עודכן {{date}}",
+    "readAllWriting": "קרא את כל הכתיבה ←"
+  },
+  "seo": {
+    "homeTitle": "תיק עבודות",
+    "homeDescription": "יוסף סבג, מהנדס תוכנה AI. סקירה מהירה למגייסים עם פרויקטים מרכזיים, מחסנית טכנולוגית ויצירת קשר ישירה.",
+    "writingTitle": "כתיבה",
+    "writingDescription": "סיפורים אמיתיים מבניית דברים שמגיעים לייצור — ה-SaaS שנכשל, התיקונים ב-3 לפנות בוקר, ומה שבאמת עבד. כתיבה מאת יוסף סבג.",
+    "postNotFoundTitle": "הפוסט לא נמצא"
+  },
+  "blog": {
+    "title": "כתיבה",
+    "intro": "בלי מילוי, בלי רשימות. סיפורים אמיתיים מבניית דברים שבאמת מגיעים לייצור — הכישלונות, התיקונים ב-3 לפנות בוקר, והעקשנות שביניהם.",
+    "backToPortfolio": "חזרה לתיק העבודות",
+    "all": "הכל",
+    "minutes": "{{count}} דק׳",
+    "minutesRead": "{{count}} דק׳ קריאה",
+    "readNext": "המשך לקרוא",
+    "allWriting": "כל הכתיבה",
+    "notFoundTitle": "הפוסט הזה לא קיים",
+    "notFoundBody": "ייתכן שהקישור ישן או שגוי. כל מה שכתבתי נמצא במרחק קליק אחד."
+  },
+  "categories": {
+    "engineering": "הנדסה",
+    "career": "קריירה",
+    "tutorials": "מדריכים",
+    "thoughts": "מחשבות",
+    "projects": "פרויקטים"
+  },
+  "dialog": {
+    "title": "היי, חזרת!",
+    "bodyLead": "אם אתה מבקר פעם שנייה, אתה או",
+    "interested": "מתעניין",
+    "or": "או",
+    "hesitating": "מתלבט",
+    "bodyRest": "כך או כך, בוא נדבר רגע. אולי אני בדיוק מה שאתה מחפש, ויש רק דרך אחת לגלות.",
+    "letsTalk": "בוא נדבר",
+    "maybeLater": "אולי אחר כך",
+    "closeDialog": "סגור חלון"
+  },
+  "chat": {
+    "askAi": "שאל AI",
+    "collapsedTooltip": "צ׳אט עם העוזר החכם של יוסף",
+    "askAboutJoseph": "שאל על יוסף",
+    "aiPowered": "מופעל ב-AI",
+    "offline": "לא מקוון",
+    "disableAutoSpeak": "בטל הקראה אוטומטית",
+    "enableAutoSpeak": "הפעל הקראה אוטומטית לתשובות קוליות",
+    "closeChat": "סגור צ׳אט",
+    "welcome": "היי! אני העוזר החכם של יוסף. שאל אותי על הכישורים, הפרויקטים או הניסיון שלו. אפשר גם בקול!",
+    "askAnything": "שאל כל דבר...",
+    "recording": "מקליט...",
+    "transcribing": "מתמלל...",
+    "stopRecording": "עצור הקלטה",
+    "recordVoiceMessage": "הקלט הודעה קולית",
+    "processingVoice": "מעבד קול...",
+    "recordingTapToStop": "מקליט... הקש על המיקרופון לעצירה",
+    "sendMessage": "שלח הודעה",
+    "playLastResponse": "נגן תשובה אחרונה",
+    "listenToLastReply": "האזן לתשובה האחרונה של ה-AI",
+    "thinking": "ה-AI חושב...",
+    "emailSending": "שולח אימייל...",
+    "emailSent": "האימייל נשלח בהצלחה",
+    "emailFailed": "שליחת האימייל נכשלה",
+    "paused": "מושהה",
+    "speaking": "מדבר...",
+    "recordingClickToStop": "מקליט... לחץ לעצירה",
+    "clickToSpeak": "לחץ כדי לדבר",
+    "processingAudio": "מעבד אודיו...",
+    "responseReady": "תשובת AI מוכנה",
+    "viewResponse": "הצג",
+    "quickActions": {
+      "technicalSkills": "כישורים טכניים",
+      "recentProjects": "פרויקטים אחרונים",
+      "workExperience": "ניסיון תעסוקתי",
+      "whyHire": "למה להעסיק את יוסף?",
+      "viewResume": "צפה בקורות חיים"
+    },
+    "quickActionTooltips": {
+      "technicalSkills": "מה הכישורים וההתמחויות הטכניות המרכזיות של יוסף?",
+      "recentProjects": "ספר לי על הפרויקטים האחרונים והמרשימים ביותר של יוסף.",
+      "workExperience": "מה הניסיון המקצועי של יוסף?",
+      "whyHire": "מה הופך את יוסף למועמד טוב לתפקיד פיתוח תוכנה?",
+      "viewResume": "פתח את קורות החיים של יוסף"
+    }
+  }
+}

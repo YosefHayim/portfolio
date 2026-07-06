@@ -1,6 +1,6 @@
-# ADR 0001 — Adopt Effect at the I/O and validation edges
+# ADR 0001 — Adopt Effect for effectful code
 
-**Status:** Accepted · 2026-07-04
+**Status:** Accepted · 2026-07-04; amended by ADR 0005 · 2026-07-06
 
 ## Context
 
@@ -13,19 +13,23 @@ duplicated fetch scaffolding (`useGitHubStats` ≈ `useGitHubProjects`), and str
 not isolated bugs.
 
 We evaluated: (a) keep hand-rolled + `zod` + `node:test`; (b) adopt Effect for typed errors,
-Schema validation, services/Layers, and structured logging **at the edges only**.
+Schema validation, services/Layers, structured logging, and tests across effectful code while
+keeping React component-local UI state idiomatic.
 
 ## Decision
 
-Adopt **Effect** (`effect`) as the backbone of the boundary layer:
+Adopt **Effect** (`effect`) as the backbone for effectful code:
 
 - **Typed errors** through one unified wrapper — never swallow; log or surface.
 - **Effect Schema** decodes every boundary, replacing the hand-rolled guards **and** `zod`.
 - **Pure core, I/O behind services + Layers** — OpenAI / GitHub / email are Effect services;
   the core stays pure and testable via swap-in test Layers.
 - **Structured, keyed logs** via Effect's logger, replacing `winston`.
-- **Effect at the edges only** — loaders, services, validation. React components stay
-  idiomatic (`useState`, JSX); a single `useEffectQuery(program)` is the one data hook.
+- **React stays idiomatic for local UI state** — props, events, `useState`, and JSX remain
+  plain React. Effect owns loaders, services, validation, config, provider access, logging,
+  retries/timeouts, and typed errors.
+- **Client server-state** — Effect loaders run through a unified TanStack Query bridge hook,
+  not duplicated manual fetch state.
 - **Tests:** `vitest` + `@effect/vitest` (`it.effect` + test Layers), colocated, core-first.
 
 Scope note: **clientV3** (the living app) adopts this; **clientV1 / clientV2** are frozen

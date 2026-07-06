@@ -6,6 +6,46 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import { compression } from 'vite-plugin-compression2';
 
+// Raw row example: "app.js" should match the compressed asset extension regex.
+const COMPRESSED_ASSET_PATTERN = /\.(js|css|html|svg|json)$/;
+// Raw row example: "node_modules/react/index.js" should match the React chunk regex.
+const REACT_PACKAGE_PATTERN = /node_modules\/react\//;
+
+const manualChunks = (id: string): string | undefined => {
+  if (!id.includes('node_modules')) {
+    return;
+  }
+
+  if (id.includes('@radix-ui')) {
+    return 'vendor-radix';
+  }
+
+  if (id.includes('lucide-react') || id.includes('react-icons')) {
+    return 'vendor-icons';
+  }
+
+  if (id.includes('framer-motion') || id.includes('node_modules/motion')) {
+    return 'vendor-motion';
+  }
+
+  if (
+    id.includes('clsx') ||
+    id.includes('tailwind-merge') ||
+    id.includes('class-variance-authority') ||
+    id.includes('date-fns')
+  ) {
+    return 'vendor-utils';
+  }
+
+  if (
+    id.includes('node_modules/react-dom') ||
+    id.includes('node_modules/react-router') ||
+    REACT_PACKAGE_PATTERN.test(id)
+  ) {
+    return 'vendor-react';
+  }
+};
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -15,7 +55,7 @@ export default defineConfig(({ mode }) => ({
     // Gzip compression for production
     compression({
       algorithms: ['gzip'],
-      include: /\.(js|css|html|svg|json)$/,
+      include: COMPRESSED_ASSET_PATTERN,
       threshold: 1024, // Only compress files > 1KB
     }),
     // Bundle analyzer (only in analyze mode)
@@ -38,29 +78,7 @@ export default defineConfig(({ mode }) => ({
     // Chunk splitting for better caching
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return;
-
-          if (id.includes('@radix-ui')) return 'vendor-radix';
-          if (id.includes('lucide-react') || id.includes('react-icons')) return 'vendor-icons';
-          if (id.includes('framer-motion') || id.includes('node_modules/motion'))
-            return 'vendor-motion';
-          if (
-            id.includes('clsx') ||
-            id.includes('tailwind-merge') ||
-            id.includes('class-variance-authority') ||
-            id.includes('date-fns')
-          )
-            return 'vendor-utils';
-
-          if (
-            id.includes('node_modules/react-dom') ||
-            id.includes('node_modules/react-router') ||
-            id.match(/node_modules\/react\//)
-          ) {
-            return 'vendor-react';
-          }
-        },
+        manualChunks,
         // Optimize chunk file names for caching
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
@@ -78,15 +96,7 @@ export default defineConfig(({ mode }) => ({
   },
   // Optimize dependencies
   optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react-router',
-      'react-router-dom',
-      'framer-motion',
-      'clsx',
-      'tailwind-merge',
-    ],
+    include: ['react', 'react-dom', 'react-router', 'framer-motion', 'clsx', 'tailwind-merge'],
   },
   // Enable CSS code splitting
   css: {

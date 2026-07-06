@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Effect } from 'effect';
+import { fallbackProjectPreviews } from '@/data/githubPortfolio';
 import { loadGitHubProjectSnapshot } from '@/data/githubPortfolioSnapshot';
 import type { GitHubProjectPreview } from '@/db/types';
+import { useEffectQuery } from './useEffectQuery.ts';
 
 type UseGitHubProjectsResult = {
   projects: GitHubProjectPreview[];
@@ -10,32 +12,26 @@ type UseGitHubProjectsResult = {
 };
 
 export const useGitHubProjects = (username: string): UseGitHubProjectsResult => {
-  const [projects, setProjects] = useState<GitHubProjectPreview[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const normalizedUsername = username.trim();
+  const query = useEffectQuery({
+    queryKey: ['github-projects', normalizedUsername],
+    program: Effect.promise(() =>
+      loadGitHubProjectSnapshot({
+        username: normalizedUsername,
+      }),
+    ),
+  });
 
-  const normalizedUsername = useMemo(() => username.trim(), [username]);
-
-  const fetchProjects = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-
-    const snapshot = await loadGitHubProjectSnapshot({
-      username: normalizedUsername,
-    });
-    setProjects(snapshot.value);
-    setError(snapshot.error);
-    setIsLoading(false);
-  }, [normalizedUsername]);
-
-  useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects, normalizedUsername]);
+  const snapshot = query.data;
+  const projects = snapshot ? snapshot.value : fallbackProjectPreviews;
+  const error = snapshot ? snapshot.error : null;
 
   return {
     projects,
-    isLoading,
+    isLoading: query.isLoading,
     error,
-    refetch: fetchProjects,
+    refetch: async () => {
+      await query.refetch();
+    },
   };
 };

@@ -42,7 +42,15 @@ export type ChatSessionAdapters = {
   speakWithBrowserTTS: (text: string) => void;
 };
 
-export async function runChatSessionMessage({
+/**
+ * Runs one chat message through offline or streaming assistant mode.
+ *
+ * @param input - Message content, state snapshot, actions, and external adapters.
+ * @returns Promise that resolves after state updates and side effects complete.
+ * @example
+ * await runChatSessionMessage({ content, snapshot, actions, adapters })
+ */
+export const runChatSessionMessage = async ({
   content,
   isVoiceMessage = false,
   snapshot,
@@ -54,7 +62,7 @@ export async function runChatSessionMessage({
   snapshot: ChatSessionSnapshot;
   actions: ChatSessionActions;
   adapters: ChatSessionAdapters;
-}): Promise<void> {
+}): Promise<void> => {
   const trimmedContent = content.trim();
   if (!trimmedContent) {
     return;
@@ -128,9 +136,17 @@ export async function runChatSessionMessage({
   } finally {
     actions.setIsStreaming(false);
   }
-}
+};
 
-export async function runVoiceChatInput({
+/**
+ * Toggles voice recording or submits the stopped recording to transcription.
+ *
+ * @param input - Voice recorder state, callbacks, and UI state setters.
+ * @returns Promise that resolves after recording/transcription work completes.
+ * @example
+ * await runVoiceChatInput({ isRecording, startRecording, stopRecording, stopSpeech, transcribeAudio, sendMessage, setError, setIsTranscribing })
+ */
+export const runVoiceChatInput = async ({
   isRecording,
   startRecording,
   stopRecording,
@@ -148,7 +164,7 @@ export async function runVoiceChatInput({
   sendMessage: (content: string, isVoiceMessage: boolean) => Promise<void>;
   setError: (error: string | null) => void;
   setIsTranscribing: (isTranscribing: boolean) => void;
-}): Promise<void> {
+}): Promise<void> => {
   if (!isRecording) {
     stopSpeech();
     await startRecording();
@@ -171,15 +187,23 @@ export async function runVoiceChatInput({
   } finally {
     setIsTranscribing(false);
   }
-}
+};
 
-export function speakLastAssistantMessage({
+/**
+ * Speaks the newest assistant message with browser speech synthesis.
+ *
+ * @param input - Messages and speech callback.
+ * @returns Nothing.
+ * @example
+ * speakLastAssistantMessage({ messages, speak })
+ */
+export const speakLastAssistantMessage = ({
   messages,
   speak,
 }: {
   messages: readonly Message[];
   speak: (content: string) => void;
-}): void {
+}): void => {
   const lastAssistantMessage = [...messages]
     .reverse()
     .find((message) => message.role === 'assistant' && message.content);
@@ -187,17 +211,30 @@ export function speakLastAssistantMessage({
   if (lastAssistantMessage) {
     speak(lastAssistantMessage.content);
   }
-}
+};
 
-export function notifyHiddenChatResponse({
+/**
+ * Notifies the user when a response arrives while the chat panel is closed.
+ *
+ * @param input - Panel state, response, and notifier callback.
+ * @returns Nothing.
+ * @example
+ * notifyHiddenChatResponse({ isOpen: false, openPanel, response, notify })
+ */
+export const notifyHiddenChatResponse = ({
   isOpen,
   openPanel,
   response,
   notify,
+  labels,
 }: {
   isOpen: boolean;
   openPanel: () => void;
   response: string;
+  labels: {
+    ready: string;
+    view: string;
+  };
   notify: (
     message: string,
     options: {
@@ -206,17 +243,17 @@ export function notifyHiddenChatResponse({
       duration: number;
     },
   ) => void;
-}): void {
+}): void => {
   if (isOpen || !response) {
     return;
   }
 
-  notify('AI Response Ready', {
+  notify(labels.ready, {
     description: createResponsePreview(response),
     action: {
-      label: 'View',
+      label: labels.view,
       onClick: openPanel,
     },
     duration: 5000,
   });
-}
+};

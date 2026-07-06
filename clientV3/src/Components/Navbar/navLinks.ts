@@ -1,13 +1,13 @@
 export type SectionLink = {
   id: string;
-  label: string;
 };
 
-// Anchor targets that exist as section ids in OnePagePortfolio.
+// Anchor targets that exist as section ids in OnePagePortfolio. Labels are
+// resolved at render time via i18n key `nav.<id>`.
 export const SECTION_LINKS: SectionLink[] = [
-  { id: 'home', label: 'Home' },
-  { id: 'stack', label: 'Stack' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'writing', label: 'Writing' },
+  { id: 'home' },
+  { id: 'stack' },
+  { id: 'experience' },
+  { id: 'projects' },
+  { id: 'writing' },
 ];

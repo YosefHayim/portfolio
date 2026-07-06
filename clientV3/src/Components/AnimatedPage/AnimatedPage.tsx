@@ -45,7 +45,7 @@ const reducedMotionVariants = {
   exit: { opacity: 0, transition: { duration: REDUCED_EXIT } },
 };
 
-export function AnimatedPage({ children, className = '' }: AnimatedPageProps) {
+export const AnimatedPage = ({ children, className = '' }: AnimatedPageProps) => {
   const prefersReducedMotion = useReducedMotion();
   const variants = prefersReducedMotion ? reducedMotionVariants : pageVariants;
 
@@ -60,6 +60,4 @@ export function AnimatedPage({ children, className = '' }: AnimatedPageProps) {
       {children}
     </motion.div>
   );
-}
-
-export default AnimatedPage;
+};

@@ -1,14 +1,15 @@
 # CONTEXT.md
 
 Orientation for the portfolio repo — what it is, who acts on it, and how it is shaped. Read
-this before non-trivial work. For **why** it exists see `PRODUCT.md`; for **names** see
+this before non-trivial work. For **why** it exists see `PROJECT.md`; for **names** see
 `LANGUAGE.md`; for **how to write code** see `CODE-STYLE.md`; for **decisions** see
 `docs/adr/`.
 
 ## What it is
 
-A personal portfolio web app that works as a proof-of-work journey for recruiters — not a
-static resume. One repository, four cooperating parts, deployed on Cloudflare via `wrangler`:
+A personal portfolio web app and publishing surface that works as a proof-of-work journey for
+recruiters — not a static resume. One repository, four cooperating parts, deployed on
+Cloudflare via `wrangler`:
 
 - **`clientV3/`** — React 19 + Vite 6 + Tailwind v4 single-page app (the portfolio UI, blog,
   and the Portfolio Assistant chat surface); served at `/`, with the `[v1][v2][v3]` toggle.
@@ -32,8 +33,8 @@ static resume. One repository, four cooperating parts, deployed on Cloudflare vi
 ## Shape
 
 - The **client** is a lazy-routed SPA; data comes from the server API and the GitHub
-  Portfolio Snapshot through a single `useEffectQuery` hook. Effect stays at the edges; React
-  components stay idiomatic.
+  Portfolio Snapshot through Effect loaders wrapped by the unified TanStack Query hook. React
+  components stay idiomatic for local UI state.
 - The **server** keeps a pure Effect core with I/O (OpenAI, GitHub, email) behind Effect
   services + Layers; routes are thin edges that decode with Effect Schema, run the core, and
   map tagged errors to HTTP.
@@ -49,7 +50,7 @@ served by one worker** — the eras are paths, not separate deployments:
 - **clientV1 / clientV2** — frozen buildable snapshots at `/v1/` and `/v2/` (each built with a
   Vite `base`), **exempt** from the style rules; they stay authentic to their era rather than
   being restyled, and build with their own pinned deps (e.g. clientV2 pins `react-icons@5.6.0`).
-- `scripts/build-all.sh` builds all three and assembles `dist/` (clientV3 at root, clientV1→
+- `scripts/buildAll.sh` builds all three and assembles `dist/` (clientV3 at root, clientV1→
   `dist/v1/`, clientV2→`dist/v2/`); the Navbar + mobile sidebar carry the `[v1][v2][v3]` toggle.
 
 ## Where things live

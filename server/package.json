@@ -7,31 +7,33 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "test": "tsx --test src/**/*.test.ts",
+    "test": "vitest run",
     "start": "node dist/index.js",
     "lint": "biome check .",
     "lint:fix": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true .",
     "format": "biome format --write ."
   },
   "dependencies": {
+    "@shared/portfolio": "file:../shared",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "effect": "^3.21.4",
     "express": "^4.21.0",
     "nodemailer": "^7.0.12",
     "openai": "^4.73.0",
-    "typescript": "^5.7.2",
-    "winston": "^3.17.0",
-    "zod": "^3.23.8"
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
+    "@effect/vitest": "^0.29.0",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.19.17",
     "@types/nodemailer": "^7.0.5",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "vitest": "^3.2.7"
   },
   "packageManager": "pnpm@10.33.2"
 }

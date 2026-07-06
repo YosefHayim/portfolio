@@ -8,8 +8,6 @@ export const appCatalog = createAppCatalog({
     tagline: 'Bulk Image Generation & Automation for Gemini',
     description:
       'Transform Google Gemini into a batch processing powerhouse. Queue multiple prompts, attach reference images, and let the extension automate your creative workflow.',
-    brandColor: '#ffffff',
-    logoBgColor: '#ffffff',
     chromeStoreUrl:
       'https://chromewebstore.google.com/detail/gemini-nano-flow/lidnnjbepijjbbphbdhcchgpckpcbgfm',
     features: [
@@ -51,8 +49,6 @@ export const appCatalog = createAppCatalog({
     tagline: 'Streamline Your Job Application Process with AI',
     description:
       'Automate and accelerate your job search with AI-powered form filling, resume customization, and application tracking. Apply to jobs faster and smarter.',
-    brandColor: '#10b981',
-    logoBgColor: '#10b981',
     features: [
       {
         title: 'AI-Powered Form Filling',
@@ -92,8 +88,6 @@ export const appCatalog = createAppCatalog({
     tagline: 'Automate Prompt Generation & Queueing for Sora AI',
     description:
       'Supercharge your Sora AI workflow with automated prompt generation and queue management. Generate creative prompts using AI and automatically queue them for Sora video/image generation.',
-    brandColor: '#ffffff',
-    logoBgColor: '#ffffff',
     chromeStoreUrl:
       'https://chromewebstore.google.com/detail/sora-auto-queue-prompts/kbpbdckjechbjmnjagfkgcplmhdkkgph',
     features: [

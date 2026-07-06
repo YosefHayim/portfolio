@@ -1,134 +1,141 @@
-import type { ChatMessage } from "./assistant.js";
-import type { PortfolioEmailInput } from "./emailMessage.js";
+import type { ContactEmailInput } from '@shared/portfolio/contactEmail.js';
+import { Schema } from 'effect';
+import type { ChatMessage } from './assistant.js';
 
 export class CoreHttpError extends Error {
-	constructor(
-		message: string,
-		readonly status: number,
-	) {
-		super(message);
-	}
+  readonly status: number;
+
+  constructor(message: string, status: number, options?: ErrorOptions) {
+    super(message, options);
+    this.status = status;
+  }
 }
+
+// Raw row example: "joseph@example.com" should match the email boundary regex.
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Raw row example: "audio/webm" should match the audio content type boundary regex.
+const AUDIO_CONTENT_TYPE_PATTERN = /audio\//;
+
+const boundedText = (min: number, max: number) =>
+  Schema.Trim.pipe(Schema.minLength(min), Schema.maxLength(max));
+
+const ChatMessageSchema: Schema.Schema<ChatMessage> = Schema.Struct({
+  role: Schema.Literal('user', 'assistant'),
+  content: boundedText(1, 2000),
+});
+
+const ChatRequestBodySchema = Schema.Struct({
+  messages: Schema.Array(ChatMessageSchema).pipe(Schema.minItems(1)),
+});
+
+export type TextToSpeechVoice = 'alloy' | 'echo' | 'fable' | 'onyx' | 'nova' | 'shimmer';
 
 export type TextToSpeechInput = {
-	text: string;
-	voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
+  readonly text: string;
+  readonly voice: TextToSpeechVoice;
 };
 
-const TTS_VOICES = [
-	"alloy",
-	"echo",
-	"fable",
-	"onyx",
-	"nova",
-	"shimmer",
-] as const;
+const TextToSpeechVoiceSchema: Schema.Schema<TextToSpeechVoice> = Schema.Literal(
+  'alloy',
+  'echo',
+  'fable',
+  'onyx',
+  'nova',
+  'shimmer',
+);
 
-export function parseChatRequestBody(body: unknown): {
-	messages: ChatMessage[];
-} {
-	if (
-		!isRecord(body) ||
-		!Array.isArray(body.messages) ||
-		body.messages.length === 0
-	) {
-		throw new CoreHttpError("Invalid request body", 400);
-	}
+const TextToSpeechInputSchema: Schema.Schema<
+  TextToSpeechInput,
+  { readonly text: string; readonly voice?: TextToSpeechVoice }
+> = Schema.Struct({
+  text: boundedText(1, 4096),
+  voice: Schema.optionalWith(TextToSpeechVoiceSchema, { default: () => 'nova' }),
+});
 
-	return {
-		messages: body.messages.map((message) => {
-			if (!isRecord(message)) {
-				throw new CoreHttpError("Invalid request body", 400);
-			}
+const PortfolioEmailInputSchema: Schema.Schema<ContactEmailInput> = Schema.Struct({
+  senderName: boundedText(1, 100),
+  senderEmail: boundedText(3, 254).pipe(Schema.pattern(EMAIL_PATTERN)),
+  subject: boundedText(1, 200),
+  message: boundedText(10, 5000),
+});
 
-			return {
-				role: asEnum(message.role, "role", ["user", "assistant"]),
-				content: asString(message.content, "content", 1, 2000),
-			};
-		}),
-	};
-}
+const AudioContentTypeSchema = Schema.String.pipe(Schema.pattern(AUDIO_CONTENT_TYPE_PATTERN));
 
-export function parseTextToSpeechRequestBody(body: unknown): TextToSpeechInput {
-	if (!isRecord(body)) {
-		throw new CoreHttpError("Invalid request body", 400);
-	}
+/**
+ * Decodes an API boundary payload with Effect Schema.
+ *
+ * @param schema - Effect Schema used for the boundary.
+ * @param value - Unknown request payload from Express.
+ * @param message - HTTP error message returned when decoding fails.
+ * @returns Decoded and normalized value.
+ * @example
+ * decodeBoundary(ChatRequestBodySchema, { messages: [{ role: 'user', content: ' hi ' }] }, 'Invalid request body')
+ */
+const decodeBoundary = <T, TEncoded>(
+  schema: Schema.Schema<T, TEncoded, never>,
+  value: unknown,
+  message: string,
+): T => {
+  try {
+    return Schema.decodeUnknownSync(schema)(value);
+  } catch (error) {
+    throw new CoreHttpError(message, 400, { cause: error });
+  }
+};
 
-	return {
-		text: asString(body.text, "text", 1, 4096),
-		voice:
-			body.voice === undefined
-				? "nova"
-				: asEnum(body.voice, "voice", TTS_VOICES),
-	};
-}
+/**
+ * Parses and trims a chat request body.
+ *
+ * @param body - Unknown Express request body.
+ * @returns Chat messages accepted by the assistant core.
+ * @example
+ * parseChatRequestBody({ messages: [{ role: 'user', content: ' hello ' }] })
+ */
+export const parseChatRequestBody = (
+  body: unknown,
+): { readonly messages: readonly ChatMessage[] } =>
+  decodeBoundary(ChatRequestBodySchema, body, 'Invalid request body');
 
-export function parsePortfolioEmailInput(body: unknown): PortfolioEmailInput {
-	if (!isRecord(body)) {
-		throw new CoreHttpError("Invalid request body", 400);
-	}
+/**
+ * Parses and trims a text-to-speech request body.
+ *
+ * @param body - Unknown Express request body.
+ * @returns Text-to-speech input with the default voice applied.
+ * @example
+ * parseTextToSpeechRequestBody({ text: 'Hello' })
+ */
+export const parseTextToSpeechRequestBody = (body: unknown): TextToSpeechInput =>
+  decodeBoundary(TextToSpeechInputSchema, body, 'Invalid request body');
 
-	return {
-		senderName: asString(body.senderName, "senderName", 1, 100),
-		senderEmail: asEmail(body.senderEmail, "senderEmail"),
-		subject: asString(body.subject, "subject", 1, 200),
-		message: asString(body.message, "message", 10, 5000),
-	};
-}
+/**
+ * Parses and trims a portfolio email request body.
+ *
+ * @param body - Unknown Express request body.
+ * @returns Validated portfolio email input.
+ * @example
+ * parsePortfolioEmailInput({ senderName: 'Joseph', senderEmail: 'joseph@example.com', subject: 'Hi', message: 'Long enough message.' })
+ */
+export const parsePortfolioEmailInput = (body: unknown): ContactEmailInput =>
+  decodeBoundary(PortfolioEmailInputSchema, body, 'Invalid request body');
 
-export function requireAudioContentType(contentType: string): string {
-	if (!contentType.includes("audio/")) {
-		throw new CoreHttpError("Invalid content type. Expected audio file.", 400);
-	}
+/**
+ * Requires an audio request content type for speech-to-text input.
+ *
+ * @param contentType - Request `content-type` header value.
+ * @returns The accepted content type.
+ * @example
+ * requireAudioContentType('audio/webm')
+ */
+export const requireAudioContentType = (contentType: string): string =>
+  decodeBoundary(AudioContentTypeSchema, contentType, 'Invalid content type. Expected audio file.');
 
-	return contentType;
-}
-
-export function asString(
-	value: unknown,
-	field: string,
-	min: number,
-	max: number,
-): string {
-	if (typeof value !== "string") {
-		throw new CoreHttpError(`Invalid request: ${field} is required`, 400);
-	}
-
-	const trimmed = value.trim();
-	if (trimmed.length < min || trimmed.length > max) {
-		throw new CoreHttpError(
-			`Invalid request: ${field} must be between ${min} and ${max} characters`,
-			400,
-		);
-	}
-
-	return trimmed;
-}
-
-export function asEmail(value: unknown, field: string): string {
-	const email = asString(value, field, 3, 254);
-	if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-		throw new CoreHttpError(
-			`Invalid request: ${field} must be a valid email`,
-			400,
-		);
-	}
-
-	return email;
-}
-
-export function asEnum<T extends string>(
-	value: unknown,
-	field: string,
-	values: readonly T[],
-): T {
-	if (typeof value !== "string" || !values.includes(value as T)) {
-		throw new CoreHttpError(`Invalid request: ${field} is invalid`, 400);
-	}
-
-	return value as T;
-}
-
-export function isRecord(value: unknown): value is Record<string, unknown> {
-	return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
+/**
+ * Checks whether an unknown value is a plain object record.
+ *
+ * @param value - Unknown value from a runtime boundary.
+ * @returns True when the value is an object record.
+ * @example
+ * isRecord({ ok: true }) // true
+ */
+export const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === 'object' && !Array.isArray(value);

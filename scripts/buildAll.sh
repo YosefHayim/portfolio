@@ -15,6 +15,9 @@ build_era() {
   ( cd "${dir}" && HUSKY=0 pnpm install --frozen-lockfile --silent && pnpm build )
 }
 
+echo "▶ shared — runtime modules used by the worker"
+( cd shared && HUSKY=0 pnpm install --frozen-lockfile --silent )
+
 build_era clientV3 "current, served at /"
 build_era clientV1 "frozen snapshot, served at /v1/"
 build_era clientV2 "frozen snapshot, served at /v2/"

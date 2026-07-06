@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { forwardRef, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiMic, FiSend, FiSquare, FiVolume2 } from 'react-icons/fi';
-import { AudioVisualizer, SpeakingIndicator } from '@/Components/ui/ai-voice-input';
+import { AudioVisualizer, SpeakingIndicator } from '@/Components/ui/AIVoiceInput';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/Components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
@@ -55,12 +56,15 @@ export const ChatInput = memo(
       },
       ref,
     ) => {
+      const { t } = useTranslation();
       const isInputDisabled = isStreaming || isTyping || isTranscribing || isRecording;
 
-      const activeInputPlaceholder = isRecording ? 'Recording...' : 'Ask anything...';
-      const inputPlaceholder = isTranscribing ? 'Transcribing...' : activeInputPlaceholder;
-      const activeVoiceTooltip = isRecording ? 'Stop recording' : 'Record voice message';
-      const voiceTooltipLabel = isTranscribing ? 'Processing voice...' : activeVoiceTooltip;
+      const activeInputPlaceholder = isRecording ? t('chat.recording') : t('chat.askAnything');
+      const inputPlaceholder = isTranscribing ? t('chat.transcribing') : activeInputPlaceholder;
+      const activeVoiceTooltip = isRecording
+        ? t('chat.stopRecording')
+        : t('chat.recordVoiceMessage');
+      const voiceTooltipLabel = isTranscribing ? t('chat.processingVoice') : activeVoiceTooltip;
       const recordingIcon = isRecording ? (
         <FiSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
       ) : (
@@ -110,8 +114,8 @@ export const ChatInput = memo(
                 className=" flex flex-col items-center gap-2 rounded-xl bg-[var(--bg-surface)] p-2"
               >
                 <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff6467]" />
-                  <span className="font-mono text-sm text-[#ff6467]">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-brand-danger" />
+                  <span className="font-mono text-sm text-brand-danger">
                     {Math.floor(recordingDuration / 60)
                       .toString()
                       .padStart(2, '0')}
@@ -122,10 +126,10 @@ export const ChatInput = memo(
                   levels={audioLevels}
                   isActive={isRecording}
                   barCount={32}
-                  color="#ff6467"
+                  color="var(--brand-danger)"
                 />
                 <span className="text-xs text-[var(--text-muted)]">
-                  Recording... Tap mic to stop
+                  {t('chat.recordingTapToStop')}
                 </span>
               </motion.div>
             )}
@@ -137,7 +141,7 @@ export const ChatInput = memo(
                 type="text"
                 className={cn(
                   'h-10 w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-2 p-2 text-sm text-[var(--text-primary)] transition-colors placeholder:text-[var(--text-muted)] sm:h-11 sm:p-2',
-                  'focus:border-[#05df72] focus:ring-1 focus:ring-[#05df72]/30 focus:outline-none',
+                  'focus:border-brand focus:ring-1 focus:ring-brand/30 focus:outline-none',
                   isRecording && 'opacity-50',
                 )}
                 disabled={isInputDisabled}
@@ -158,7 +162,7 @@ export const ChatInput = memo(
                   className={cn(
                     'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[var(--border-subtle)]',
                     isRecording
-                      ? 'bg-[#ff6467] text-white'
+                      ? 'bg-brand-danger text-white'
                       : 'bg-[var(--bg-surface)] text-[var(--text-muted)] hover:text-[var(--text-primary)]',
                     (isStreaming || isTyping) && 'cursor-not-allowed opacity-50',
                   )}
@@ -181,7 +185,7 @@ export const ChatInput = memo(
                   type="submit"
                   disabled={!inputValue.trim() || isInputDisabled}
                   className={cn(
-                    'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#05df72] text-black hover:bg-[#04c566]',
+                    'inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-brand text-black hover:bg-brand-hover',
                     (!inputValue.trim() || isInputDisabled) && 'cursor-not-allowed opacity-50',
                   )}
                   whileHover={{
@@ -195,7 +199,7 @@ export const ChatInput = memo(
                 </motion.button>
               </TooltipTrigger>
               <TooltipContent side="top" sideOffset={8}>
-                Send message
+                {t('chat.sendMessage')}
               </TooltipContent>
             </Tooltip>
           </form>
@@ -206,14 +210,14 @@ export const ChatInput = memo(
                 <button
                   type="button"
                   onClick={onSpeakLastMessage}
-                  className=" flex w-full items-center justify-center gap-2 rounded-lg p-2 text-[11px] text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-surface)] hover:text-[#05df72] sm:p-2 sm:text-xs"
+                  className=" flex w-full items-center justify-center gap-2 rounded-lg p-2 text-[11px] text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-surface)] hover:text-brand sm:p-2 sm:text-xs"
                 >
                   <FiVolume2 size={12} />
-                  Play last response
+                  {t('chat.playLastResponse')}
                 </button>
               </TooltipTrigger>
               <TooltipContent side="top" sideOffset={8}>
-                Listen to the AI's last reply
+                {t('chat.listenToLastReply')}
               </TooltipContent>
             </Tooltip>
           )}

@@ -1,15 +1,23 @@
+import { requirePortfolioProductFact } from '@shared/portfolio/productRegistry.js';
 import type { ReactNode } from 'react';
-import { requirePortfolioProductFact } from '../../../../shared/portfolio/productRegistry.js';
 import type { AppConfig, AppMetadata, FeatureCopy } from './types.ts';
 
 export type AppCatalogSeed = Omit<AppMetadata, 'pagePath' | 'legalSlug'> & {
   features: FeatureCopy[];
 };
 
-export function createAppCatalog<T extends Record<string, AppCatalogSeed>>(
-  entries: T,
-): Record<keyof T, AppMetadata> {
-  return Object.fromEntries(
+/**
+ * Creates app metadata from local copy and the shared product registry.
+ *
+ * @param entries - App metadata seeds keyed by product id.
+ * @returns App metadata with page path and legal slug filled from the registry.
+ * @example
+ * createAppCatalog({ sorqa: { id: 'sorqa', name: 'Sorqa', features: [] } })
+ */
+export const createAppCatalog = (
+  entries: Record<string, AppCatalogSeed>,
+): Record<string, AppMetadata> =>
+  Object.fromEntries(
     Object.entries(entries).map(([key, entry]) => {
       const product = requirePortfolioProductFact(entry.id);
       if (!product.pagePath) {
@@ -25,10 +33,18 @@ export function createAppCatalog<T extends Record<string, AppCatalogSeed>>(
         },
       ];
     }),
-  ) as Record<keyof T, AppMetadata>;
-}
+  );
 
-export function createAppConfig(
+/**
+ * Combines app metadata with React icons used by the UI.
+ *
+ * @param metadata - App metadata from the catalog.
+ * @param icons - Logo and feature icon configuration.
+ * @returns Renderable app config.
+ * @example
+ * createAppConfig(metadata, { logoIcon, featureIcons: [], fallbackFeatureIcon })
+ */
+export const createAppConfig = (
   metadata: AppMetadata,
   {
     logoIcon,
@@ -39,13 +55,11 @@ export function createAppConfig(
     featureIcons: ReactNode[];
     fallbackFeatureIcon: ReactNode;
   },
-): AppConfig {
-  return {
-    ...metadata,
-    logoIcon,
-    features: metadata.features.map((feature, index) => ({
-      ...feature,
-      icon: featureIcons[index] ?? fallbackFeatureIcon,
-    })),
-  };
-}
+): AppConfig => ({
+  ...metadata,
+  logoIcon,
+  features: metadata.features.map((feature, index) => ({
+    ...feature,
+    icon: featureIcons[index] ?? fallbackFeatureIcon,
+  })),
+});

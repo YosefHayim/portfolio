@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { fetchStreamingResponse, sendEmail, transcribeAudio } from '@/utils/chatApi';
 import {
@@ -22,8 +23,18 @@ type UsePortfolioChatSessionOptions = {
   openPanel: () => void;
 };
 
-export function usePortfolioChatSession({ isOpen, openPanel }: UsePortfolioChatSessionOptions) {
-  const [messages, setMessages] = useState<Message[]>([createWelcomeMessage()]);
+/**
+ * Coordinates AI chat panel state, voice recording, and contact-email markers.
+ *
+ * @param options - Chat panel open state and opener callback.
+ * @returns State and handlers consumed by the AI chat sidebar.
+ * @example
+ * const chat = usePortfolioChatSession({ isOpen, openPanel })
+ */
+export const usePortfolioChatSession = ({ isOpen, openPanel }: UsePortfolioChatSessionOptions) => {
+  const { t, i18n } = useTranslation();
+  const welcomeContent = t('chat.welcome');
+  const [messages, setMessages] = useState<Message[]>(() => [createWelcomeMessage(welcomeContent)]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -47,16 +58,28 @@ export function usePortfolioChatSession({ isOpen, openPanel }: UsePortfolioChatS
     isOpenRef.current = isOpen;
   }, [isOpen]);
 
+  useEffect(() => {
+    setMessages((prevMessages) =>
+      prevMessages.map((message) =>
+        message.id === 'welcome' ? { ...message, content: welcomeContent } : message,
+      ),
+    );
+  }, [welcomeContent]);
+
   const notifyResponseReady = useCallback(
     (response: string) => {
       notifyHiddenChatResponse({
         isOpen: isOpenRef.current,
         openPanel,
         response,
+        labels: {
+          ready: t('chat.responseReady'),
+          view: t('chat.viewResponse'),
+        },
         notify: toast.success,
       });
     },
-    [openPanel],
+    [openPanel, t],
   );
 
   const sendMessage = useCallback(
@@ -86,7 +109,7 @@ export function usePortfolioChatSession({ isOpen, openPanel }: UsePortfolioChatS
             window.open(url, '_blank', 'noopener,noreferrer');
           },
           fetchStreamingResponse,
-          getOfflineResponse,
+          getOfflineResponse: (message) => getOfflineResponse(message, i18n.language),
           notifyResponseReady,
           schedule: (callback, delayMs) => {
             window.setTimeout(callback, delayMs);
@@ -123,22 +146,25 @@ export function usePortfolioChatSession({ isOpen, openPanel }: UsePortfolioChatS
     });
   }, [messages, speechSynthesis]);
 
-  const sendEmailFromMarker = useCallback(async (messageId: string, emailData: EmailData) => {
-    if (processedEmailsRef.current.has(messageId)) {
-      return;
-    }
-    processedEmailsRef.current.add(messageId);
+  const sendEmailFromMarker = useCallback(
+    async (messageId: string, emailData: EmailData) => {
+      if (processedEmailsRef.current.has(messageId)) {
+        return;
+      }
+      processedEmailsRef.current.add(messageId);
 
-    setMessages((prev) => markMessageEmailStatus(prev, messageId, 'sending'));
+      setMessages((prev) => markMessageEmailStatus(prev, messageId, 'sending'));
 
-    try {
-      await sendEmail(emailData);
-      setMessages((prev) => markMessageEmailStatus(prev, messageId, 'sent'));
-    } catch (err) {
-      setMessages((prev) => markMessageEmailStatus(prev, messageId, 'failed'));
-      setError(err instanceof Error ? err.message : 'Failed to send email');
-    }
-  }, []);
+      try {
+        await sendEmail(emailData);
+        setMessages((prev) => markMessageEmailStatus(prev, messageId, 'sent'));
+      } catch (err) {
+        setMessages((prev) => markMessageEmailStatus(prev, messageId, 'failed'));
+        setError(err instanceof Error ? err.message : t('chat.emailFailed'));
+      }
+    },
+    [t],
+  );
 
   useEffect(() => {
     const pendingEmail = findPendingEmailRequest(messages, isStreaming);
@@ -165,4 +191,4 @@ export function usePortfolioChatSession({ isOpen, openPanel }: UsePortfolioChatS
     handleVoiceRecord,
     speakLastMessage,
   };
-}
+};

@@ -13,7 +13,7 @@ const featureIcons = [
 ];
 
 export const sorqaConfig: AppConfig = createAppConfig(appCatalog.sorqa, {
-  logoIcon: <Zap className="h-5 w-5 text-[#0a0a0b]" />,
+  logoIcon: <Zap className="h-5 w-5 text-neutral-950" />,
   featureIcons,
   fallbackFeatureIcon: <Zap className="h-6 w-6" />,
 });

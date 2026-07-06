@@ -4,7 +4,7 @@ export const DEVELOPER_INFO = {
   name: 'Yosef Hayim Sabag',
   email: 'yosefisabag@gmail.com',
   website: 'https://yosefhayimsabag.com',
-} as const;
+};
 
 export type FeatureCopy = {
   title: string;
@@ -16,8 +16,6 @@ export type AppMetadata = {
   name: string;
   tagline: string;
   description: string;
-  brandColor: string;
-  logoBgColor: string;
   pagePath: string;
   legalSlug?: string;
   chromeStoreUrl?: string;

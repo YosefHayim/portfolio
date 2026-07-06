@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 
-export function useReducedMotion(): boolean {
+/**
+ * Reads the user's reduced-motion preference.
+ *
+ * @returns True when reduced motion is preferred.
+ * @example
+ * const prefersReducedMotion = useReducedMotion()
+ */
+export const useReducedMotion = (): boolean => {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -16,4 +23,4 @@ export function useReducedMotion(): boolean {
   }, []);
 
   return prefersReducedMotion;
-}
+};

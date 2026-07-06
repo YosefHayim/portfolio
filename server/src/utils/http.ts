@@ -1,7 +1,5 @@
-export function createHealthResponse(extra: Record<string, unknown> = {}) {
-	return {
-		status: "ok",
-		timestamp: new Date().toISOString(),
-		...extra,
-	};
-}
+export const createHealthResponse = (extra: Record<string, unknown> = {}) => ({
+  status: 'ok',
+  timestamp: new Date().toISOString(),
+  ...extra,
+});

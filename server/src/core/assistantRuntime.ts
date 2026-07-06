@@ -1,252 +1,274 @@
 import {
-	ASSISTANT_STREAM_DONE_EVENT,
-	type AssistantStreamEvent,
-	encodeAssistantSseEvent,
-} from "../../../shared/portfolio/assistantStream.js";
+  ASSISTANT_STREAM_DONE_EVENT,
+  encodeAssistantSseEvent,
+} from '@shared/portfolio/assistantStream.js';
 import {
-	AI_CHAT_MAX_TOKENS,
-	AI_CHAT_MODEL,
-	AI_CHAT_TEMPERATURE,
-	type ChatMessage,
-	canUseAssistantResponseCache,
-	createCachedResponseChunks,
-	getLastUserMessage,
-	getSystemPrompt,
-} from "./assistant.js";
-import { CoreHttpError, isRecord } from "./requestValidation.js";
-import { responseCache as defaultResponseCache } from "./responseCache.js";
+  AI_CHAT_MAX_TOKENS,
+  AI_CHAT_MODEL,
+  AI_CHAT_TEMPERATURE,
+  type ChatMessage,
+  canUseAssistantResponseCache,
+  createCachedResponseChunks,
+  getLastUserMessage,
+  getSystemPrompt,
+} from './assistant.js';
+import { CoreHttpError, isRecord } from './requestValidation.js';
+import { responseCache as defaultResponseCache } from './responseCache.js';
 
 export type AssistantProviderMessage = {
-	role: "system" | "user" | "assistant";
-	content: string;
+  role: 'system' | 'user' | 'assistant';
+  content: string;
 };
 
 export type AssistantProviderInput = {
-	model: string;
-	messages: AssistantProviderMessage[];
-	maxTokens: number;
-	temperature: number;
+  model: string;
+  messages: AssistantProviderMessage[];
+  maxTokens: number;
+  temperature: number;
 };
 
-export type CompleteAssistantResponse = (
-	input: AssistantProviderInput,
-) => Promise<string>;
+export type CompleteAssistantResponse = (input: AssistantProviderInput) => Promise<string>;
 
 export type StreamAssistantResponse = (
-	input: AssistantProviderInput,
+  input: AssistantProviderInput,
 ) => Promise<AsyncIterable<string>> | AsyncIterable<string>;
 
 export type AssistantCache = {
-	get(message: string): string | null;
-	set(message: string, response: string): void;
+  get: (message: string) => string | null;
+  set: (message: string, response: string) => void;
 };
 
-export type AssistantCacheStatus = "HIT" | "MISS";
+export type AssistantCacheStatus = 'HIT' | 'MISS';
 
 export type AssistantReply = {
-	message: string;
-	cacheStatus: AssistantCacheStatus;
+  message: string;
+  cacheStatus: AssistantCacheStatus;
 };
 
-export type { AssistantStreamEvent };
+export type AssistantStreamEvent =
+  | { type: 'content'; content: string }
+  | { type: 'error'; error: string };
 
 export type AssistantStreamResult = {
-	cacheStatus: AssistantCacheStatus;
-	events: AsyncIterable<AssistantStreamEvent>;
+  cacheStatus: AssistantCacheStatus;
+  events: AsyncIterable<AssistantStreamEvent>;
 };
 
-export async function createAssistantReply({
-	messages,
-	complete,
-	cache = defaultResponseCache,
+export const createAssistantReply = async ({
+  messages,
+  complete,
+  cache = defaultResponseCache,
 }: {
-	messages: readonly ChatMessage[];
-	complete: CompleteAssistantResponse;
-	cache?: AssistantCache;
-}): Promise<AssistantReply> {
-	const lastUserMessage = getLastUserMessage(messages);
+  messages: readonly ChatMessage[];
+  complete: CompleteAssistantResponse;
+  cache?: AssistantCache;
+}): Promise<AssistantReply> => {
+  const lastUserMessage = getLastUserMessage(messages);
 
-	if (canUseAssistantResponseCache(messages)) {
-		const cached = cache.get(lastUserMessage);
-		if (cached) {
-			return { message: cached, cacheStatus: "HIT" };
-		}
-	}
+  if (canUseAssistantResponseCache(messages)) {
+    const cached = cache.get(lastUserMessage);
+    if (cached) {
+      return { message: cached, cacheStatus: 'HIT' };
+    }
+  }
 
-	const message = await complete(await createProviderInput(messages));
-	if (!message) {
-		throw new CoreHttpError("No response from AI", 500);
-	}
+  const message = await complete(await createProviderInput(messages));
+  if (!message) {
+    throw new CoreHttpError('No response from AI', 500);
+  }
 
-	if (canUseAssistantResponseCache(messages)) {
-		cache.set(lastUserMessage, message);
-	}
+  if (canUseAssistantResponseCache(messages)) {
+    cache.set(lastUserMessage, message);
+  }
 
-	return { message, cacheStatus: "MISS" };
-}
+  return { message, cacheStatus: 'MISS' };
+};
 
-export async function createAssistantReplyStream({
-	messages,
-	stream,
-	cache = defaultResponseCache,
+export const createAssistantReplyStream = async ({
+  messages,
+  stream,
+  cache = defaultResponseCache,
 }: {
-	messages: readonly ChatMessage[];
-	stream: StreamAssistantResponse;
-	cache?: AssistantCache;
-}): Promise<AssistantStreamResult> {
-	const lastUserMessage = getLastUserMessage(messages);
+  messages: readonly ChatMessage[];
+  stream: StreamAssistantResponse;
+  cache?: AssistantCache;
+}): Promise<AssistantStreamResult> => {
+  const lastUserMessage = getLastUserMessage(messages);
 
-	if (canUseAssistantResponseCache(messages)) {
-		const cached = cache.get(lastUserMessage);
-		if (cached) {
-			return {
-				cacheStatus: "HIT",
-				events: streamCachedAssistantReply(cached),
-			};
-		}
-	}
+  if (canUseAssistantResponseCache(messages)) {
+    const cached = cache.get(lastUserMessage);
+    if (cached) {
+      return {
+        cacheStatus: 'HIT',
+        events: streamCachedAssistantReply(cached),
+      };
+    }
+  }
 
-	return {
-		cacheStatus: "MISS",
-		events: streamLiveAssistantReply({
-			cache,
-			cacheKey: canUseAssistantResponseCache(messages) ? lastUserMessage : null,
-			input: await createProviderInput(messages),
-			stream,
-		}),
-	};
-}
+  return {
+    cacheStatus: 'MISS',
+    events: streamLiveAssistantReply({
+      cache,
+      cacheKey: canUseAssistantResponseCache(messages) ? lastUserMessage : null,
+      input: await createProviderInput(messages),
+      stream,
+    }),
+  };
+};
 
-export { ASSISTANT_STREAM_DONE_EVENT, encodeAssistantSseEvent };
+export const createAssistantSseStream = (
+  events: AsyncIterable<AssistantStreamEvent>,
+): ReadableStream<Uint8Array> => {
+  const encoder = new TextEncoder();
 
-export function createAssistantSseStream(
-	events: AsyncIterable<AssistantStreamEvent>,
-): ReadableStream<Uint8Array> {
-	const encoder = new TextEncoder();
+  return new ReadableStream({
+    start: async (controller) => {
+      try {
+        for await (const event of events) {
+          controller.enqueue(encoder.encode(encodeAssistantSseEvent(event)));
+        }
+        controller.enqueue(encoder.encode(ASSISTANT_STREAM_DONE_EVENT));
+      } catch {
+        controller.enqueue(
+          encoder.encode(
+            encodeAssistantSseEvent({
+              type: 'error',
+              error: 'AI provider unavailable',
+            }),
+          ),
+        );
+        controller.enqueue(encoder.encode(ASSISTANT_STREAM_DONE_EVENT));
+      } finally {
+        controller.close();
+      }
+    },
+  });
+};
 
-	return new ReadableStream({
-		async start(controller) {
-			try {
-				for await (const event of events) {
-					controller.enqueue(encoder.encode(encodeAssistantSseEvent(event)));
-				}
-				controller.enqueue(encoder.encode(ASSISTANT_STREAM_DONE_EVENT));
-			} catch {
-				controller.enqueue(
-					encoder.encode(
-						encodeAssistantSseEvent({
-							type: "error",
-							error: "AI provider unavailable",
-						}),
-					),
-				);
-				controller.enqueue(encoder.encode(ASSISTANT_STREAM_DONE_EVENT));
-			} finally {
-				controller.close();
-			}
-		},
-	});
-}
+export const readOpenAiCompletionText = (completion: unknown): string => {
+  if (!(isRecord(completion) && Array.isArray(completion.choices))) {
+    return '';
+  }
 
-export function readOpenAiCompletionText(completion: unknown): string {
-	if (!isRecord(completion) || !Array.isArray(completion.choices)) {
-		return "";
-	}
+  const [firstChoice] = completion.choices;
+  if (!(isRecord(firstChoice) && isRecord(firstChoice.message))) {
+    return '';
+  }
 
-	const firstChoice = completion.choices[0];
-	if (!isRecord(firstChoice) || !isRecord(firstChoice.message)) {
-		return "";
-	}
+  const { content } = firstChoice.message;
+  return typeof content === 'string' ? content : '';
+};
 
-	return typeof firstChoice.message.content === "string"
-		? firstChoice.message.content
-		: "";
-}
+export const readOpenAiTextStream = (body: ReadableStream<Uint8Array>): AsyncIterable<string> => ({
+  async *[Symbol.asyncIterator]() {
+    const reader = body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let shouldRead = true;
 
-export async function* readOpenAiTextStream(
-	body: ReadableStream<Uint8Array>,
-): AsyncIterable<string> {
-	const reader = body.getReader();
-	const decoder = new TextDecoder();
-	let buffer = "";
+    while (shouldRead) {
+      const { value, done } = await reader.read();
+      if (done) {
+        shouldRead = false;
+      } else {
+        buffer += decoder.decode(value, { stream: true });
+        // Raw row example: "data: {\"choices\":[]}\n\ndata: [DONE]\n\n" splits into SSE lines.
+        const lines = buffer.split('\n');
+        const nextBuffer = lines.pop();
+        buffer = nextBuffer === undefined ? '' : nextBuffer;
 
-	while (true) {
-		const { value, done } = await reader.read();
-		if (done) {
-			break;
-		}
+        for (const line of lines) {
+          const content = readOpenAiTextStreamLine(line);
+          if (content === OPENAI_STREAM_DONE) {
+            return;
+          }
 
-		buffer += decoder.decode(value, { stream: true });
-		const lines = buffer.split("\n");
-		buffer = lines.pop() ?? "";
+          if (typeof content === 'string' && content.length > 0) {
+            yield content;
+          }
+        }
+      }
+    }
+  },
+});
 
-		for (const line of lines) {
-			const trimmed = line.trim();
-			if (!trimmed.startsWith("data: ")) {
-				continue;
-			}
+const OPENAI_STREAM_DONE = Symbol('OPENAI_STREAM_DONE');
 
-			const data = trimmed.slice(6);
-			if (data === "[DONE]") {
-				return;
-			}
+const createProviderInput = async (
+  messages: readonly ChatMessage[],
+): Promise<AssistantProviderInput> => ({
+  model: AI_CHAT_MODEL,
+  messages: [{ role: 'system', content: await getSystemPrompt() }, ...messages],
+  maxTokens: AI_CHAT_MAX_TOKENS,
+  temperature: AI_CHAT_TEMPERATURE,
+});
 
-			const parsed = JSON.parse(data) as {
-				choices?: Array<{ delta?: { content?: string } }>;
-			};
-			const content = parsed.choices?.[0]?.delta?.content;
-			if (content) {
-				yield content;
-			}
-		}
-	}
-}
+const streamCachedAssistantReply = (response: string): AsyncIterable<AssistantStreamEvent> => ({
+  async *[Symbol.asyncIterator]() {
+    for (const chunk of createCachedResponseChunks(response)) {
+      yield { type: 'content', content: chunk };
+    }
+  },
+});
 
-async function createProviderInput(
-	messages: readonly ChatMessage[],
-): Promise<AssistantProviderInput> {
-	return {
-		model: AI_CHAT_MODEL,
-		messages: [
-			{ role: "system", content: await getSystemPrompt() },
-			...messages,
-		],
-		maxTokens: AI_CHAT_MAX_TOKENS,
-		temperature: AI_CHAT_TEMPERATURE,
-	};
-}
-
-async function* streamCachedAssistantReply(
-	response: string,
-): AsyncIterable<AssistantStreamEvent> {
-	for (const chunk of createCachedResponseChunks(response)) {
-		yield { type: "content", content: chunk };
-	}
-}
-
-async function* streamLiveAssistantReply({
-	cache,
-	cacheKey,
-	input,
-	stream,
+const streamLiveAssistantReply = ({
+  cache,
+  cacheKey,
+  input,
+  stream,
 }: {
-	cache: AssistantCache;
-	cacheKey: string | null;
-	input: AssistantProviderInput;
-	stream: StreamAssistantResponse;
-}): AsyncIterable<AssistantStreamEvent> {
-	let fullResponse = "";
+  cache: AssistantCache;
+  cacheKey: string | null;
+  input: AssistantProviderInput;
+  stream: StreamAssistantResponse;
+}): AsyncIterable<AssistantStreamEvent> => ({
+  async *[Symbol.asyncIterator]() {
+    let fullResponse = '';
 
-	try {
-		for await (const content of await stream(input)) {
-			fullResponse += content;
-			yield { type: "content", content };
-		}
+    try {
+      for await (const content of await stream(input)) {
+        fullResponse += content;
+        yield { type: 'content', content };
+      }
 
-		if (cacheKey && fullResponse) {
-			cache.set(cacheKey, fullResponse);
-		}
-	} catch {
-		yield { type: "error", error: "AI provider unavailable" };
-	}
-}
+      if (cacheKey && fullResponse) {
+        cache.set(cacheKey, fullResponse);
+      }
+    } catch {
+      yield { type: 'error', error: 'AI provider unavailable' };
+    }
+  },
+});
+
+const parseJson = (value: string): unknown => {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+};
+
+const readOpenAiTextStreamLine = (line: string): string | null | typeof OPENAI_STREAM_DONE => {
+  const trimmed = line.trim();
+  if (!trimmed.startsWith('data: ')) {
+    return null;
+  }
+
+  const data = trimmed.slice(6);
+  if (data === '[DONE]') {
+    return OPENAI_STREAM_DONE;
+  }
+
+  const parsed = parseJson(data);
+  if (!(isRecord(parsed) && Array.isArray(parsed.choices))) {
+    return null;
+  }
+
+  const [choice] = parsed.choices;
+  if (!(isRecord(choice) && isRecord(choice.delta))) {
+    return null;
+  }
+
+  const { content } = choice.delta;
+  return typeof content === 'string' ? content : null;
+};

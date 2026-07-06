@@ -1,0 +1,148 @@
+{
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "he": "עברית",
+    "switchTo": "Switch to {{language}}"
+  },
+  "nav": {
+    "home": "Home",
+    "stack": "Stack",
+    "experience": "Experience",
+    "projects": "Projects",
+    "writing": "Writing",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "backToPortfolio": "Back to portfolio",
+    "portfolioVersion": "Portfolio version"
+  },
+  "version": {
+    "v1": "First edition — where it started",
+    "v2": "Second edition — the rebuild",
+    "v3": "Current — you're here"
+  },
+  "hero": {
+    "repositories": "Repositories",
+    "stars": "Stars",
+    "commits": "Commits",
+    "repositoriesTooltip": "Total public repositories on GitHub",
+    "starsTooltip": "Total stars across public repositories",
+    "commitsTooltip": "Total public GitHub commits",
+    "cv": "CV",
+    "email": "Email"
+  },
+  "social": {
+    "linkedin": "LinkedIn",
+    "github": "GitHub",
+    "whatsapp": "WhatsApp",
+    "discord": "Discord",
+    "contact": "Contact"
+  },
+  "sections": {
+    "techStack": "Tech Stack",
+    "experience": "Experience",
+    "projects": "Projects",
+    "featuredRepositories": "Featured Repositories",
+    "latestWriting": "Latest Writing",
+    "latestWritingDescription": "Real stories from building things that ship — no fluff, no listicles."
+  },
+  "tenure": {
+    "year_one": "{{count}} yr",
+    "year_other": "{{count}} yrs",
+    "month_one": "{{count}} mo",
+    "month_other": "{{count}} mos"
+  },
+  "projects": {
+    "live": "Live",
+    "loadingRepositories": "Loading GitHub Repositories...",
+    "usingCachedFallback": "Using cached fallback data right now.",
+    "retry": "Retry",
+    "recently": "Recently",
+    "updated": "Updated {{date}}",
+    "readAllWriting": "Read all writing →"
+  },
+  "seo": {
+    "homeTitle": "Portfolio",
+    "homeDescription": "Joseph Sabag, AI Software Engineer. Fast recruiter overview with core projects, stack, and direct contact.",
+    "writingTitle": "Writing",
+    "writingDescription": "Real stories from building things that ship — the failed SaaS, the 3am fixes, and what actually worked. Writing by Joseph Sabag.",
+    "postNotFoundTitle": "Post not found"
+  },
+  "blog": {
+    "title": "Writing",
+    "intro": "No fluff, no listicles. Real stories from building things that actually ship — the failures, the 3am fixes, and the stubbornness in between.",
+    "backToPortfolio": "Back to portfolio",
+    "all": "All",
+    "minutes": "{{count}} min",
+    "minutesRead": "{{count}} min read",
+    "readNext": "Read next",
+    "allWriting": "All writing",
+    "notFoundTitle": "That post doesn't exist",
+    "notFoundBody": "The link may be old or mistyped. Everything I've written is one click away."
+  },
+  "categories": {
+    "engineering": "Engineering",
+    "career": "Career",
+    "tutorials": "Tutorials",
+    "thoughts": "Thoughts",
+    "projects": "Projects"
+  },
+  "dialog": {
+    "title": "Hey, you're back!",
+    "bodyLead": "If you're visiting twice, you're either",
+    "interested": "interested",
+    "or": "or",
+    "hesitating": "hesitating",
+    "bodyRest": "Either way, let's have a quick chat. I might be exactly what you're looking for, and there's only one way to find out.",
+    "letsTalk": "Let's talk",
+    "maybeLater": "Maybe later",
+    "closeDialog": "Close dialog"
+  },
+  "chat": {
+    "askAi": "Ask AI",
+    "collapsedTooltip": "Chat with Joseph's AI assistant",
+    "askAboutJoseph": "Ask about Joseph",
+    "aiPowered": "AI-powered",
+    "offline": "Offline",
+    "disableAutoSpeak": "Disable auto-speak",
+    "enableAutoSpeak": "Enable auto-speak for voice replies",
+    "closeChat": "Close chat",
+    "welcome": "Hi! I'm Joseph's AI assistant. Ask me about his skills, projects, or experience. You can also use voice!",
+    "askAnything": "Ask anything...",
+    "recording": "Recording...",
+    "transcribing": "Transcribing...",
+    "stopRecording": "Stop recording",
+    "recordVoiceMessage": "Record voice message",
+    "processingVoice": "Processing voice...",
+    "recordingTapToStop": "Recording... Tap mic to stop",
+    "sendMessage": "Send message",
+    "playLastResponse": "Play last response",
+    "listenToLastReply": "Listen to the AI's last reply",
+    "thinking": "AI is thinking...",
+    "emailSending": "Sending email...",
+    "emailSent": "Email sent successfully",
+    "emailFailed": "Failed to send email",
+    "paused": "Paused",
+    "speaking": "Speaking...",
+    "recordingClickToStop": "Recording... Click to stop",
+    "clickToSpeak": "Click to speak",
+    "processingAudio": "Processing audio...",
+    "responseReady": "AI Response Ready",
+    "viewResponse": "View",
+    "quickActions": {
+      "technicalSkills": "Technical Skills",
+      "recentProjects": "Recent Projects",
+      "workExperience": "Work Experience",
+      "whyHire": "Why Hire Joseph?",
+      "viewResume": "View Resume"
+    },
+    "quickActionTooltips": {
+      "technicalSkills": "What are Joseph's main technical skills and proficiencies?",
+      "recentProjects": "Tell me about Joseph's most impressive recent projects.",
+      "workExperience": "What is Joseph's professional work experience?",
+      "whyHire": "What makes Joseph a good candidate for a software developer role?",
+      "viewResume": "Open Joseph's resume"
+    }
+  }
+}

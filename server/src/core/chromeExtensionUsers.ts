@@ -6,25 +6,30 @@
  * Pattern is intentionally loose because Google occasionally A/B-tests the
  * surrounding markup; we only depend on the numeric span itself.
  */
-export function extractChromeUsers(html: string): number | null {
-	const match = html.match(/>\s*([0-9][0-9,]*\+?)\s*users?\b/i);
-	if (!match) {
-		return null;
-	}
-	const numeric = Number.parseInt(match[1].replace(/[+,]/g, ""), 10);
-	return Number.isFinite(numeric) ? numeric : null;
-}
+const CHROME_USERS_PATTERN = />\s*([0-9][0-9,]*\+?)\s*users?\b/i;
+const CHROME_USERS_NUMBER_PATTERN = /[+,]/g;
+const EXTENSION_ID_REGEX = /^[a-p]{32}$/;
+
+export const extractChromeUsers = (html: string): number | null => {
+  const match = html.match(CHROME_USERS_PATTERN);
+  if (!match) {
+    return null;
+  }
+  const [, rawUserCount] = match;
+
+  if (rawUserCount === undefined) {
+    return null;
+  }
+
+  const numeric = Number.parseInt(rawUserCount.replace(CHROME_USERS_NUMBER_PATTERN, ''), 10);
+  return Number.isFinite(numeric) ? numeric : null;
+};
 
 /**
  * Chrome Web Store IDs are 32-character lowercase alphanumeric slugs (a-p).
  * Validated here so the route never proxies arbitrary input back to Google.
  */
-const EXTENSION_ID_REGEX = /^[a-p]{32}$/;
+export const isValidChromeExtensionId = (id: string): boolean => EXTENSION_ID_REGEX.test(id);
 
-export function isValidChromeExtensionId(id: string): boolean {
-	return EXTENSION_ID_REGEX.test(id);
-}
-
-export function chromeExtensionUrl(id: string): string {
-	return `https://chromewebstore.google.com/detail/${id}`;
-}
+export const chromeExtensionUrl = (id: string): string =>
+  `https://chromewebstore.google.com/detail/${id}`;

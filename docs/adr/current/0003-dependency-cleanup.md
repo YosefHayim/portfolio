@@ -1,6 +1,6 @@
 # ADR 0003 — Dependency cleanup
 
-**Status:** Accepted · 2026-07-04
+**Status:** Accepted · 2026-07-04; amended by ADR 0005 · 2026-07-06
 
 ## Context
 
@@ -14,6 +14,8 @@ Some are twin packages of the same library; some are replaced by decisions in AD
 
 - `effect` — client + server (ADR 0001).
 - `vitest` + `@effect/vitest` — dev; the test runner and Effect test support.
+- `@tanstack/react-query` — client server-state cache around Effect loaders.
+- `react-hook-form` — multi-field client forms, with Effect Schema validation helpers.
 
 **Remove**
 

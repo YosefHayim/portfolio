@@ -1,8 +1,9 @@
 import { cx } from 'class-variance-authority';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiAlertCircle } from 'react-icons/fi';
-import { ColorOrb } from '@/Components/ui/ai-input';
+import { ColorOrb } from '@/Components/ui/AIInput';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/Components/ui/tooltip';
 import { usePortfolioChatSession } from '@/hooks/usePortfolioChatSession';
 import { cn } from '@/lib/utils';
@@ -18,6 +19,7 @@ const PANEL_HEIGHT_EXPANDED = 520;
 const PANEL_HEIGHT_EXPANDED_MOBILE = 450;
 
 export const AIChatSidebar = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -55,7 +57,7 @@ export const AIChatSidebar = () => {
   }, [isOpen, voiceRecorder.isRecording]);
 
   useEffect(() => {
-    function handleSidebarOutsideClick(e: MouseEvent) {
+    const handleSidebarOutsideClick = (e: MouseEvent) => {
       if (
         wrapperRef.current &&
         !(e.target instanceof Node && wrapperRef.current.contains(e.target)) &&
@@ -63,7 +65,7 @@ export const AIChatSidebar = () => {
       ) {
         setIsOpen(false);
       }
-    }
+    };
     document.addEventListener('mousedown', handleSidebarOutsideClick);
     return () => document.removeEventListener('mousedown', handleSidebarOutsideClick);
   }, [isOpen]);
@@ -158,14 +160,14 @@ export const AIChatSidebar = () => {
                     />
                     <button
                       type="button"
-                      className="flex items-center gap-2 rounded-full p-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-surface)] hover:text-[#05df72]"
+                      className="flex items-center gap-2 rounded-full p-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-surface)] hover:text-brand"
                     >
-                      <span className="text-sm font-medium">Ask AI</span>
+                      <span className="text-sm font-medium">{t('chat.askAi')}</span>
                     </button>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="top" sideOffset={8}>
-                  Chat with Joseph's AI assistant
+                  {t('chat.collapsedTooltip')}
                 </TooltipContent>
               </Tooltip>
             </motion.footer>
@@ -190,7 +192,7 @@ export const AIChatSidebar = () => {
               />
 
               {error && (
-                <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] bg-[#fdc700]/10 p-2 text-xs text-[#fdc700]">
+                <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] bg-brand-accent/10 p-2 text-xs text-brand-accent">
                   <FiAlertCircle size={12} />
                   {error}
                 </div>
@@ -250,5 +252,3 @@ export const AIChatSidebar = () => {
     </div>
   );
 };
-
-export default AIChatSidebar;

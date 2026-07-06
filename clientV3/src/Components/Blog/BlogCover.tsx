@@ -1,14 +1,40 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { type BlogPost, getCategoryConfig } from '@/data/blog';
+import { useLocale } from '@/i18n/localized';
 import { cn } from '@/lib/utils';
 
-const initialsFrom = (title: string): string =>
-  title
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0]?.toUpperCase() ?? '')
-    .join('');
+// Raw row example: "Effect Belongs At The Edges" -> ["Effect", "Belongs", "At", "The", "Edges"]
+const TITLE_WORD_PATTERN = /\s+/;
+
+/**
+ * Builds a short fallback mark from a blog title.
+ *
+ * @param title - Blog post title from authored content.
+ * @returns Up to two uppercase initials, or an empty string when the title is empty.
+ * @example
+ * initialsFrom('Effect Belongs At The Edges') // 'EB'
+ */
+const initialsFrom = (title: string): string => {
+  const trimmedTitle = title.trim();
+
+  if (trimmedTitle.length === 0) {
+    return '';
+  }
+
+  const words = trimmedTitle.split(TITLE_WORD_PATTERN);
+  const initials: string[] = [];
+
+  for (const word of words.slice(0, 2)) {
+    const [firstLetter] = word;
+
+    if (firstLetter !== undefined) {
+      initials.push(firstLetter.toUpperCase());
+    }
+  }
+
+  return initials.join('');
+};
 
 type BlogCoverProps = {
   post: BlogPost;
@@ -23,44 +49,47 @@ type BlogCoverProps = {
  * elsewhere in the portfolio, so a cover-less post still looks intentional.
  */
 export const BlogCover = ({ post, className, priority = false }: BlogCoverProps) => {
+  const { t } = useTranslation();
+  const { localize } = useLocale();
   const [failed, setFailed] = useState(false);
   const category = getCategoryConfig(post.category);
+  const title = localize(post.title);
   const showImage = Boolean(post.coverImage) && !failed;
+  const handleImageError = useCallback(() => setFailed(true), []);
 
   return (
     <div className={cn('relative overflow-hidden bg-[var(--bg-card)]', className)}>
       {showImage ? (
         <img
-          alt={post.title}
+          alt={title}
           className="h-full w-full object-cover"
+          height={900}
           loading={priority ? 'eager' : 'lazy'}
-          onError={() => setFailed(true)}
+          onError={handleImageError}
           src={post.coverImage}
+          width={1600}
         />
       ) : (
         <div
           aria-hidden={true}
-          className="flex h-full w-full items-center justify-center"
-          style={{
-            background: `radial-gradient(120% 120% at 12% 12%, ${category.color}30, transparent 55%), linear-gradient(135deg, ${category.color}14, transparent 62%), var(--bg-surface)`,
-          }}
+          className={cn(
+            'blog-cover-fallback flex h-full w-full items-center justify-center',
+            category.accentClassName,
+          )}
         >
-          <span
-            className="select-none text-6xl font-bold tracking-tight opacity-20 sm:text-7xl"
-            style={{ color: category.color, fontFamily: 'var(--code-font)' }}
-          >
-            {initialsFrom(post.title)}
+          <span className="select-none font-mono text-6xl font-bold tracking-tight opacity-20 sm:text-7xl">
+            {initialsFrom(title)}
           </span>
         </div>
       )}
       <span
-        className="absolute top-3 left-3 rounded-full border border-[var(--border-subtle)] bg-black/40 px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm"
-        style={{ color: category.color }}
+        className={cn(
+          'absolute top-3 left-3 rounded-full border border-[var(--border-subtle)] bg-black/40 px-2.5 py-1 text-[11px] font-medium backdrop-blur-sm',
+          category.accentClassName,
+        )}
       >
-        {category.label}
+        {t(`categories.${post.category}`)}
       </span>
     </div>
   );
 };
-
-export default BlogCover;

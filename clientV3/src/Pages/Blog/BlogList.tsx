@@ -1,23 +1,34 @@
-import { format } from 'date-fns';
 import { ArrowLeft, Clock } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
 import { BlogCover } from '@/Components/Blog/BlogCover';
 import { SEO } from '@/Components/SEO/SEO';
-import {
-  type BlogCategory,
-  type BlogPost,
-  blogPosts,
-  getAllCategories,
-  getCategoryConfig,
-} from '@/data/blog';
+import { type BlogCategory, type BlogPost, blogPosts, getAllCategories } from '@/data/blog';
+import { useLocale } from '@/i18n/localized';
 import { cn } from '@/lib/utils';
 
 type Filter = 'all' | BlogCategory;
 
 const byNewest = (a: BlogPost, b: BlogPost): number =>
   new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+
+/**
+ * Formats a blog publish date for the active UI language.
+ *
+ * @param isoDate - ISO date string from the blog post.
+ * @param language - Normalized app language.
+ * @returns Locale-aware compact publish date.
+ * @example
+ * formatPostDate('2026-07-06', 'he')
+ */
+const formatPostDate = (isoDate: string, language: string): string =>
+  new Date(isoDate).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 
 const FilterChip = ({
   active,
@@ -32,7 +43,7 @@ const FilterChip = ({
     className={cn(
       'rounded-full border px-3 py-1.5 text-xs font-medium transition',
       active
-        ? 'border-[#05df72]/50 bg-[#05df72]/10 text-[#7ff7af]'
+        ? 'border-brand/50 bg-brand/10 text-brand-readable'
         : 'border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-hover)]',
     )}
     onClick={onClick}
@@ -42,31 +53,37 @@ const FilterChip = ({
   </button>
 );
 
-const PostCard = ({ post, priority = false }: { post: BlogPost; priority?: boolean }) => (
-  <Link
-    className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] transition hover:border-[#05df72]/40 hover:bg-[var(--bg-card-hover)]"
-    to={`/blog/${post.slug}`}
-  >
-    <BlogCover className="aspect-[16/9] w-full" post={post} priority={priority} />
-    <div className="flex flex-1 flex-col gap-2 p-4">
-      <h2 className="text-base leading-snug font-semibold tracking-tight transition group-hover:text-[#7ff7af] sm:text-lg">
-        {post.title}
-      </h2>
-      <p className="line-clamp-2 text-sm leading-relaxed text-[var(--text-secondary)]">
-        {post.excerpt}
-      </p>
-      <div className="mt-auto flex items-center gap-3 pt-2 text-xs text-[var(--text-muted)]">
-        <time dateTime={post.publishedAt}>{format(new Date(post.publishedAt), 'MMM d, yyyy')}</time>
-        <span className="inline-flex items-center gap-1">
-          <Clock size={12} />
-          {post.readingTime} min
-        </span>
+const PostCard = ({ post, priority = false }: { post: BlogPost; priority?: boolean }) => {
+  const { t } = useTranslation();
+  const { language, localize } = useLocale();
+
+  return (
+    <Link
+      className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] transition hover:border-brand/40 hover:bg-[var(--bg-card-hover)]"
+      to={`/blog/${post.slug}`}
+    >
+      <BlogCover className="aspect-[16/9] w-full" post={post} priority={priority} />
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <h2 className="text-base leading-snug font-semibold tracking-tight transition group-hover:text-brand-readable sm:text-lg">
+          {localize(post.title)}
+        </h2>
+        <p className="line-clamp-2 text-sm leading-relaxed text-[var(--text-secondary)]">
+          {localize(post.excerpt)}
+        </p>
+        <div className="mt-auto flex items-center gap-3 pt-2 text-xs text-[var(--text-muted)]">
+          <time dateTime={post.publishedAt}>{formatPostDate(post.publishedAt, language)}</time>
+          <span className="inline-flex items-center gap-1">
+            <Clock size={12} />
+            {t('blog.minutes', { count: post.readingTime })}
+          </span>
+        </div>
       </div>
-    </div>
-  </Link>
-);
+    </Link>
+  );
+};
 
 export const BlogList = () => {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<Filter>('all');
   const categories = getAllCategories();
 
@@ -78,7 +95,7 @@ export const BlogList = () => {
   return (
     <>
       <SEO
-        description="Real stories from building things that ship — the failed SaaS, the 3am fixes, and what actually worked. Writing by Joseph Sabag."
+        description={t('seo.writingDescription')}
         keywords={[
           'Joseph Sabag',
           'blog',
@@ -87,33 +104,36 @@ export const BlogList = () => {
           'self-taught',
           'building in public',
         ]}
-        title="Writing"
+        title={t('seo.writingTitle')}
         url="/blog"
       />
 
       <AnimatedPage className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-1 py-3 sm:px-2 sm:py-4 md:gap-8 md:px-3 md:py-6">
         <header className="flex flex-col gap-3">
           <Link
-            className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)] transition hover:text-[#7ff7af]"
+            className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-[var(--text-secondary)] transition hover:text-brand-readable"
             to="/"
           >
             <ArrowLeft size={14} />
-            Back to portfolio
+            {t('blog.backToPortfolio')}
           </Link>
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">Writing</h1>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{t('blog.title')}</h1>
           <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-secondary)] md:text-base">
-            No fluff, no listicles. Real stories from building things that actually ship — the
-            failures, the 3am fixes, and the stubbornness in between.
+            {t('blog.intro')}
           </p>
         </header>
 
         <div className="flex flex-wrap gap-2">
-          <FilterChip active={filter === 'all'} label="All" onClick={() => setFilter('all')} />
+          <FilterChip
+            active={filter === 'all'}
+            label={t('blog.all')}
+            onClick={() => setFilter('all')}
+          />
           {categories.map((category) => (
             <FilterChip
               active={filter === category}
               key={category}
-              label={getCategoryConfig(category).label}
+              label={t(`categories.${category}`)}
               onClick={() => setFilter(category)}
             />
           ))}
@@ -128,5 +148,3 @@ export const BlogList = () => {
     </>
   );
 };
-
-export default BlogList;

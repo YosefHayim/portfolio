@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": { "ignoreUnknown": true },
   "formatter": {
@@ -41,16 +41,17 @@
       "style": {
         "noNestedTernary": "error",
         "useImportType": "error",
-        "noDefaultExport": "off",
+        "noDefaultExport": "warn",
         "noJsxLiterals": "off",
         "useComponentExportOnlyModules": "off",
         "noTernary": "off",
         "useNamingConvention": "off",
         "noMagicNumbers": "off",
         "noCommonJs": "off",
-        "useExportsLast": "warn",
+        "useExportsLast": "off",
         "noIncrementDecrement": "off",
         "noProcessEnv": "off",
+        "useConsistentTypeDefinitions": "off",
         "noExcessiveLinesPerFile": "warn"
       },
       "correctness": {
@@ -58,6 +59,7 @@
         "noUndeclaredDependencies": "warn",
         "noUndeclaredVariables": "warn",
         "noUnresolvedImports": "off",
+        "useImportExtensions": "off",
         "useQwikValidLexicalScope": "off",
         "useHookAtTopLevel": "off"
       },

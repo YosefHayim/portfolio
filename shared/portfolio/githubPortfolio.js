@@ -1,48 +1,49 @@
-export const GITHUB_API_BASE = "https://api.github.com";
-export const GITHUB_USERNAME = "YosefHayim";
+export const GITHUB_API_BASE = 'https://api.github.com';
+export const GITHUB_USERNAME = 'YosefHayim';
 export const MAX_PROJECT_PREVIEWS = 8;
 
 const MAX_PROJECTS_IN_CONTEXT = 6;
 const CACHE_TTL_MS = 1000 * 60 * 10;
-const EXCLUDED_REPO_NAMES = new Set(["yosefhayim", "template", "portfolio"]);
+const EXCLUDED_REPO_NAMES = new Set(['yosefhayim', 'template', 'portfolio']);
+// Raw row example: "hello   world" becomes "hello world".
+const WHITESPACE_PATTERN = /\s+/g;
 
 let contextCache = null;
 
-export function isExcludedRepoName(repoName) {
-  return EXCLUDED_REPO_NAMES.has(repoName.trim().toLowerCase());
-}
+export const isExcludedRepoName = (repoName) =>
+  EXCLUDED_REPO_NAMES.has(repoName.trim().toLowerCase());
 
-export function formatUpdatedAt(value) {
+export const formatUpdatedAt = (value) => {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
-    return "Unknown";
+    return 'Unknown';
   }
 
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    year: "numeric",
+  return new Intl.DateTimeFormat('en', {
+    month: 'short',
+    year: 'numeric',
   }).format(date);
-}
+};
 
-export function sanitizeDescription(description) {
+export const sanitizeDescription = (description) => {
   if (!description) {
-    return "No description provided.";
+    return 'No description provided.';
   }
 
-  const compact = description.replace(/\s+/g, " ").trim();
+  const compact = description.replace(WHITESPACE_PATTERN, ' ').trim();
   return compact.length > 140 ? `${compact.slice(0, 137)}...` : compact;
-}
+};
 
-export async function fetchGitHubRepos(
+export const fetchGitHubRepos = async (
   fetcher = fetch,
   username = GITHUB_USERNAME,
-) {
+) => {
   const response = await fetcher(
     `${GITHUB_API_BASE}/users/${username}/repos?type=owner&sort=updated&per_page=100`,
     {
       headers: {
-        Accept: "application/vnd.github+json",
-        "User-Agent": "portfolio",
+        Accept: 'application/vnd.github+json',
+        'User-Agent': 'portfolio',
       },
     },
   );
@@ -52,10 +53,10 @@ export async function fetchGitHubRepos(
   }
 
   return response.json();
-}
+};
 
-export function getRankedPortfolioRepos(repos) {
-  return repos
+export const getRankedPortfolioRepos = (repos) =>
+  repos
     .filter(
       (repo) => !repo.fork && !repo.archived && !isExcludedRepoName(repo.name),
     )
@@ -65,50 +66,53 @@ export function getRankedPortfolioRepos(repos) {
       }
       return Date.parse(b.pushed_at) - Date.parse(a.pushed_at);
     });
-}
 
-export function createGitHubPortfolioSnapshot(repos) {
-  return getRankedPortfolioRepos(repos).map((repo) => ({
+export const createGitHubPortfolioSnapshot = (repos) =>
+  getRankedPortfolioRepos(repos).map((repo) => ({
     name: repo.name,
     url: repo.html_url,
     description: sanitizeDescription(repo.description),
     stars: repo.stargazers_count,
     updatedAt: repo.pushed_at,
   }));
-}
 
-export function createGitHubProjectPreviews(
+export const createGitHubProjectPreviews = (
   repos,
   maxProjects = MAX_PROJECT_PREVIEWS,
-) {
-  return getRankedPortfolioRepos(repos)
+) =>
+  getRankedPortfolioRepos(repos)
     .map((repo) => {
-      const techStack = [repo.language, ...(repo.topics ?? [])]
+      const repoTopics = Array.isArray(repo.topics) ? repo.topics : [];
+      const language = typeof repo.language === 'string' ? repo.language : null;
+      const techStack = [language, ...repoTopics]
         .filter((value) => Boolean(value))
         .slice(0, 6);
-      const homepage = repo.homepage?.trim();
+      const homepage = typeof repo.homepage === 'string' ? repo.homepage.trim() : '';
+      const hasHomepage = homepage.length > 0;
+      const description =
+        typeof repo.description === 'string'
+          ? repo.description
+          : 'No repository description provided.';
 
       return {
         id: repo.name.toLowerCase(),
         name: repo.name,
-        description: repo.description ?? "No repository description provided.",
-        techStack: techStack.length > 0 ? techStack : ["Software Engineering"],
+        description,
+        techStack: techStack.length > 0 ? techStack : ['Software Engineering'],
         repoUrl: repo.html_url,
-        deployedUrl: homepage || repo.html_url,
-        status: homepage ? "live" : "completed",
+        deployedUrl: hasHomepage ? homepage : repo.html_url,
+        status: hasHomepage ? 'live' : 'completed',
         stars: repo.stargazers_count,
         updatedAt: repo.pushed_at,
       };
     })
     .slice(0, maxProjects);
-}
 
-export function createGitHubStatsSnapshot({
+export const createGitHubStatsSnapshot = ({
   repos,
   totalCommits,
   now = new Date(),
-}) {
-  return {
+}) => ({
     totalCommits,
     totalRepos: repos.length,
     totalStars: repos.reduce(
@@ -116,10 +120,9 @@ export function createGitHubStatsSnapshot({
       0,
     ),
     lastUpdated: now.toISOString(),
-  };
-}
+  });
 
-export function formatGitHubProjectsContext(projects) {
+export const formatGitHubProjectsContext = (projects) => {
   const topProjects = projects.slice(0, MAX_PROJECTS_IN_CONTEXT);
   const totalStars = projects.reduce((sum, repo) => sum + repo.stars, 0);
   const projectsList =
@@ -129,8 +132,8 @@ export function formatGitHubProjectsContext(projects) {
             (repo) =>
               `- ${repo.name} (${repo.stars} stars, updated ${formatUpdatedAt(repo.updatedAt)}): ${repo.description} (${repo.url})`,
           )
-          .join("\n")
-      : "- No repositories found.";
+          .join('\n')
+      : '- No repositories found.';
 
   return `## Live GitHub Projects Snapshot
 Source: GitHub API for ${GITHUB_USERNAME}, auto-fetched by server.
@@ -141,9 +144,9 @@ Top active projects:
 ${projectsList}
 
 When users ask about recent repos/projects, prioritize this live snapshot over generic examples.`;
-}
+};
 
-export async function getDynamicGitHubProjectsContext() {
+export const getDynamicGitHubProjectsContext = async () => {
   const now = Date.now();
   if (contextCache && contextCache.expiresAt > now) {
     return contextCache.value;
@@ -163,4 +166,4 @@ GitHub live snapshot is temporarily unavailable. If asked for recent repos/proje
     contextCache = { value: fallbackContext, expiresAt: now + CACHE_TTL_MS };
     return fallbackContext;
   }
-}
+};

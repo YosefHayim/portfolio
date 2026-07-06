@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import type { TFunction } from 'i18next';
 import {
   BriefcaseBusiness,
   Building2,
@@ -14,6 +15,7 @@ import {
   Users,
 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa';
 import { Link } from 'react-router';
 import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
@@ -30,6 +32,7 @@ import { getRecentPosts } from '@/data/blog';
 import { useChromeExtensionUsers } from '@/hooks/useChromeExtensionUsers';
 import { useGitHubProjects } from '@/hooks/useGitHubProjects';
 import { useGitHubStats } from '@/hooks/useGitHubStats';
+import { useLocale } from '@/i18n/localized';
 import { cn } from '@/lib/utils';
 import { getTechIcon } from '@/utils/techIcons';
 
@@ -37,15 +40,18 @@ const sectionTitleClass = 'text-2xl font-semibold tracking-tight md:text-3xl';
 
 const SOCIAL_ICON_SIZE = 14;
 
-const actionLinkClass =
-  'inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-[var(--border-subtle)] px-2.5 text-xs font-medium hover:border-[#05df72]/50';
+// Raw example: "React Query/Node" -> ["React", "Query", "Node"]
+const FALLBACK_INITIAL_SPLIT_PATTERN = /[\s/-]+/;
 
-const formatDate = (isoDate: string): string => {
+const actionLinkClass =
+  'inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-[var(--border-subtle)] px-2.5 text-xs font-medium hover:border-brand/50';
+
+const formatDate = (isoDate: string, locale: string, fallback: string): string => {
   const date = new Date(isoDate);
   if (Number.isNaN(date.getTime())) {
-    return 'Recently';
+    return fallback;
   }
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'short',
   });
@@ -65,30 +71,30 @@ const monthsInclusive = (startIso: string, endIso: string): number => {
   return (endY - startY) * 12 + (endM - startM) + 1;
 };
 
-/** Human-readable tenure label like "11 mos" or "1 yr 2 mos". */
-const formatTenure = (months: number): string => {
+/** Human-readable tenure label like "11 mos" or "1 yr 2 mos", localized via i18n. */
+const formatTenure = (months: number, t: TFunction): string => {
   if (months <= 0) {
     return '';
   }
   const years = Math.floor(months / 12);
   const remainingMonths = months % 12;
-  const monthPart = remainingMonths === 1 ? '1 mo' : `${remainingMonths} mos`;
+  const monthPart = t('tenure.month', { count: remainingMonths });
   if (years === 0) {
     return monthPart;
   }
-  const yearPart = years === 1 ? '1 yr' : `${years} yrs`;
+  const yearPart = t('tenure.year', { count: years });
   if (remainingMonths === 0) {
     return yearPart;
   }
   return `${yearPart} ${monthPart}`;
 };
 
-const tenureLabel = (item: { startDate?: string; endDate?: string }): string => {
+const tenureLabel = (item: { startDate?: string; endDate?: string }, t: TFunction): string => {
   if (!item.startDate) {
     return '';
   }
   const endIso = item.endDate ?? new Date().toISOString().slice(0, 7); // "YYYY-MM"
-  return formatTenure(monthsInclusive(item.startDate, endIso));
+  return formatTenure(monthsInclusive(item.startDate, endIso), t);
 };
 
 /**
@@ -106,6 +112,35 @@ const REPO_LOGO_OVERRIDES: Record<string, { src: string; alt: string }> = {
 
 const findRepoLogoOverride = (projectName: string) =>
   REPO_LOGO_OVERRIDES[projectName.trim().toLowerCase()];
+
+/**
+ * Builds compact initials for technology chips without known icons.
+ *
+ * @param label - Technology or project label from profile/project data.
+ * @returns Up to two uppercase initials, or an empty string when the label is empty.
+ * @example
+ * getFallbackInitials('React Query') // 'RQ'
+ */
+const getFallbackInitials = (label: string): string => {
+  const trimmedLabel = label.trim();
+
+  if (trimmedLabel.length === 0) {
+    return '';
+  }
+
+  const parts = trimmedLabel.split(FALLBACK_INITIAL_SPLIT_PATTERN);
+  const initials: string[] = [];
+
+  for (const part of parts.slice(0, 2)) {
+    const [firstLetter] = part;
+
+    if (firstLetter !== undefined) {
+      initials.push(firstLetter.toUpperCase());
+    }
+  }
+
+  return initials.join('');
+};
 
 const SectionBlock = ({
   id,
@@ -133,12 +168,7 @@ const SectionBlock = ({
 
 const TechIconChip = ({ tech }: { tech: string }) => {
   const icon = getTechIcon(tech);
-  const fallbackLabel = tech
-    .split(/[\s-/]+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
+  const fallbackLabel = getFallbackInitials(tech);
 
   return (
     <Tooltip>
@@ -189,7 +219,9 @@ const LogoBadge = ({
   );
 };
 
-const OnePagePortfolio = () => {
+export const OnePagePortfolio = () => {
+  const { t } = useTranslation();
+  const { language, localize } = useLocale();
   const { stats } = useGitHubStats();
   const {
     projects,
@@ -200,7 +232,7 @@ const OnePagePortfolio = () => {
   const chromeExtensionIds = featuredOffGitHubProjects
     .map((project) => project.chromeExtensionId)
     .filter((id): id is string => Boolean(id));
-  const chromeExtensionUsers = useChromeExtensionUsers(chromeExtensionIds);
+  const { users: chromeExtensionUsers } = useChromeExtensionUsers(chromeExtensionIds);
   const contactEmail = recruiterProfile.contactEmail || 'yosefisabag@gmail.com';
   const stackedTechLoop = [
     ...coreTechStack,
@@ -215,57 +247,57 @@ const OnePagePortfolio = () => {
 
   const heroStats = [
     {
-      icon: <FolderGit2 size={14} className="text-[#7ff7af]" />,
-      label: 'Repositories',
-      tooltip: 'Total public repositories on GitHub',
+      icon: <FolderGit2 size={14} className="text-brand-readable" />,
+      label: t('hero.repositories'),
+      tooltip: t('hero.repositoriesTooltip'),
       value: stats?.totalRepos ?? '--',
     },
     {
-      icon: <Star size={14} className="text-[#7ff7af]" />,
-      label: 'Stars',
-      tooltip: 'Total stars across public repositories',
+      icon: <Star size={14} className="text-brand-readable" />,
+      label: t('hero.stars'),
+      tooltip: t('hero.starsTooltip'),
       value: stats?.totalStars ?? '--',
     },
     {
-      icon: <GitCommitHorizontal size={14} className="text-[#7ff7af]" />,
-      label: 'Commits',
-      tooltip: 'Total public GitHub commits',
+      icon: <GitCommitHorizontal size={14} className="text-brand-readable" />,
+      label: t('hero.commits'),
+      tooltip: t('hero.commitsTooltip'),
       value: stats?.totalCommits ?? '--',
     },
-  ] as const;
+  ];
 
   const socialLinks = [
     {
-      label: 'LinkedIn',
+      label: t('social.linkedin'),
       href: recruiterProfile.linkedinUrl,
-      icon: <FaLinkedinIn size={SOCIAL_ICON_SIZE} className="text-[#0A66C2]" />,
+      icon: <FaLinkedinIn size={SOCIAL_ICON_SIZE} className="text-social-linkedin" />,
     },
     {
-      label: 'GitHub',
+      label: t('social.github'),
       href: `https://github.com/${recruiterProfile.githubUsername}`,
-      icon: <FaGithub size={SOCIAL_ICON_SIZE} className="text-[#f1f5f9]" />,
+      icon: <FaGithub size={SOCIAL_ICON_SIZE} className="text-social-github" />,
     },
     {
-      label: 'WhatsApp',
+      label: t('social.whatsapp'),
       href: recruiterProfile.whatsappUrl,
-      icon: <FaWhatsapp size={SOCIAL_ICON_SIZE} className="text-[#25D366]" />,
+      icon: <FaWhatsapp size={SOCIAL_ICON_SIZE} className="text-social-whatsapp" />,
     },
     {
-      label: 'CV',
+      label: t('hero.cv'),
       href: recruiterProfile.resumeUrl,
-      icon: <FileText size={SOCIAL_ICON_SIZE} className="text-[#7ff7af]" />,
+      icon: <FileText size={SOCIAL_ICON_SIZE} className="text-brand-readable" />,
     },
     {
-      label: 'Email',
+      label: t('hero.email'),
       href: `mailto:${contactEmail}`,
-      icon: <Mail size={SOCIAL_ICON_SIZE} className="text-[#f7c76b]" />,
+      icon: <Mail size={SOCIAL_ICON_SIZE} className="text-social-mail" />,
     },
-  ] as const;
+  ];
 
   return (
     <>
       <SEO
-        description="Joseph Sabag, AI Software Engineer. Fast recruiter overview with core projects, stack, and direct contact."
+        description={t('seo.homeDescription')}
         keywords={[
           'Joseph Sabag',
           'AI Software Engineer',
@@ -275,7 +307,7 @@ const OnePagePortfolio = () => {
           'TypeScript',
           'GitHub Projects',
         ]}
-        title="Portfolio"
+        title={t('seo.homeTitle')}
         url="/"
       />
 
@@ -286,12 +318,12 @@ const OnePagePortfolio = () => {
               <h1 className="max-w-3xl text-2xl leading-tight font-semibold text-balance md:text-4xl">
                 {recruiterProfile.name}
               </h1>
-              <p className="inline-flex items-center gap-2 text-sm font-medium text-[#9fdab6] md:text-base">
+              <p className="inline-flex items-center gap-2 text-sm font-medium text-brand-muted md:text-base">
                 <BriefcaseBusiness size={15} />
-                {recruiterProfile.role}
+                {localize(recruiterProfile.role)}
               </p>
               <p className="max-w-3xl text-sm leading-relaxed text-[var(--text-secondary)] md:text-base md:leading-7">
-                {recruiterProfile.shortBio}
+                {localize(recruiterProfile.shortBio)}
               </p>
 
               <div className="grid grid-cols-3 gap-2">
@@ -321,7 +353,7 @@ const OnePagePortfolio = () => {
               <div className="grid grid-cols-2 gap-2 min-[430px]:grid-cols-3 sm:flex sm:flex-wrap">
                 {socialLinks.map((social) => (
                   <a
-                    className="inline-flex h-11 min-w-0 items-center justify-center gap-2 rounded-full border border-[var(--border-default)] px-3 text-xs font-medium transition hover:border-[#05df72]/50 hover:bg-[#05df72]/10 sm:w-auto sm:justify-start"
+                    className="inline-flex h-11 min-w-0 items-center justify-center gap-2 rounded-full border border-[var(--border-default)] px-3 text-xs font-medium transition hover:border-brand/50 hover:bg-brand/10 sm:w-auto sm:justify-start"
                     href={social.href}
                     key={social.label}
                     rel="noreferrer"
@@ -348,7 +380,7 @@ const OnePagePortfolio = () => {
           </div>
         </section>
 
-        <SectionBlock id="stack" title="Tech Stack">
+        <SectionBlock id="stack" title={t('sections.techStack')}>
           <div className="stack-marquee w-full">
             <div className="stack-marquee-track">
               {stackedTechLoop.map((tech, index) => (
@@ -358,7 +390,7 @@ const OnePagePortfolio = () => {
           </div>
         </SectionBlock>
 
-        <SectionBlock id="experience" title="Experience">
+        <SectionBlock id="experience" title={t('sections.experience')}>
           <div className="grid gap-2 md:grid-cols-2">
             {experienceItems.map((item) => (
               <article
@@ -377,7 +409,7 @@ const OnePagePortfolio = () => {
                       <h3 className="text-base leading-tight font-semibold">
                         {item.companyUrl ? (
                           <a
-                            className="inline-flex max-w-full items-center gap-2 hover:text-[#7ff7af]"
+                            className="inline-flex max-w-full items-center gap-2 hover:text-brand-readable"
                             href={item.companyUrl}
                             rel="noreferrer"
                             target="_blank"
@@ -388,21 +420,21 @@ const OnePagePortfolio = () => {
                           <span className="truncate">{item.company}</span>
                         )}
                       </h3>
-                      <p className="text-xs text-[var(--text-secondary)]">{item.role}</p>
+                      <p className="text-xs text-[var(--text-secondary)]">{localize(item.role)}</p>
                     </div>
                   </div>
                   <p className="inline-flex shrink-0 items-center gap-2 text-xs text-[var(--text-secondary)]">
                     <CalendarDays size={12} />
-                    <span>{item.dateRange}</span>
-                    {tenureLabel(item) && (
+                    <span>{localize(item.dateRange)}</span>
+                    {tenureLabel(item, t) && (
                       <span className="text-[10px] text-[var(--text-secondary)]/80">
-                        ({tenureLabel(item)})
+                        ({tenureLabel(item, t)})
                       </span>
                     )}
                   </p>
                 </div>
                 <ul className="grid gap-2 text-sm leading-relaxed text-[var(--text-secondary)]">
-                  {item.bullets.map((bullet) => (
+                  {localize(item.bullets).map((bullet) => (
                     <li className="line-clamp-3" key={`${item.id}-${bullet}`}>
                       {bullet}
                     </li>
@@ -413,7 +445,7 @@ const OnePagePortfolio = () => {
           </div>
         </SectionBlock>
 
-        <SectionBlock id="mobile-projects" title="Projects">
+        <SectionBlock id="mobile-projects" title={t('sections.projects')}>
           <div className="grid gap-2 md:grid-cols-2">
             {featuredOffGitHubProjects.map((project) => (
               <motion.article
@@ -436,7 +468,7 @@ const OnePagePortfolio = () => {
                       <h3 className="text-base leading-tight font-semibold sm:text-lg">
                         {project.url ? (
                           <a
-                            className="inline-flex max-w-full items-start gap-2 hover:text-[#7ff7af]"
+                            className="inline-flex max-w-full items-start gap-2 hover:text-brand-readable"
                             href={project.url}
                             rel="noreferrer"
                             target="_blank"
@@ -449,7 +481,7 @@ const OnePagePortfolio = () => {
                       </h3>
                       <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
                         <CalendarDays size={12} />
-                        {project.dateRange}
+                        {localize(project.dateRange)}
                       </p>
                     </div>
                   </div>
@@ -457,13 +489,13 @@ const OnePagePortfolio = () => {
                     {project.chromeExtensionId &&
                       chromeExtensionUsers[project.chromeExtensionId] !== undefined && (
                         <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] p-2 text-xs text-green-500">
-                          <Users size={12} color="#05df72" />
+                          <Users size={12} color="var(--brand-primary)" />
                           {chromeExtensionUsers[project.chromeExtensionId]?.toLocaleString()}
                         </span>
                       )}
                     {!project.url && (
                       <span className="inline-flex h-9 items-center justify-center rounded-full border border-[var(--border-subtle)] px-2.5 text-xs text-[var(--text-secondary)]">
-                        {project.status}
+                        {localize(project.status)}
                       </span>
                     )}
                     {project.url && (
@@ -474,13 +506,13 @@ const OnePagePortfolio = () => {
                         target="_blank"
                       >
                         <ExternalLink size={14} />
-                        Live
+                        {t('projects.live')}
                       </a>
                     )}
                   </div>
                 </div>
                 <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-                  {project.description}
+                  {localize(project.description)}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {project.techStack.map((tech) => (
@@ -492,18 +524,18 @@ const OnePagePortfolio = () => {
           </div>
         </SectionBlock>
 
-        <SectionBlock id="projects" title="Featured Repositories">
-          {isProjectsLoading && <p className="text-sm">Loading GitHub Repositories...</p>}
+        <SectionBlock id="projects" title={t('sections.featuredRepositories')}>
+          {isProjectsLoading && <p className="text-sm">{t('projects.loadingRepositories')}</p>}
 
           {projectsError && (
             <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-2 text-sm">
-              <span>Using cached fallback data right now.</span>
+              <span>{t('projects.usingCachedFallback')}</span>
               <button
-                className="rounded-md border border-[var(--border-subtle)] p-2 hover:border-[#05df72]/50"
+                className="rounded-md border border-[var(--border-subtle)] p-2 hover:border-brand/50"
                 onClick={refetch}
                 type="button"
               >
-                Retry
+                {t('projects.retry')}
               </button>
             </div>
           )}
@@ -524,7 +556,7 @@ const OnePagePortfolio = () => {
                     <div className="min-w-0">
                       <h3 className="text-base leading-tight font-semibold sm:text-lg">
                         <a
-                          className="inline-flex max-w-full items-start gap-2 hover:text-[#7ff7af]"
+                          className="inline-flex max-w-full items-start gap-2 hover:text-brand-readable"
                           href={project.repoUrl}
                           rel="noreferrer"
                           target="_blank"
@@ -543,13 +575,15 @@ const OnePagePortfolio = () => {
                       </h3>
                       <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
                         <CalendarDays size={12} />
-                        Updated {formatDate(project.updatedAt)}
+                        {t('projects.updated', {
+                          date: formatDate(project.updatedAt, language, t('projects.recently')),
+                        })}
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-1.5">
                       {project.stars > 0 && (
                         <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border-subtle)] p-2 text-xs text-green-500">
-                          <Star size={12} color="#05df72" />
+                          <Star size={12} color="var(--brand-primary)" />
                           {project.stars}
                         </span>
                       )}
@@ -560,7 +594,7 @@ const OnePagePortfolio = () => {
                         target="_blank"
                       >
                         <ExternalLink size={14} />
-                        Live
+                        {t('projects.live')}
                       </a>
                     </div>
                   </div>
@@ -581,24 +615,24 @@ const OnePagePortfolio = () => {
         </SectionBlock>
 
         <SectionBlock
-          description="Real stories from building things that ship — no fluff, no listicles."
+          description={t('sections.latestWritingDescription')}
           id="writing"
-          title="Latest Writing"
+          title={t('sections.latestWriting')}
         >
           <div className="grid gap-2 md:grid-cols-3">
             {getRecentPosts(3).map((post) => (
               <Link
-                className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] transition hover:border-[#05df72]/40 hover:bg-[var(--bg-card-hover)]"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-card)] transition hover:border-brand/40 hover:bg-[var(--bg-card-hover)]"
                 key={post.id}
                 to={`/blog/${post.slug}`}
               >
                 <BlogCover className="aspect-[16/9] w-full" post={post} />
                 <div className="flex flex-1 flex-col gap-1.5 p-3">
-                  <h3 className="text-sm leading-snug font-semibold transition group-hover:text-[#7ff7af]">
-                    {post.title}
+                  <h3 className="text-sm leading-snug font-semibold transition group-hover:text-brand-readable">
+                    {localize(post.title)}
                   </h3>
                   <p className="line-clamp-2 text-xs leading-relaxed text-[var(--text-secondary)]">
-                    {post.excerpt}
+                    {localize(post.excerpt)}
                   </p>
                 </div>
               </Link>
@@ -606,10 +640,10 @@ const OnePagePortfolio = () => {
           </div>
           <div className="pt-3">
             <Link
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#7ff7af] hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-readable hover:underline"
               to="/blog"
             >
-              Read all writing →
+              {t('projects.readAllWriting')}
             </Link>
           </div>
         </SectionBlock>
@@ -617,5 +651,3 @@ const OnePagePortfolio = () => {
     </>
   );
 };
-
-export default OnePagePortfolio;

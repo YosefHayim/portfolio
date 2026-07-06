@@ -3,26 +3,38 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes, useLocation } from 'react-router';
 import { Toaster } from 'sonner';
 import { Navbar } from './Components/Navbar/Navbar.tsx';
-import ReturnVisitorDialog from './Components/ReturnVisitorDialog/ReturnVisitorDialog.tsx';
-import ScrollProgress from './Components/ScrollProgress/ScrollProgress.tsx';
+import { ReturnVisitorDialog } from './Components/ReturnVisitorDialog/ReturnVisitorDialog.tsx';
+import { ScrollProgress } from './Components/ScrollProgress/ScrollProgress.tsx';
 import { useReturnVisitor } from './hooks/useReturnVisitor.ts';
 import '@/index.css';
 
-const OnePagePortfolio = lazy(() => import('./Pages/OnePage/OnePagePortfolio.tsx'));
-const BlogList = lazy(() => import('./Pages/Blog/BlogList.tsx'));
-const BlogPost = lazy(() => import('./Pages/Blog/BlogPost.tsx'));
+const OnePagePortfolio = lazy(() =>
+  import('./Pages/OnePage/OnePagePortfolio.tsx').then((module) => ({
+    default: module.OnePagePortfolio,
+  })),
+);
+const BlogList = lazy(() =>
+  import('./Pages/Blog/BlogList.tsx').then((module) => ({ default: module.BlogList })),
+);
+const BlogPost = lazy(() =>
+  import('./Pages/Blog/BlogPost.tsx').then((module) => ({ default: module.BlogPost })),
+);
 
-const AIChatSidebar = lazy(() => import('./Components/AIChatSidebar/AIChatSidebar.tsx'));
+const AIChatSidebar = lazy(() =>
+  import('./Components/AIChatSidebar/AIChatSidebar.tsx').then((module) => ({
+    default: module.AIChatSidebar,
+  })),
+);
 
 const PageLoader = () => (
   <div className="flex min-h-[50vh] items-center justify-center">
-    <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#05df72] border-t-transparent" />
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
   </div>
 );
 
 const ChatLoader = () => null;
 
-const App = () => {
+export const App = () => {
   const location = useLocation();
   const { shouldShowDialog, dismissDialog } = useReturnVisitor();
 
@@ -60,5 +72,3 @@ const App = () => {
     </div>
   );
 };
-
-export default App;
