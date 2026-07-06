@@ -337,7 +337,7 @@ const OnePagePortfolio = () => {
             </div>
 
             <div className="grid min-w-0 place-items-center" id="contact">
-              <div className="mx-auto flex h-[min(64vw,270px)] w-full max-w-[300px] items-end justify-center sm:h-[340px] sm:max-w-[360px] lg:h-[420px] lg:max-w-none">
+              <div className="mx-auto flex h-[min(80vw,360px)] w-full max-w-[360px] items-end justify-center sm:h-[440px] sm:max-w-[420px] lg:h-[540px] lg:max-w-none">
                 <img
                   alt="Joseph Sabag"
                   className="h-full w-full rounded-2xl object-contain object-bottom"

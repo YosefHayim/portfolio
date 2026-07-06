@@ -306,7 +306,7 @@ That was the hard part. Not learning to code. Learning that being right about pe
   {
     id: '11',
     slug: 'effect-the-library-that-looks-weird-until-it-doesnt',
-    title: 'Effect: the library that looks weird until it doesn\'t',
+    title: "Effect: the library that looks weird until it doesn't",
     excerpt:
       'Effect replaces try/catch, zod, and async/await boilerplate with one system that composes. It looks alien on first read — then you realize how much noise it deleted.',
     content: `I resisted [Effect](https://github.com/Effect-TS/effect) for months. The syntax looked alien. Generators instead of async/await? Pipe everywhere? Who writes TypeScript like that?
@@ -404,6 +404,65 @@ It's not a framework. It's the missing standard library TypeScript should have s
     tags: ['Effect', 'TypeScript', 'schemas', 'error handling', 'functional programming'],
     author: AUTHOR,
     publishedAt: '2026-07-05',
+    readingTime: 4,
+    featured: true,
+  },
+  {
+    id: '12',
+    slug: 'the-skill-that-writes-code-like-me',
+    title: 'The skill that finally writes code like me',
+    excerpt:
+      'For two weeks I stopped writing code and started writing the thing that writes code. I brainstormed with the AI to build a skill that makes the AI write like me — then refined it prompt by prompt until it did.',
+    content: `For the last two weeks I barely wrote code. I wrote the thing that writes code.
+
+Let me explain, because it sounds backwards and it changed everything.
+
+I ship for freelance clients and for myself. The bottleneck was never speed — an agent will hand me a thousand lines before I finish my coffee. The bottleneck was *taste*. The AI writes code that runs and looks nothing like mine. Nested ternaries. Silent catches. Twelve ways to declare the same route. Files I'd never sign my name to. So every session I'd generate fast, then spend the real time dragging the output back to how I actually write. Fast to generate, slow to trust. That's not productivity. That's babysitting.
+
+So I tried something that felt stupid at first: instead of fixing the output, I sat down and *brainstormed with the AI about how to make the AI write better*. Not "write this feature." "Let's design a skill that interrogates how I build, writes it down, and then holds every future diff to it." I was using the model to sharpen the tool that sharpens the model.
+
+## Prompt by prompt until it clicked
+
+The first version was garbage. It asked lazy questions and wrote a bland style guide nobody would follow. Fine. I told it exactly where it was weak, and we went again. And again. Prompt to prompt, iteration to iteration, I refined that skill the same way you refine a person — point at the miss, explain the standard, watch it adjust. 
+
+A few days in it stopped guessing and started *grilling* me. Arrow consts or function declarations? \`type\` or \`interface\`? Where does an error live — do you throw, or do you return a typed channel? It dragged the real rules out of my head and pinned them to the page. By the end it wasn't a prompt anymore. It was a skill I keep in my personal bag — [dufflebag](https://github.com/YosefHayim/dufflebag) — that any agent loads before it touches my code.
+
+Now the loop is inverted. I don't clean up after the AI. The AI writes it my way the first time, because the standard ships *with* the assignment.
+
+## The boring markdown files are the fuel
+
+Here's the part that surprised me most. What makes this work isn't a clever prompt. It's a stack of unglamorous markdown files.
+
+\`CONTEXT.md\` — the domain and the blueprint.
+\`LANGUAGE.md\` — the exact words this project uses, so the code speaks one dialect.
+\`CODE-STYLE.md\` — how code is *written* here, every rule with a ✓ chosen and a ✗ rejected.
+\`PROJECT.md\` — what this thing is even for.
+
+\`\`\`markdown
+#### Arrow consts, never a function declaration · [taste]
+
+// ✓ chosen
+export const issueApiKey = (input: IssueApiKey) => Effect.gen(function* () {…});
+// ✗ not this
+export function issueApiKey(input) {…}
+\`\`\`
+
+Yes, it's a lot of files. Yes, writing them is a chore. But they're the difference between an agent that guesses and one that *knows*. Every rule I write down once is a mistake the AI never makes again. Vague task plus blind repo equals confident garbage. Sharp context plus a written standard equals code I'd ship. The markdown is where the quality is decided, long before a line is generated.
+
+## I stopped reading code in the terminal
+
+The other thing that quietly wrecked my flow: reading everything as flat text in a terminal. Monochrome scrollback, plans and diffs and reviews all the same grey. My eyes glaze, I skim, I miss things. It's exhausting and it's slow, and I read a *lot* of AI output now.
+
+So I fixed that too. Plans and reviews render as a proper local HTML page — [planpage](https://github.com/YosefHayim/planpage) — clean templates, color-coded diffs, the decision I actually have to make sitting right there instead of buried in a wall of text. The eye reads structure in seconds what it reads out of a terminal in minutes. Same information. A tenth of the friction. It's calm to look at, so I actually *look*.
+
+That's the whole shift of these two weeks. I moved my effort upstream — into the skill, the markdown, the way I read — and the code downstream started coming out right on its own.
+
+Anyone can generate a thousand lines now. I spent two weeks making sure the thousand lines come out sounding like me. That's the part that turns a fast typist into a beast.`,
+    coverImage: '/blog/write-like-me.png',
+    category: 'engineering',
+    tags: ['AI agents', 'skills', 'context engineering', 'developer tools', 'readability'],
+    author: AUTHOR,
+    publishedAt: '2026-07-06',
     readingTime: 4,
     featured: true,
   },

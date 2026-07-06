@@ -176,6 +176,9 @@ export const BlogContent = ({ content }: BlogContentProps) => {
 
           case 'paragraph':
             return <p key={index}>{renderInlineMarkdown(block.text)}</p>;
+
+          default:
+            return null;
         }
       })}
     </article>

@@ -1,8 +1,8 @@
 /* Prism dark theme — portfolio palette */
-code[class*='language-'],
-pre[class*='language-'] {
+code[class*="language-"],
+pre[class*="language-"] {
   color: #e2e8f0;
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 13px;
   line-height: 1.6;
   direction: ltr;
@@ -14,7 +14,7 @@ pre[class*='language-'] {
   hyphens: none;
 }
 
-pre[class*='language-'] {
+pre[class*="language-"] {
   margin: 0;
   overflow: auto;
 }

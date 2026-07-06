@@ -3,8 +3,8 @@ import { ArrowLeft, Clock } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router';
 import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
-import { BlogCover } from '@/Components/Blog/BlogCover';
 import { BlogContent } from '@/Components/Blog/BlogContent';
+import { BlogCover } from '@/Components/Blog/BlogCover';
 import { SEO } from '@/Components/SEO/SEO';
 import { blogPosts, getCategoryConfig, getPostBySlug } from '@/data/blog';
 
