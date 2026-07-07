@@ -8,6 +8,7 @@
 !CONTEXT.md
 !LANGUAGE.md
 !PROJECT.md
+!README.md
 !docs/agents/*.md
 !docs/adr/current/*.md
 !clientV3/biome.json
