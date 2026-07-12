@@ -81,6 +81,17 @@ const handleWorkerRequest = async (
   }
 
   try {
+    // Default era: send the bare root to the current flagship (v4 / JTS) instead
+    // of the v3 SPA. 302 (not 301) keeps the default swappable without fighting
+    // hard browser/CDN caches. Deeper v3 client routes still resolve via the SPA
+    // fallback, and every era stays reachable at its own /vN/ path.
+    // Raw example: "https://site/?ref=x" -> "https://site/v4/?ref=x".
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      const target = new URL('/v4/', url);
+      target.search = url.search;
+      return Response.redirect(target.toString(), 302);
+    }
+
     if (url.pathname === '/health') {
       return jsonResponse(request, env, {
         status: 'ok',

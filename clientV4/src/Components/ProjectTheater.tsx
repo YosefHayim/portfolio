@@ -12,7 +12,6 @@ import { asset } from '@/lib/utils';
 
 interface ProjectSlideProps {
   repo: GitHubRepoPreview;
-  index: number;
 }
 
 /**
@@ -41,7 +40,7 @@ const HeroTile = ({ src, fallbackLabel, className, y }: HeroTileProps) => {
 
   return (
     <motion.div
-      className={`absolute overflow-hidden rounded-xl border border-white/10 bg-zinc-950/80 shadow-2xl ${className}`}
+      className={`overflow-hidden rounded-xl border border-white/10 bg-zinc-950/80 shadow-2xl ${className}`}
       style={{ y }}
     >
       {showImage && src ? (
@@ -67,31 +66,41 @@ const HeroTile = ({ src, fallbackLabel, className, y }: HeroTileProps) => {
   );
 };
 
-const ProjectSlide = ({ repo, index }: ProjectSlideProps) => {
+const ProjectSlide = ({ repo }: ProjectSlideProps) => {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
   });
-  const yPrimary = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const yPrimary = useTransform(scrollYProgress, [0, 1], [28, -28]);
   const opacity = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.35, 1, 1, 0.35]);
 
   const tag = repo.language ?? 'Repository';
   const href = repo.homepage ?? repo.repoUrl;
   const hasStars = repo.stars > 0;
-  const primaryLeft = index % 2 === 0;
 
   return (
     <article
-      className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-5 py-20 sm:px-8"
+      className="relative flex min-h-[70vh] flex-col items-center justify-center gap-10 overflow-hidden px-5 py-16 sm:px-8 sm:py-20"
       ref={ref}
     >
       <div className="pointer-events-none absolute inset-0 vignette" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(94,234,212,0.04),transparent_55%)]" />
 
-      <motion.div className="relative z-10 text-center" style={{ opacity }}>
+      {/* One repo → one README hero, centered above the copy so nothing overlaps at
+          any width. Parallax drift keeps the cinematic feel of the old float. */}
+      <HeroTile
+        className={`relative w-full max-w-sm sm:max-w-md md:max-w-lg ${
+          hasStars ? 'h-48 sm:h-56 md:h-64' : 'h-44 sm:h-52 md:h-56'
+        }`}
+        fallbackLabel={repo.name}
+        src={repo.heroImage}
+        y={yPrimary}
+      />
+
+      <motion.div className="relative z-10 max-w-2xl text-center" style={{ opacity }}>
         <p className="mb-3 text-[11px] tracking-[0.22em] text-zinc-500 uppercase">{tag}</p>
-        <h3 className="text-[clamp(2.5rem,8vw,5.5rem)] leading-none font-semibold tracking-[-0.05em] text-white">
+        <h3 className="text-[clamp(2rem,7vw,5rem)] leading-none font-semibold tracking-[-0.05em] text-white">
           {repo.name}
         </h3>
         <p className="mx-auto mt-4 max-w-md text-sm text-zinc-400">{repo.description}</p>
@@ -122,19 +131,6 @@ const ProjectSlide = ({ repo, index }: ProjectSlideProps) => {
           {repo.homepage ? 'Open project' : 'View on GitHub'}
         </a>
       </motion.div>
-
-      {/* One repo → one floating README hero (no neighbor reuse, no double tiles).
-          Starred repos get a slightly larger tile so social proof reads first. */}
-      <HeroTile
-        className={`${primaryLeft ? 'left-[5%] sm:left-[8%]' : 'right-[5%] sm:right-[8%]'} top-[18%] ${
-          hasStars
-            ? 'h-48 w-72 sm:h-56 sm:w-[22rem] md:h-64 md:w-[26rem]'
-            : 'h-40 w-60 sm:h-48 sm:w-72 md:h-52 md:w-80'
-        }`}
-        fallbackLabel={repo.name}
-        src={repo.heroImage}
-        y={yPrimary}
-      />
     </article>
   );
 };
@@ -185,9 +181,7 @@ export const ProjectTheater = () => {
 
       {isLoading && repos.length === 0
         ? [0, 1, 2].map((slot) => <TheaterSkeleton index={slot} key={`sk-${slot}`} />)
-        : slides.map((repo, index) => (
-            <ProjectSlide index={index} key={repo.id} repo={repo} />
-          ))}
+        : slides.map((repo) => <ProjectSlide key={repo.id} repo={repo} />)}
     </section>
   );
 };

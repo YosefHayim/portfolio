@@ -66,21 +66,26 @@ export const TechStackSection = () => (
                 transform: 'rotateX(8deg) rotateY(-5deg)',
               }}
             >
-              <div className="pointer-events-none absolute -top-8 -right-8 size-20 rounded-full bg-mint/10 blur-2xl transition group-hover:bg-mint/20" />
-              <img
-                alt=""
-                aria-hidden="true"
-                className="relative size-14 object-contain drop-shadow-[0_10px_22px_rgba(94,234,212,0.35)] transition duration-500 group-hover:scale-110 sm:size-16 md:size-[4.25rem]"
-                decoding="async"
-                height={68}
-                loading="lazy"
-                src={asset(item.icon)}
-                style={{
-                  transform: iconRotates[index % iconRotates.length],
-                  transformStyle: 'preserve-3d',
-                }}
-                width={68}
-              />
+              <div className="relative flex items-center justify-center">
+                <span
+                  aria-hidden="true"
+                  className="icon-3d-halo pointer-events-none absolute -inset-4 rounded-full opacity-80 blur-lg transition duration-500 group-hover:opacity-100"
+                />
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  className="icon-3d relative size-14 object-contain transition duration-500 group-hover:scale-110 sm:size-16 md:size-[4.25rem]"
+                  decoding="async"
+                  height={68}
+                  loading="lazy"
+                  src={asset(item.icon)}
+                  style={{
+                    transform: iconRotates[index % iconRotates.length],
+                    transformStyle: 'preserve-3d',
+                  }}
+                  width={68}
+                />
+              </div>
               <span className="relative text-center text-[11px] font-medium tracking-[0.08em] text-zinc-400 uppercase">
                 {item.label}
               </span>

@@ -2,6 +2,30 @@ import { brand, navLinks } from '@/data/content';
 import { VersionPills } from '@/Components/VersionPills';
 import { asset } from '@/lib/utils';
 
+/** 3D glass mark for each footer nav option, keyed by nav id. GitHub reuses the hero logo. */
+const navIcons: Record<string, string> = {
+  work: 'images-of-me/nav-work-3d.webp',
+  github: 'images-of-me/github-3d-logo.webp',
+  services: 'images-of-me/nav-services-3d.webp',
+  journal: 'images-of-me/nav-journal-3d.webp',
+  studio: 'images-of-me/nav-studio-3d.webp',
+  contact: 'images-of-me/nav-contact-3d.webp',
+};
+
+/** Small transparent glass icon used inline beside a footer link label. */
+const GlassIcon = ({ src }: { src: string }) => (
+  <img
+    alt=""
+    aria-hidden="true"
+    className="size-6 shrink-0 object-contain opacity-90 drop-shadow-[0_2px_5px_rgba(0,0,0,0.55)] transition duration-300 group-hover:scale-110 group-hover:opacity-100"
+    decoding="async"
+    height={24}
+    loading="lazy"
+    src={asset(src)}
+    width={24}
+  />
+);
+
 export const SiteFooter = () => (
   <footer className="relative overflow-hidden border-t border-white/10 px-5 pt-16 pb-32 sm:px-8">
     <div className="relative z-10 mx-auto grid max-w-7xl gap-10 sm:grid-cols-3">
@@ -12,7 +36,11 @@ export const SiteFooter = () => (
         <ul className="mt-4 space-y-2 text-sm text-zinc-400">
           {navLinks.map((link) => (
             <li key={link.id}>
-              <a className="transition hover:text-white" href={link.href}>
+              <a
+                className="group inline-flex items-center gap-3 transition hover:text-white"
+                href={link.href}
+              >
+                <GlassIcon src={navIcons[link.id] ?? navIcons.work} />
                 {link.label}
               </a>
             </li>
@@ -26,34 +54,32 @@ export const SiteFooter = () => (
         <ul className="mt-4 space-y-2 text-sm text-zinc-400">
           <li>
             <a
-              className="inline-flex items-center gap-2 transition hover:text-white"
+              className="group inline-flex items-center gap-3 transition hover:text-white"
               href={brand.github}
               rel="noreferrer"
               target="_blank"
             >
-              <img
-                alt=""
-                className="size-4 object-contain opacity-80"
-                decoding="async"
-                height={16}
-                src={asset('images-of-me/github-3d-logo.webp')}
-                width={16}
-              />
+              <GlassIcon src="images-of-me/github-3d-logo.webp" />
               GitHub
             </a>
           </li>
           <li>
             <a
-              className="transition hover:text-white"
+              className="group inline-flex items-center gap-3 transition hover:text-white"
               href={brand.linkedin}
               rel="noreferrer"
               target="_blank"
             >
+              <GlassIcon src="images-of-me/nav-linkedin-3d.webp" />
               LinkedIn
             </a>
           </li>
           <li>
-            <a className="transition hover:text-white" href={`mailto:${brand.email}`}>
+            <a
+              className="group inline-flex items-center gap-3 transition hover:text-white"
+              href={`mailto:${brand.email}`}
+            >
+              <GlassIcon src="images-of-me/nav-email-3d.webp" />
               Email
             </a>
           </li>

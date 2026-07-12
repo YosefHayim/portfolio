@@ -111,6 +111,26 @@
   background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.55) 100%);
 }
 
+/*
+ * Grounded 3D glass mark. A tight dark edge plus a soft dark contact shadow let
+ * the icon sit on the panel; a low-opacity teal ambient pass melts into the card
+ * instead of the old hard halo, so the mark reads as a real object in the light.
+ */
+.icon-3d {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5)) drop-shadow(0 9px 15px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 16px 30px rgba(94, 234, 212, 0.16));
+}
+
+/* Centered ambient bloom placed behind an .icon-3d — radial fade, no disc edge. */
+.icon-3d-halo {
+  background: radial-gradient(
+    circle at 50% 55%,
+    rgba(94, 234, 212, 0.22),
+    rgba(94, 234, 212, 0.05) 45%,
+    transparent 72%
+  );
+}
+
 .hairline {
   border-color: var(--color-line);
 }

@@ -25,58 +25,39 @@ const StatCard = ({
   iconRotate,
   delay,
 }: StatCardProps) => (
-  <motion.div
-    className={`group relative ${tilt}`}
-    style={{ perspective: 1100 }}
-    variants={fadeUp}
-  >
-    <div
-      className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-sm transition duration-500 group-hover:-translate-y-1.5 group-hover:border-mint/30 sm:p-6"
-      style={{
-        transformStyle: 'preserve-3d',
-        transform: 'rotateX(10deg) rotateY(-8deg)',
-      }}
-    >
-      <div className="pointer-events-none absolute -top-10 -right-10 size-32 rounded-full bg-mint/10 blur-2xl transition group-hover:bg-mint/20" />
+  <motion.div className={`group relative ${tilt}`} variants={fadeUp}>
+    <div className="relative flex items-center gap-4 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.45)] transition duration-500 group-hover:-translate-y-1.5 group-hover:border-mint/30 sm:flex-col sm:items-start sm:p-6">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-mint/40 to-transparent" />
 
       <div
-        className="mb-4 inline-flex size-20 items-center justify-center sm:mb-5 sm:size-24"
-        style={{
-          transform: `translateZ(40px) ${iconRotate}`,
-          transformStyle: 'preserve-3d',
-        }}
+        className="relative flex size-16 shrink-0 items-center justify-center sm:mb-5 sm:size-20"
+        style={{ perspective: 600 }}
       >
+        <span
+          aria-hidden="true"
+          className="icon-3d-halo pointer-events-none absolute -inset-3 rounded-full opacity-80 blur-lg transition duration-500 group-hover:opacity-100"
+        />
         <img
           alt=""
           aria-hidden="true"
-          className="size-[4.5rem] object-contain drop-shadow-[0_12px_28px_rgba(94,234,212,0.4)] transition duration-500 group-hover:scale-110 sm:size-[5.5rem]"
+          className="icon-3d size-[3.5rem] object-contain transition duration-500 group-hover:scale-110 sm:size-[4.5rem]"
           decoding="async"
           height={88}
           src={asset(iconSrc)}
-          style={{ animationDelay: `${delay}ms` }}
+          style={{ transform: iconRotate, animationDelay: `${delay}ms` }}
           width={88}
         />
       </div>
 
-      <p
-        className="text-[clamp(2.4rem,6vw,3.5rem)] leading-none font-semibold tracking-[-0.05em] text-white tabular-nums"
-        style={{ transform: 'translateZ(32px)' }}
-      >
-        {value}
-      </p>
-      <p
-        className="mt-2 text-xs font-semibold tracking-[0.2em] text-zinc-400 uppercase"
-        style={{ transform: 'translateZ(18px)' }}
-      >
-        {label}
-      </p>
-      <p
-        className="mt-2 text-[11px] leading-relaxed text-zinc-600"
-        style={{ transform: 'translateZ(12px)' }}
-      >
-        {hint}
-      </p>
+      <div className="min-w-0">
+        <p className="text-[clamp(2.2rem,10vw,3.25rem)] leading-none font-semibold tracking-[-0.05em] text-white tabular-nums sm:text-[clamp(2.4rem,4vw,3.5rem)]">
+          {value}
+        </p>
+        <p className="mt-2 text-xs font-semibold tracking-[0.2em] text-zinc-400 uppercase">
+          {label}
+        </p>
+        <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-600">{hint}</p>
+      </div>
     </div>
   </motion.div>
 );
