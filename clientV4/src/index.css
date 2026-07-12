@@ -1,0 +1,143 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-void: #09090b;
+  --color-ink: #fafafa;
+  --color-muted: #a1a1aa;
+  --color-dim: #71717a;
+  --color-line: rgba(255, 255, 255, 0.1);
+  --color-panel: rgba(255, 255, 255, 0.03);
+  --color-mint: #5eead4;
+  --color-mint-soft: rgba(94, 234, 212, 0.12);
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/*
+ * Put resets in @layer base so Tailwind utilities (text-black, etc.) win.
+ * Unlayered `a { color: inherit }` was beating `text-black` on white CTAs,
+ * leaving white-on-white labels.
+ */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    background: var(--color-void);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--color-mint-soft);
+    color: var(--color-ink);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font: inherit;
+  }
+}
+
+/** Solid light CTA — dark label always readable on white fill. */
+@layer components {
+  .btn-solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background-color: #fafafa;
+    color: #09090b;
+    font-weight: 600;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .btn-solid:hover {
+    background-color: #e4e4e7;
+    color: #09090b;
+  }
+
+  .btn-solid:focus-visible {
+    outline: 2px solid var(--color-mint);
+    outline-offset: 2px;
+  }
+}
+
+.vignette {
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.hairline {
+  border-color: var(--color-line);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.ghost-wordmark {
+  font-size: clamp(4rem, 18vw, 12rem);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 0.85;
+  color: rgba(255, 255, 255, 0.04);
+  user-select: none;
+  pointer-events: none;
+}
+
+@keyframes v4-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
+}

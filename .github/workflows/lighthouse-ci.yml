@@ -1,0 +1,34 @@
+# Lab gate — Lighthouse against clientV4 static dist on every PR / main push.
+name: Lighthouse CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: clientV4/pnpm-lock.yaml
+
+      - name: Install + build clientV4
+        run: |
+          cd clientV4
+          HUSKY=0 pnpm install --frozen-lockfile
+          pnpm build
+
+      - name: Lighthouse CI
+        run: npx --yes @lhci/cli@0.14.x autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

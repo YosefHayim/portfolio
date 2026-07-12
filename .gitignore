@@ -21,10 +21,18 @@
 # re-include a file whose parent dir is excluded — so these only surface real config.
 !clientV1/**/*.json
 !clientV2/**/*.json
+!clientV4/**/*.json
+!package.json
+!wrangler.jsonc
+!lighthouserc.json
+!.github/**/*.json
+!.github/**/*.yml
 !.gitignore
 !.github
 .dedup.json
 node_modules/
+clientV4/node_modules/
+clientV4/dist/
 # Assembled deploy artifact (scripts/buildAll.sh): v3 at /, v1+v2 nested
 /dist/
 infra/aws/keys/*.pem
@@ -75,5 +83,7 @@ kilo.jsonc
 # Kimi Code CLI local config + skills
 .kimi-code/
 
-# Local dev scripts (not committed)
+# Local dev scripts (not committed), except media pipeline used by v4 deploy
 scripts/dev/
+!scripts/dev/convertV4ImagesToWebp.mjs
+!scripts/dev/uploadV4MediaToR2.mjs

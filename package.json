@@ -1,0 +1,15 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "media:webp": "node scripts/dev/convertV4ImagesToWebp.mjs",
+    "media:r2": "node scripts/dev/uploadV4MediaToR2.mjs",
+    "perf:lhci": "npx --yes @lhci/cli@0.14.x autorun",
+    "perf:psi": "node .github/perf/runPagespeed.mjs",
+    "perf:crux": "node .github/perf/runCrux.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.3"
+  }
+}

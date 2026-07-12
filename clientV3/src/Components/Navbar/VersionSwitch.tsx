@@ -12,12 +12,13 @@ type Era = {
   external: boolean;
 };
 
-// v1/v2 are frozen snapshots served by the same worker at /v1/ and /v2/ (full
-// page loads); v3 is the app you're already in, so it routes with react-router.
+// v1/v2/v4 are nested snapshots served by the same worker (full page loads);
+// v3 is the app you're already in, so it routes with react-router.
 const ERAS: Era[] = [
   { id: 'v1', href: '/v1/', external: true },
   { id: 'v2', href: '/v2/', external: true },
   { id: 'v3', href: '/', external: false },
+  { id: 'v4', href: '/v4/', external: true },
 ];
 
 const CURRENT_ERA = 'v3';

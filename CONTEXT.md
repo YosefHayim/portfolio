@@ -41,17 +41,19 @@ Cloudflare via `wrangler`:
 - The **worker** is the deploy front door — it serves the built client and resolves routes
   from the shared Product Route Registry so the static server and the Worker never drift.
 
-## Version showcase — clientV1 / clientV2 / clientV3
+## Version showcase — clientV1 / clientV2 / clientV3 / clientV4
 
-The site preserves three eras for recruiters to compare (see `LANGUAGE.md`), all on **one site
+The site preserves eras for visitors to compare (see `LANGUAGE.md`), all on **one site
 served by one worker** — the eras are paths, not separate deployments:
 
-- **clientV3** — the living app at `/`, the only one governed by `CODE-STYLE.md`.
+- **clientV3** — the living recruiter portfolio at `/`, governed by `CODE-STYLE.md`.
+- **clientV4** — JTS (Joseph Tech Solutions) studio landing at `/v4/` — client-facing company
+  surface with Fractal-style motion, constellation hero, and project theater.
 - **clientV1 / clientV2** — frozen buildable snapshots at `/v1/` and `/v2/` (each built with a
   Vite `base`), **exempt** from the style rules; they stay authentic to their era rather than
   being restyled, and build with their own pinned deps (e.g. clientV2 pins `react-icons@5.6.0`).
-- `scripts/buildAll.sh` builds all three and assembles `dist/` (clientV3 at root, clientV1→
-  `dist/v1/`, clientV2→`dist/v2/`); the Navbar + mobile sidebar carry the `[v1][v2][v3]` toggle.
+- `scripts/buildAll.sh` builds all eras and assembles `dist/` (clientV3 at root, nested
+  `v1`/`v2`/`v4`); the Navbar carries the `[v1][v2][v3][v4]` toggle.
 
 ## Where things live
 

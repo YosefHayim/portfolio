@@ -1,0 +1,55 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "pnpm --dir clientV4 preview --host 127.0.0.1 --port 4173",
+      "startServerReadyPattern": "Local:",
+      "url": [
+        "http://127.0.0.1:4173/v4/",
+        "http://127.0.0.1:4173/v4/blog"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "formFactor": "mobile",
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": true,
+          "width": 412,
+          "height": 823,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.9 }],
+        "categories:accessibility": ["warn", { "minScore": 0.9 }],
+        "categories:best-practices": ["warn", { "minScore": 0.9 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "total-blocking-time": ["error", { "maxNumericValue": 200 }],
+        "first-contentful-paint": ["warn", { "maxNumericValue": 1800 }],
+        "speed-index": ["warn", { "maxNumericValue": 3400 }],
+        "server-response-time": ["warn", { "maxNumericValue": 800 }],
+        "interactive": "off",
+        "unused-javascript": "off",
+        "uses-responsive-images": "off",
+        "unsized-images": "warn",
+        "offscreen-images": "warn",
+        "uses-text-compression": "off",
+        "canonical": "off",
+        "is-crawlable": "off",
+        "robots-txt": "off",
+        "bf-cache": "off",
+        "color-contrast": "warn",
+        "errors-in-console": "warn",
+        "legacy-javascript": "off",
+        "uses-long-cache-ttl": "off"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

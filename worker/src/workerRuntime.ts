@@ -21,8 +21,22 @@ type AssetFetcher = {
   fetch(request: Request): Promise<Response>;
 };
 
+/** Minimal R2 object shape used for long-cache media responses. */
+type R2ObjectBody = {
+  body: ReadableStream;
+  httpEtag?: string;
+  httpMetadata?: { contentType?: string };
+  size: number;
+};
+
+type R2BucketBinding = {
+  get(key: string): Promise<R2ObjectBody | null>;
+};
+
 export type Env = {
   ASSETS: AssetFetcher;
+  /** Portfolio media (WebP stack/hero/blog/screenshots) with immutable cache. */
+  MEDIA?: R2BucketBinding;
   OPENAI_API_KEY?: string;
   FRONTEND_URL?: string;
   CONTACT_RECIPIENT?: string;
@@ -75,6 +89,12 @@ const handleWorkerRequest = async (
       });
     }
 
+    // Long-cache R2 media: /media/v4/images-of-me/stack-react-3d.webp
+    // Raw path example: "/media/v4/blog/ebay-mcp.webp" → key "v4/blog/ebay-mcp.webp"
+    if (url.pathname.startsWith('/media/')) {
+      return await handleMediaRequest(request, env, url);
+    }
+
     if (url.pathname.startsWith('/api/')) {
       return await handleApiRequest(request, env, url, rateLimitStore);
     }
@@ -89,19 +109,19 @@ const handleWorkerRequest = async (
       return fetchStaticProductPage(request, env, staticProductPage);
     }
 
-    // SPA fallback for v1/v2: if the path is a client-side route (no file
-    // extension), serve the era's own index.html so its React Router boots.
-    // Cloudflare's built-in SPA fallback would serve the root index.html (v3).
-    if (url.pathname.startsWith('/v1/') || url.pathname.startsWith('/v2/')) {
-      const era = url.pathname.startsWith('/v1/') ? 'v1' : 'v2';
-      // Raw row example: "/v1/about" splits into ["", "v1", "about"].
+    // SPA fallback for nested eras: if the path is a client-side route (no
+    // file extension), serve that era's own index.html. Cloudflare's built-in
+    // SPA fallback would otherwise serve the root index.html (v3).
+    // Raw row example: "/v4/work" -> era "v4".
+    const nestedEraMatch = url.pathname.match(/^\/(v[124])(?:\/|$)/);
+    if (nestedEraMatch) {
+      const era = nestedEraMatch[1];
       const pathnameSegments = url.pathname.split('/');
       const segment = pathnameSegments.at(-1);
       const lastSegment = segment === undefined ? '' : segment;
       const hasExtension = lastSegment.includes('.');
 
       if (!hasExtension) {
-        // Client-side route — serve the era's index.html
         const eraIndexUrl = new URL(request.url);
         eraIndexUrl.pathname = `/${era}/index.html`;
         return env.ASSETS.fetch(
@@ -127,6 +147,89 @@ const handleWorkerRequest = async (
       status,
     );
   }
+};
+
+const MEDIA_CACHE_CONTROL = 'public, max-age=31536000, immutable';
+
+/**
+ * Serves WebP (and other) media from R2 with year-long immutable cache headers.
+ * Falls back to Workers Assets under `/v4/` when the object is missing so local
+ * previews and partial uploads keep working.
+ *
+ * @param request - Incoming request.
+ * @param env - Worker bindings.
+ * @param url - Parsed request URL.
+ * @returns Media response or 404.
+ */
+const handleMediaRequest = async (
+  request: Request,
+  env: Env,
+  url: URL,
+): Promise<Response> => {
+  // Raw: "/media/v4/images-of-me/x.webp" → key "v4/images-of-me/x.webp"
+  const key = url.pathname.replace(/^\/media\//, '').replace(/^\/+/, '');
+  if (!key || key.includes('..')) {
+    return new Response('Not found', { status: 404 });
+  }
+
+  if (env.MEDIA) {
+    const object = await env.MEDIA.get(key);
+    if (object) {
+      const headers = new Headers();
+      headers.set(
+        'Content-Type',
+        object.httpMetadata?.contentType ?? guessMediaContentType(key),
+      );
+      headers.set('Cache-Control', MEDIA_CACHE_CONTROL);
+      headers.set('X-Content-Type-Options', 'nosniff');
+      headers.set('X-Media-Source', 'r2');
+      if (object.httpEtag) {
+        headers.set('ETag', object.httpEtag);
+      }
+      headers.set('Content-Length', String(object.size));
+      return new Response(object.body, { headers });
+    }
+  }
+
+  // Fallback: same file under the v4 static tree (Workers Assets).
+  // Raw key "v4/blog/x.webp" already matches dist layout.
+  const assetUrl = new URL(request.url);
+  assetUrl.pathname = `/${key}`;
+  const assetResponse = await env.ASSETS.fetch(
+    new Request(assetUrl.toString(), {
+      headers: request.headers,
+      method: 'GET',
+    }),
+  );
+
+  if (!assetResponse.ok) {
+    return new Response('Not found', { status: 404 });
+  }
+
+  const headers = new Headers(assetResponse.headers);
+  headers.set('Cache-Control', MEDIA_CACHE_CONTROL);
+  headers.set('X-Media-Source', 'assets-fallback');
+  return new Response(assetResponse.body, {
+    status: assetResponse.status,
+    headers,
+  });
+};
+
+/**
+ * Maps a media object key to a Content-Type when R2 metadata is empty.
+ *
+ * @param key - R2 object key.
+ * @returns MIME type string.
+ */
+const guessMediaContentType = (key: string): string => {
+  const lower = key.toLowerCase();
+  if (lower.endsWith('.webp')) return 'image/webp';
+  if (lower.endsWith('.png')) return 'image/png';
+  if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return 'image/jpeg';
+  if (lower.endsWith('.svg')) return 'image/svg+xml';
+  if (lower.endsWith('.gif')) return 'image/gif';
+  if (lower.endsWith('.avif')) return 'image/avif';
+  return 'application/octet-stream';
 };
 
 const handleApiRequest = async (

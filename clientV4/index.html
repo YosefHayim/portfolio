@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JTS — Joseph Tech Solutions</title>
+    <meta
+      name="description"
+      content="Joseph Tech Solutions builds AI products, full-stack systems, and automations that ship. We fix the hard middle — auth, data, payments, production."
+    />
+    <meta name="author" content="Joseph Sabag" />
+    <meta property="og:title" content="JTS — Joseph Tech Solutions" />
+    <meta
+      property="og:description"
+      content="Boutique studio that solves real problems and ships AI + software clients can run."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#09090b" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/v4/favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/v4/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/v4/favicon/favicon-16x16.png" />
+    <link rel="manifest" href="/v4/favicon/site.webmanifest" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="/v4/images-of-me/hero-3d-constellation.webp"
+      fetchpriority="high"
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #09090b;
+        color: #fafafa;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+      }
+      #root {
+        min-height: 100vh;
+      }
+      /* Static LCP shell — replaced when React mounts. */
+      #boot-hero {
+        box-sizing: border-box;
+        display: flex;
+        min-height: 100svh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5.5rem 1.25rem 4rem;
+        text-align: center;
+      }
+      #boot-hero h1 {
+        margin: 0;
+        font-size: clamp(3.25rem, 12vw, 8.5rem);
+        font-weight: 600;
+        letter-spacing: -0.06em;
+        line-height: 0.85;
+      }
+      #boot-hero img {
+        display: block;
+        width: min(18rem, 70vw);
+        height: auto;
+        margin-top: 2rem;
+      }
+      #boot-hero p {
+        max-width: 28rem;
+        margin: 1.5rem 0 0;
+        color: #a1a1aa;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div id="boot-hero">
+        <h1>JTS</h1>
+        <img
+          alt="Joseph Sabag"
+          width="288"
+          height="288"
+          decoding="sync"
+          fetchpriority="high"
+          src="/v4/images-of-me/hero-3d-constellation.webp"
+        />
+        <p>We build the hard middle.</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

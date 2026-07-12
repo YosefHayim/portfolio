@@ -1,0 +1,60 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portfolio",
+  "main": "worker/src/index.ts",
+  "compatibility_date": "2026-05-06",
+  "account_id": "b0ba5fea46c96d72bfc6f12e1dafaf7b",
+  "workers_dev": true,
+  "assets": {
+    "directory": "dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/api/*",
+      "/health",
+      "/media/*",
+      "/v1/*",
+      "/v2/*",
+      "/prompt-queue",
+      "/prompt-queue/",
+      "/sorqa",
+      "/sorqa/",
+      "/jts",
+      "/jts/",
+      "/audio-transcriber/privacy",
+      "/audio-transcriber/privacy/",
+      "/audio-transcriber-privacy",
+      "/audio-transcriber-privacy.html",
+      "/prompt-queue/privacy",
+      "/prompt-queue/privacy/",
+      "/prompt-queue/terms",
+      "/prompt-queue/terms/",
+      "/promptqueue-privacy",
+      "/promptqueue-privacy.html",
+      "/promptqueue-terms",
+      "/promptqueue-terms.html",
+      "/sorqa/privacy",
+      "/sorqa/privacy/",
+      "/sorqa/terms",
+      "/sorqa/terms/",
+      "/sorqa-privacy",
+      "/sorqa-privacy.html",
+      "/sorqa-terms",
+      "/sorqa-terms.html"
+    ]
+  },
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "portfolio-assets"
+    }
+  ],
+  "vars": {
+    "FRONTEND_URL": "https://yosefhayimsabag.com,https://www.yosefhayimsabag.com,https://portfolio.yosefisabag.workers.dev",
+    "CONTACT_RECIPIENT": "yosefisabag@gmail.com"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

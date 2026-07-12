@@ -64,6 +64,7 @@ offenders.
 
 ```txt
 clientV3/ React 19 + Vite 6 + Tailwind v4 SPA - living app at /
+clientV4/ JTS studio landing - Joseph Tech Solutions era at /v4/
 clientV1/ First-era portfolio - frozen buildable snapshot at /v1/
 clientV2/ Second-era portfolio - frozen buildable snapshot at /v2/
 server/   Express AI chat + contact-email API - adapters / core / middleware / routes / config / utils
@@ -73,7 +74,7 @@ scripts/  Current build wrapper plus target dual-mode CLI under scripts/cli/
 docs/adr/ decisions - 0001 Effect · 0002 CLI · 0003 deps · 0004 versions · 0005 runtime target
 ```
 
-The three eras are one site: v1/v2/v3 are paths served by the single Worker's assets binding,
+Eras are one site: v1/v2/v3/v4 are paths served by the single Worker's assets binding,
 not separate workers. Deploy = `bash scripts/buildAll.sh && wrangler deploy`. Only
-`clientV3` follows `CODE-STYLE.md`; `clientV1`/`clientV2` are frozen snapshots that build with
-their own pinned deps and are Biome-exempt.
+`clientV3` (and new work in `clientV4`) follow `CODE-STYLE.md`; `clientV1`/`clientV2` are frozen
+snapshots that build with their own pinned deps and are Biome-exempt.
