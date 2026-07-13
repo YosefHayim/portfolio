@@ -1,0 +1,17 @@
+# Joseph Sabag
+
+> AI Software Engineer specializing in React, Node.js, TypeScript, and AI integrations — building impactful software solutions.
+
+Personal portfolio of Joseph (Yosef Hayim) Sabag — projects, tech stack, certifications, a blog, and experiments. Based in Israel.
+GitHub: https://github.com/YosefHayim · LinkedIn: https://linkedin.com/in/yosef-hayim-sabag
+
+## Pages
+- [About](https://yosefhayimsabag.com/about): background and experience
+- [Projects](https://yosefhayimsabag.com/projects): selected work and case studies
+- [Tech stack](https://yosefhayimsabag.com/techStack): languages, frameworks, and tools
+- [Certifications](https://yosefhayimsabag.com/certifications): credentials
+- [Blog](https://yosefhayimsabag.com/blog): articles and notes
+
+## Optional
+- [Prompt queue](https://yosefhayimsabag.com/prompt-queue): experiment; skip when context is tight
+- [SorQA](https://yosefhayimsabag.com/sorqa): experiment; skip when context is tight
