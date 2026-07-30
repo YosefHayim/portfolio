@@ -9,9 +9,9 @@ type ContentBlock =
   | { kind: 'code'; language: string; code: string }
   | { kind: 'heading'; level: number; text: string };
 
-// Raw: "## The try/catch noise is over"
+// Raw row example: "## The try/catch noise is over" → level "##", text "The try/catch…".
 const HEADING_PATTERN = /^(#{1,3})\s+(.+)$/;
-// Raw: "[Effect](https://example.com)" | "`code`" | "**bold**" | "*italic*"
+// Raw row example: "[Effect](https://example.com)" | "`code`" | "**bold**" | "*italic*"
 const INLINE_MARKDOWN_PATTERN =
   /\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*|\*([^*]+)\*/g;
 

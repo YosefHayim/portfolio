@@ -43,6 +43,7 @@ type EmailData = {
   message: string;
 };
 
+// Raw row example: '[SEND_EMAIL:{"senderName":"Name"}]' captures the JSON payload.
 const EMAIL_MARKER_REGEX = /\[SEND_EMAIL:(\{[\s\S]*?\})\]/;
 
 function parseEmailMarker(content: string): EmailData | null {

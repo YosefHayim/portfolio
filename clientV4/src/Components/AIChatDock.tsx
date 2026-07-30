@@ -13,9 +13,11 @@ import { brand } from '@/data/content';
 import { usePortfolioChat } from '@/hooks/usePortfolioChat';
 import { asset, cn } from '@/lib/utils';
 
-// Raw: "**bold**" → strong; "`code`" → code; "[label](url)" → link.
+// Raw row example: "**bold**" → strong tag.
 const BOLD_PATTERN = /\*\*(.*?)\*\*/g;
+// Raw row example: "`code`" → inline code tag.
 const CODE_PATTERN = /`([^`]+)`/g;
+// Raw row example: "[label](https://example.com)" → external link.
 const LINK_PATTERN = /\[([^\]]+)\]\(([^)]+)\)/g;
 
 /**
@@ -26,8 +28,11 @@ const LINK_PATTERN = /\[([^\]]+)\]\(([^)]+)\)/g;
  */
 const renderLightMarkdown = (text: string): string =>
   text
+    // Raw row example: "Tom & Jerry" → "Tom &amp; Jerry" before markdown tags.
     .replace(/&/g, '&amp;')
+    // Raw row example: "<tag>" escapes the opening angle bracket.
     .replace(/</g, '&lt;')
+    // Raw row example: "<tag>" escapes the closing angle bracket.
     .replace(/>/g, '&gt;')
     .replace(BOLD_PATTERN, '<strong class="font-semibold text-white">$1</strong>')
     .replace(
@@ -38,6 +43,7 @@ const renderLightMarkdown = (text: string): string =>
       LINK_PATTERN,
       '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-mint underline-offset-2 hover:underline">$1</a>',
     )
+    // Raw row example: "line1\nline2" → "line1<br />line2".
     .replace(/\n/g, '<br />');
 
 const PANEL_WIDTH = 420;

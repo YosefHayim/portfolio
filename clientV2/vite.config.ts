@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => ({
     tailwindcss(),
     // Gzip compression for production
     compression({
+      // Raw row example: "app.js" should match the compressed asset extension regex.
       include: /\.(js|css|html|svg|json)$/,
       threshold: 1024, // Only compress files > 1KB
     }),

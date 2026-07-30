@@ -13,7 +13,7 @@ type Message = {
   emailStatus?: "sending" | "sent" | "failed";
 };
 
-// Regex to detect email sending marker in AI response
+// Raw row example: '[SEND_EMAIL:{"senderName":"Name"}]' captures the JSON payload.
 const EMAIL_MARKER_REGEX = /\[SEND_EMAIL:(\{[\s\S]*?\})\]/;
 
 // Strip email marker from displayed content
@@ -25,21 +25,22 @@ function stripEmailMarker(content: string): string {
 function renderMarkdown(text: string): string {
   return (
     stripEmailMarker(text)
-      // Bold: **text** or __text__
+      // Raw row example: "**text**" becomes a strong tag.
       .replace(
         /\*\*(.*?)\*\*/g,
         '<strong class="font-semibold text-[var(--text-primary)]">$1</strong>',
       )
+      // Raw row example: "__text__" becomes a strong tag.
       .replace(
         /__(.*?)__/g,
         '<strong class="font-semibold text-[var(--text-primary)]">$1</strong>',
       )
-      // Inline code: `code`
+      // Raw row example: "`code`" becomes an inline code tag.
       .replace(
         /`([^`]+)`/g,
         '<code class="bg-[var(--bg-elevated)] px-1 py-0.5 rounded text-[#00d9ff] font-mono text-xs">$1</code>',
       )
-      // Links: [text](url)
+      // Raw row example: "[Joseph](https://example.com)" becomes an external link.
       .replace(
         /\[([^\]]+)\]\(([^)]+)\)/g,
         '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#05df72] hover:underline">$1</a>',

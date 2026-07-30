@@ -6,8 +6,11 @@
  * Pattern is intentionally loose because Google occasionally A/B-tests the
  * surrounding markup; we only depend on the numeric span itself.
  */
+// Raw row example: ">1,234 users" or ">10,000+ users" captures "1,234" / "10,000+".
 const CHROME_USERS_PATTERN = />\s*([0-9][0-9,]*\+?)\s*users?\b/i;
+// Raw row example: "1,234+" becomes "1234" after stripping commas and plus.
 const CHROME_USERS_NUMBER_PATTERN = /[+,]/g;
+// Raw row example: "abcdefghijklmnopqrstuvwxyzabcdef" (32 chars a–p) is a valid store id.
 const EXTENSION_ID_REGEX = /^[a-p]{32}$/;
 
 export const extractChromeUsers = (html: string): number | null => {

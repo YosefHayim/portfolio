@@ -25,6 +25,7 @@ export const asset = (path: string): string => {
   const clean = path.startsWith('/') ? path.slice(1) : path;
   const mediaBase = import.meta.env.VITE_MEDIA_BASE as string | undefined;
   if (mediaBase && mediaBase.length > 0) {
+    // Raw row example: "https://cdn.example.com/" + "x.webp" → "https://cdn.example.com/x.webp".
     return `${mediaBase.replace(/\/$/, '')}/${clean}`;
   }
   return `${import.meta.env.BASE_URL}${clean}`;

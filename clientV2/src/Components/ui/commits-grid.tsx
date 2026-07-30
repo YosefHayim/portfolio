@@ -85,6 +85,7 @@ const commitColors = ["#05df72", "#016d32", "#0d4429"];
 export const CommitsGrid = ({ text }: { text: string }) => {
   const cleanString = (str: string): string => {
     const upperStr = str.toUpperCase();
+    // Raw row example: "JOSÉ" (NFD) becomes "JOSE" after stripping combining marks.
     const withoutAccents = upperStr
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");

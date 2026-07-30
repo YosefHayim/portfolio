@@ -177,7 +177,7 @@ const handleMediaRequest = async (
   env: Env,
   url: URL,
 ): Promise<Response> => {
-  // Raw: "/media/v4/images-of-me/x.webp" → key "v4/images-of-me/x.webp"
+  // Raw row example: "/media/v4/images-of-me/x.webp" → key "v4/images-of-me/x.webp".
   const key = url.pathname.replace(/^\/media\//, '').replace(/^\/+/, '');
   if (!key || key.includes('..')) {
     return new Response('Not found', { status: 404 });

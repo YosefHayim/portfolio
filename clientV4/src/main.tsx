@@ -11,6 +11,7 @@ if (!rootElement) {
 }
 
 /** Vite base is `/v4/` — keep all routes under that public path. */
+// Raw row example: "/v4/" becomes "/v4" for BrowserRouter basename.
 const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
 
 createRoot(rootElement).render(

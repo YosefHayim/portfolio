@@ -662,6 +662,7 @@ export const AnimatedFolder = ({
         <div
           className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-700"
           style={{
+            // Raw row example: "linear-gradient(#05df72, #000)" captures "#05df72".
             background: gradient
               ? `radial-gradient(circle at 50% 70%, ${gradient.match(/#[a-fA-F0-9]{3,6}/)?.[0] || "#05df72"} 0%, transparent 70%)`
               : "radial-gradient(circle at 50% 70%, #05df72 0%, transparent 70%)",
