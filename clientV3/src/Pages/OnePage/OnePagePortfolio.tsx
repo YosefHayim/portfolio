@@ -40,7 +40,7 @@ const sectionTitleClass = 'text-2xl font-semibold tracking-tight md:text-3xl';
 
 const SOCIAL_ICON_SIZE = 14;
 
-// Raw example: "React Query/Node" -> ["React", "Query", "Node"]
+// Raw row example: "React Query/Node" -> ["React", "Query", "Node"]
 const FALLBACK_INITIAL_SPLIT_PATTERN = /[\s/-]+/;
 
 const actionLinkClass =

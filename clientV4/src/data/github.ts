@@ -27,10 +27,11 @@ const CACHE_KEY = 'v4_github_snapshot_v5';
 const CACHE_TTL_MS = 1000 * 60 * 15;
 const MAX_REPOS = 9;
 const EXCLUDED = new Set(['yosefhayim', 'template', 'portfolio']);
-// Raw: '<https://api.github.com/repos/x/y/commits?page=12>; rel="last"'
+// Raw row example: '<https://api.github.com/repos/x/y/commits?page=12>; rel="last"'
 const LAST_PAGE_REGEX = /page=(\d+)>; rel="last"/;
-// Raw: '![alt](public/hero.png)' or '<img src="assets/cover.png">'
+// Raw row example: '![alt](public/hero.png)' captures "public/hero.png".
 const MD_IMAGE_REGEX = /!\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+// Raw row example: '<img src="assets/cover.png">' captures "assets/cover.png".
 const HTML_IMAGE_REGEX = /<img\b[^>]*?\bsrc\s*=\s*["']([^"']+)["']/gi;
 const BADGE_HOST_HINTS = [
   'img.shields.io',
@@ -282,12 +283,14 @@ export const resolveReadmeImageSrc = (
   repoName: string,
   branch: string,
 ): string | null => {
+  // Raw row example: "<public/hero.png>" becomes "public/hero.png".
   const trimmed = src.trim().replace(/^<|>$/g, '');
   if (!trimmed || trimmed.startsWith('data:')) {
     return null;
   }
 
   // Decode HTML entities that show up in GitHub README HTML fragments.
+  // Raw row example: "&amp;" / "&quot;" / "&#39;" → & / " / '
   const decoded = trimmed
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
@@ -301,6 +304,7 @@ export const resolveReadmeImageSrc = (
   }
 
   // Skip anchors / repo-relative non-image paths that aren't files.
+  // Raw row example: "./docs/hero.png" or "/docs/hero.png" → "docs/hero.png".
   const path = decoded.replace(/^\.\//, '').replace(/^\/+/, '');
   if (!path || path.startsWith('#')) {
     return null;
@@ -477,6 +481,7 @@ const probeRawUrl = async (url: string): Promise<string | null> => {
   }
 };
 
+// Raw row example: path "/docs/hero.png" → "docs/hero.png" in the raw.githubusercontent URL.
 const rawFileUrl = (repoName: string, branch: string, path: string): string =>
   `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${repoName}/${branch}/${path.replace(/^\/+/, '')}`;
 

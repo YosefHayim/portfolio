@@ -13,6 +13,7 @@ const root = path.resolve(__dirname, '../..');
 const publicDir = path.join(root, 'clientV4/public');
 const BUCKET = 'portfolio-assets';
 const PREFIX = 'v4';
+// Raw row example: "hero.webp" or "logo.svg" should match uploadable media.
 const MEDIA = /\.(webp|svg)$/i;
 const SKIP = new Set(['favicon']);
 

@@ -13,6 +13,7 @@ const EnvSchema = Schema.Struct({
   FRONTEND_URL: Schema.optionalWith(Schema.String, {
     default: () => 'http://localhost:5173',
   }),
+  // Raw row example: "joseph@example.com" should match the email boundary regex.
   EMAIL_USER: Schema.optional(Schema.String.pipe(Schema.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))),
   EMAIL_PASS: Schema.optional(Schema.String),
 });

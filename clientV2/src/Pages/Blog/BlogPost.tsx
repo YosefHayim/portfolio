@@ -27,51 +27,61 @@ const SITE_URL = "https://josephsabag.dev";
 const processContent = (content: string): string => {
   let processed = content.trim();
 
+  // Raw row example: "# Title" becomes an h1.
   processed = processed.replace(
     /^# (.+)$/gm,
     '<h1 class="blog-h1">$1</h1>'
   );
 
+  // Raw row example: "## Section" becomes an h2.
   processed = processed.replace(
     /^## (.+)$/gm,
     '<h2 class="blog-h2">$1</h2>'
   );
 
+  // Raw row example: "### Subsection" becomes an h3.
   processed = processed.replace(
     /^### (.+)$/gm,
     '<h3 class="blog-h3">$1</h3>'
   );
 
+  // Raw row example: "```ts\nconst x = 1\n```" becomes a pre/code block.
   processed = processed.replace(
     /```(\w+)?\n([\s\S]*?)```/g,
     '<pre class="blog-code-block"><code>$2</code></pre>'
   );
 
+  // Raw row example: "`code`" becomes an inline code tag.
   processed = processed.replace(
     /`([^`]+)`/g,
     '<code class="blog-inline-code">$1</code>'
   );
 
+  // Raw row example: "**bold**" becomes a strong tag.
   processed = processed.replace(
     /\*\*([^*]+)\*\*/g,
     '<strong class="blog-bold">$1</strong>'
   );
 
+  // Raw row example: "*italic*" becomes an em tag.
   processed = processed.replace(
     /\*([^*]+)\*/g,
     '<em class="blog-italic">$1</em>'
   );
 
+  // Raw row example: "[Joseph](https://example.com)" becomes an external link.
   processed = processed.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
     '<a href="$2" class="blog-link" target="_blank" rel="noopener noreferrer">$1</a>'
   );
 
+  // Raw row example: "---" on its own line becomes a horizontal rule.
   processed = processed.replace(
     /^---$/gm,
     '<hr class="blog-divider" />'
   );
 
+  // Raw row example: "para1\n\npara2" splits into two paragraphs.
   const paragraphs = processed.split(/\n\n+/);
   processed = paragraphs
     .map((p) => {

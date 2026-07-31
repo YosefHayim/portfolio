@@ -11,6 +11,7 @@ export const AI_CHAT_MAX_TOKENS = 400;
 export const AI_CHAT_TEMPERATURE = 0.7;
 
 const BASE_SYSTEM_PROMPT = createPortfolioSystemPromptBase();
+// Raw row example: "latest github projects" should match the dynamic portfolio intent regex.
 const DYNAMIC_PORTFOLIO_INTENT_PATTERN =
   /\b(github|repo|repos|project|projects|recent|latest|newest|updated)\b/i;
 

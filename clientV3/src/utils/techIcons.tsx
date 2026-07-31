@@ -123,9 +123,12 @@ const normalizeTechName = (value: string): string =>
   value
     .toLowerCase()
     .trim()
+    // Raw row example: "node.js" / "C++" separators → spaces ("node js").
     .replace(/[._/()-]+/g, ' ')
+    // Raw row example: "hello   world" becomes "hello world".
     .replace(/\s+/g, ' ');
 
+// Raw row example: "node js" becomes "nodejs" for icon map lookup.
 const toCanonicalKey = (value: string): string =>
   normalizeTechName(value).replace(/[^a-z0-9]/g, '');
 

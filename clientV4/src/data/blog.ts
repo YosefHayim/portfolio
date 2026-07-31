@@ -22,6 +22,7 @@ export type BlogPost = {
  */
 export const blogPosts: BlogPost[] = (postsJson as BlogPost[]).map((post) => ({
   ...post,
+  // Raw row example: "/blog/cover.webp" becomes "blog/cover.webp" for asset().
   coverImage: post.coverImage.replace(/^\//, ''),
   category: post.category as BlogCategory,
 }));

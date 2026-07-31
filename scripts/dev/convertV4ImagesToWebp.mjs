@@ -13,6 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '../..');
 const publicDir = path.join(root, 'clientV4/public');
 
+// Raw row example: "hero.png" or "cover.jpeg" should match raster sources.
 const RASTER = /\.(png|jpe?g)$/i;
 const SKIP_DIRS = new Set(['favicon']);
 

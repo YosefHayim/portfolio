@@ -4,6 +4,7 @@ import type { GitHubStats } from "@/db/types";
 
 const GITHUB_USERNAME = "YosefHayim";
 const GITHUB_API_BASE = "https://api.github.com";
+// Raw row example: '<https://api.github.com/repos/x/y/commits?page=12>; rel="last"'
 const LAST_PAGE_REGEX = /page=(\d+)>; rel="last"/;
 const RATE_LIMIT_STATUS = 403;
 
