@@ -195,34 +195,7 @@ export const createGitHubProjectPreviews = (
     })
     .slice(0, maxProjects);
 
-<<<<<<< HEAD
 export const createGitHubStatsSnapshot = ({
-=======
-/**
- * Enriches project previews with auto-detected avatar URLs by fetching each
- * repo's README for its first image. Runs all fetches in parallel.
- * Non-destructive: projects that fail detection keep avatarUrl undefined.
- */
-export async function enrichProjectsWithLogos(
-  fetcher,
-  owner,
-  projects,
-) {
-  const results = await Promise.allSettled(
-    projects.map(async (project) => {
-      const repoName = project.name;
-      const logoUrl = await fetchRepoLogoUrl(fetcher, owner, repoName);
-      return { ...project, avatarUrl: logoUrl ?? undefined };
-    }),
-  );
-
-  return results.map((result, index) =>
-    result.status === "fulfilled" ? result.value : projects[index],
-  );
-}
-
-export function createGitHubStatsSnapshot({
->>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
   repos,
   totalCommits,
   now = new Date(),

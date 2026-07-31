@@ -634,11 +634,7 @@ export const OnePagePortfolio = () => {
         </SectionBlock>
 
         <SectionBlock
-<<<<<<< HEAD
           description={t('sections.latestWritingDescription')}
-=======
-          description="Real stories from building things that ship no fluff, no listicles."
->>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
           id="writing"
           title={t('sections.latestWriting')}
         >

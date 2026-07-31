@@ -25,18 +25,12 @@ class ChromeExtensionUsersError extends Error {
 }
 
 /**
-<<<<<<< HEAD
  * Fetches a single Chrome Web Store user count.
  *
  * @param id - Chrome extension id.
  * @returns Extension id and live user count when the server response is successful.
  * @example
  * fetchChromeExtensionUserCount('abcdefghijklmnopabcdefghijklmnop')
-=======
- * Fetches the public Chrome Web Store user count for each extension id.
- * Failures are skipped silently the badge just won't render for that id.
- * One in-flight request per id; runs once per `ids` set change.
->>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
  */
 const fetchChromeExtensionUserCount = (
   id: string,

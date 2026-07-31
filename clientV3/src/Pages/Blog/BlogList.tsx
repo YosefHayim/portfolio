@@ -95,11 +95,7 @@ export const BlogList = () => {
   return (
     <>
       <SEO
-<<<<<<< HEAD
         description={t('seo.writingDescription')}
-=======
-        description="Real stories from building things that ship the failed SaaS, the 3am fixes, and what actually worked. Writing by Joseph Sabag."
->>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
         keywords={[
           'Joseph Sabag',
           'blog',
@@ -123,12 +119,7 @@ export const BlogList = () => {
           </Link>
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{t('blog.title')}</h1>
           <p className="max-w-2xl text-sm leading-relaxed text-[var(--text-secondary)] md:text-base">
-<<<<<<< HEAD
             {t('blog.intro')}
-=======
-            No fluff, no listicles. Real stories from building things that actually ship the
-            failures, the 3am fixes, and the stubbornness in between.
->>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
           </p>
         </header>
 

@@ -8,7 +8,6 @@ import { NavMobileDrawer } from './NavMobileDrawer.tsx';
 import { SECTION_LINKS } from './navLinks.ts';
 import { VersionSwitch } from './VersionSwitch.tsx';
 
-<<<<<<< HEAD
 const initials = recruiterProfile.name
   // Raw row example: "Joseph Sabag" splits into ["Joseph", "Sabag"].
   .split(' ')
@@ -17,8 +16,6 @@ const initials = recruiterProfile.name
   .map((part) => part.charAt(0).toUpperCase())
   .join('');
 
-=======
->>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
 export const Navbar = () => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -30,14 +27,10 @@ export const Navbar = () => {
       <header className="fixed inset-x-0 top-0 z-40 border-b border-[var(--border-subtle)] bg-[var(--bg-void)]/80 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-3 sm:px-4">
           <Link className="flex items-center gap-2 font-semibold" to="/">
-<<<<<<< HEAD
             <span className="inline-flex size-7 items-center justify-center rounded-lg bg-brand text-xs font-bold text-black">
               {initials}
             </span>
             <span className="hidden truncate text-sm sm:inline">{recruiterProfile.name}</span>
-=======
-            <span className="truncate text-sm">{recruiterProfile.name}</span>
->>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
           </Link>
 
           {isHome && (

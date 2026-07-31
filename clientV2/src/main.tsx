@@ -6,11 +6,7 @@ import { SidebarProvider } from "./Components/ui/sidebar.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <HelmetProvider>
-<<<<<<< HEAD
     <BrowserRouter basename="/v2">
-=======
-    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
->>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
       <SidebarProvider>
         <App />
       </SidebarProvider>

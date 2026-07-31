@@ -61,11 +61,6 @@ export declare function createGitHubProjectPreviews(
   repos: readonly GitHubRepo[],
   maxProjects?: number,
 ): GitHubProjectPreview[];
-export declare function enrichProjectsWithLogos(
-  fetcher: typeof fetch,
-  owner: string,
-  projects: readonly GitHubProjectPreview[],
-): Promise<GitHubProjectPreview[]>;
 export declare function createGitHubStatsSnapshot(input: {
   repos: readonly GitHubRepo[];
   totalCommits: number;
