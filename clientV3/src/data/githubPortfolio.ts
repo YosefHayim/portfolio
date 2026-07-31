@@ -1,6 +1,7 @@
 import {
   createGitHubProjectPreviews,
   createGitHubStatsSnapshot,
+  enrichProjectsWithLogos,
   fetchGitHubRepos,
   GITHUB_API_BASE,
   GITHUB_USERNAME,
@@ -46,8 +47,14 @@ export const fetchGitHubProjectPreviews = async (
   username: string,
 ): Promise<GitHubProjectPreview[]> => {
   const repos = await fetchGitHubRepos(fetch, username);
+<<<<<<< HEAD
   return createGitHubProjectPreviews(repos, MAX_PROJECTS);
 };
+=======
+  const previews = createGitHubProjectPreviews(repos, MAX_PROJECTS);
+  return enrichProjectsWithLogos(fetch, username, previews);
+}
+>>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
 
 /**
  * Fetches GitHub stats used by the portfolio hero.

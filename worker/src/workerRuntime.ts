@@ -120,6 +120,7 @@ const handleWorkerRequest = async (
       return fetchStaticProductPage(request, env, staticProductPage);
     }
 
+<<<<<<< HEAD
     // SPA fallback for nested eras: if the path is a client-side route (no
     // file extension), serve that era's own index.html. Cloudflare's built-in
     // SPA fallback would otherwise serve the root index.html (v3).
@@ -142,6 +143,12 @@ const handleWorkerRequest = async (
           }),
         );
       }
+=======
+    const eraSpaFallback = findEraSpaFallback(url.pathname);
+    if (eraSpaFallback) {
+      const redirectUrl = new URL("/", url.origin);
+      return Response.redirect(redirectUrl.toString(), 301);
+>>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
     }
 
     return env.ASSETS.fetch(request);
@@ -530,7 +537,28 @@ const isAllowedOrigin = (origin: string, env: Env): boolean => {
 const isApiPath = (pathname: string): boolean =>
   pathname === '/health' || pathname.startsWith('/api/');
 
+<<<<<<< HEAD
 const fetchStaticProductPage = (
+=======
+const ERA_SPA_PREFIXES = ["v1", "v2"];
+
+function findEraSpaFallback(pathname: string): boolean {
+  const segments = pathname.split("/").filter(Boolean);
+  const era = segments[0];
+  if (!era || !ERA_SPA_PREFIXES.includes(era)) {
+    return false;
+  }
+
+  const lastSegment = segments.at(-1) ?? "";
+  if (lastSegment.includes(".")) {
+    return false;
+  }
+
+  return true;
+}
+
+function fetchStaticProductPage(
+>>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
   request: Request,
   env: Env,
   staticFile: string,

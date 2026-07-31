@@ -27,7 +27,7 @@ export type ExperienceItem = {
   companyUrl?: string;
   logoUrl?: string;
   logoMonogram?: string;
-  /** ISO month "YYYY-MM" — used to derive months-on-the-job alongside `dateRange`. */
+  /** ISO month "YYYY-MM" used to derive months-on-the-job alongside `dateRange`. */
   startDate?: string;
   /** ISO month "YYYY-MM"; omit for ongoing roles. */
   endDate?: string;

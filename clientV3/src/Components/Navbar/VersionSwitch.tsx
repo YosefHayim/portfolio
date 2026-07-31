@@ -15,10 +15,16 @@ type Era = {
 // v1/v2/v4 are nested snapshots served by the same worker (full page loads);
 // v3 is the app you're already in, so it routes with react-router.
 const ERAS: Era[] = [
+<<<<<<< HEAD
   { id: 'v1', href: '/v1/', external: true },
   { id: 'v2', href: '/v2/', external: true },
   { id: 'v3', href: '/', external: false },
   { id: 'v4', href: '/v4/', external: true },
+=======
+  { id: 'v1', hint: 'First edition where it started', href: '/v1/', external: true },
+  { id: 'v2', hint: 'Second edition the rebuild', href: '/v2/', external: true },
+  { id: 'v3', hint: "Current you're here", href: '/', external: false },
+>>>>>>> refs/heads/mac-reset-backup/2026-07-30/stash/000-afbb755efb3e
 ];
 
 const CURRENT_ERA = 'v3';
