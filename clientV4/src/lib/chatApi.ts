@@ -12,7 +12,7 @@ export type ChatRequestMessage = {
  * @param userMessages - Conversation history for the model.
  * @param onChunk - Called for each streamed content fragment.
  * @param abortSignal - Optional cancel signal.
- * @returns Full assistant response text.
+ * @returns Full assistant reply text.
  * @example
  * await fetchStreamingResponse([{ role: 'user', content: 'Hi' }], console.log)
  */
@@ -21,20 +21,20 @@ export const fetchStreamingResponse = async (
   onChunk: (chunk: string) => void,
   abortSignal?: AbortSignal,
 ): Promise<string> => {
-  let fullResponse = '';
+  let fullReply = '';
 
-  const response = await fetch(`${API_BASE_URL}/api/chat/stream`, {
+  const streamResponse = await fetch(`${API_BASE_URL}/api/chat/stream`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages: userMessages }),
     signal: abortSignal,
   });
 
-  if (!response.ok) {
+  if (!streamResponse.ok) {
     throw new Error('Failed to get AI response');
   }
 
-  const reader = response.body?.getReader();
+  const reader = streamResponse.body?.getReader();
   if (!reader) {
     throw new Error('No response body');
   }
@@ -52,7 +52,7 @@ export const fetchStreamingResponse = async (
         throw new Error(event.error);
       }
 
-      fullResponse += event.content;
+      fullReply += event.content;
       onChunk(event.content);
     }
 
@@ -61,5 +61,5 @@ export const fetchStreamingResponse = async (
     }
   }
 
-  return fullResponse;
+  return fullReply;
 };
