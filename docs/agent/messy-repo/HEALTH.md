@@ -1,6 +1,6 @@
 # Product health — portfolio
 
-status: post-land
+status: post-land (close-wave local cleanup done)
 updated: 2026-08-07
 
 ## Tips
@@ -83,4 +83,12 @@ shared/     precompiled modules
 ## Next
 
 - Same-branch FIX commits on open PRs, then `/messy-repo land` again (or land those four after re-audit)  
-- `/messy-repo close` for local worktree cleanup after FIX land  
+- `/messy-repo close` for local worktree cleanup after FIX land
+
+## close-wave
+
+- Local worktrees for **landed** lanes removed after reachability proof.
+- FIX / unmerged work retained under `.worktrees/` (see MATRIX).
+- Remote branches and backups **not** deleted.
+- Worktrees kept: `feat-26-dual-mode-cli` (#31), `refactor-21-portfolio-assistant` (#37), `refactor-25-clientV4-jts` (#35), `test-28-server-tests` (#29 closed-not-merged).
+
