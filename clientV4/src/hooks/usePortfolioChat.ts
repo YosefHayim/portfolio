@@ -8,7 +8,7 @@ import {
   DOWNLOAD_RESUME_ACTION,
   getOfflineResponse,
   RESUME_URL,
-  toRequestMessages,
+  requestMessages,
   type ChatMessage,
 } from '@/data/chat';
 import { fetchStreamingResponse } from '@/lib/chatApi';
@@ -67,7 +67,7 @@ export const usePortfolioChat = () => {
 
       try {
         await fetchStreamingResponse(
-          toRequestMessages([...messages, userMessage]),
+          requestMessages([...messages, userMessage]),
           (chunk) => {
             setMessages((prev) => appendAssistantChunk(prev, placeholder.id, chunk));
           },

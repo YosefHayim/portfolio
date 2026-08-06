@@ -45,9 +45,9 @@ export const fetchStreamingResponse = async (
   while (true) {
     const { done, value } = await reader.read();
     const chunk = value ? decoder.decode(value, { stream: !done }) : '';
-    const result = done ? parser.flush() : parser.push(chunk);
+    const parsed = done ? parser.flush() : parser.push(chunk);
 
-    for (const event of result.events) {
+    for (const event of parsed.events) {
       if (event.type === 'error') {
         throw new Error(event.error);
       }
@@ -56,7 +56,7 @@ export const fetchStreamingResponse = async (
       onChunk(event.content);
     }
 
-    if (done || result.done) {
+    if (done || parsed.done) {
       break;
     }
   }

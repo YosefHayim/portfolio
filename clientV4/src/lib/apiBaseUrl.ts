@@ -8,13 +8,13 @@ const WORKERS_DEV_HOST_PATTERN = /\.workers\.dev$/i;
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 
 /**
- * Resolves the portfolio API origin for chat, STT, and contact email.
+ * Portfolio API origin for chat, STT, and contact email.
  *
  * @returns Absolute API base URL without a trailing slash.
  * @example
- * resolveApiBaseUrl() // "http://localhost:3000" in local Vite
+ * apiBaseUrl() // "http://localhost:3000" in local Vite
  */
-export const resolveApiBaseUrl = (): string => {
+export const apiBaseUrl = (): string => {
   const configuredUrl = import.meta.env.VITE_API_URL?.trim();
 
   if (configuredUrl) {
@@ -32,4 +32,4 @@ export const resolveApiBaseUrl = (): string => {
   return LOCAL_API_URL;
 };
 
-export const API_BASE_URL = resolveApiBaseUrl();
+export const API_BASE_URL = apiBaseUrl();

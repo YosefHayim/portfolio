@@ -16,15 +16,30 @@ export type BlogPost = {
   featured?: boolean;
 };
 
+const BLOG_CATEGORIES = new Set<BlogCategory>([
+  'engineering',
+  'career',
+  'tutorials',
+  'thoughts',
+  'projects',
+]);
+
+const asBlogCategory = (value: string): BlogCategory => {
+  if (BLOG_CATEGORIES.has(value as BlogCategory)) {
+    return value as BlogCategory;
+  }
+  return 'thoughts';
+};
+
 /**
  * Full journal corpus for v4 (English source from the living site).
  * Covers live under public/blog/; routes under /v4/blog/*.
  */
-export const blogPosts: BlogPost[] = (postsJson as BlogPost[]).map((post) => ({
+export const blogPosts: BlogPost[] = (postsJson as readonly BlogPost[]).map((post) => ({
   ...post,
   // Raw row example: "/blog/cover.webp" becomes "blog/cover.webp" for asset().
   coverImage: post.coverImage.replace(/^\//, ''),
-  category: post.category as BlogCategory,
+  category: asBlogCategory(post.category),
 }));
 
 export const featuredPosts = blogPosts.filter((post) => post.featured);

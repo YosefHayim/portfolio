@@ -15,12 +15,12 @@ interface ProjectSlideProps {
 }
 
 /**
- * Resolves absolute README heroes or local public assets.
+ * Absolute README heroes pass through; local paths go through the /v4 asset helper.
  *
  * @param src - URL or path under /v4/.
  * @returns Usable img src.
  */
-const resolveImageSrc = (src: string): string => {
+const imageSrc = (src: string): string => {
   if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('data:')) {
     return src;
   }
@@ -53,7 +53,7 @@ const HeroTile = ({ src, fallbackLabel, className, y }: HeroTileProps) => {
           onError={() => setFailed(true)}
           // raw.githubusercontent.com is fine without a document referrer
           referrerPolicy="no-referrer"
-          src={resolveImageSrc(src)}
+          src={imageSrc(src)}
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(ellipse_at_30%_20%,rgba(94,234,212,0.14),transparent_60%)]">
