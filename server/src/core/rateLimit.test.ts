@@ -84,7 +84,7 @@ describe('consumeRateLimit', () => {
     expect(blocked).toEqual({
       allowed: false,
       status: 429,
-      body: {
+      errorJson: {
         success: false,
         error: 'Too many requests. You have been blocked for 5 seconds.',
         blocked: true,
@@ -117,7 +117,7 @@ describe('consumeRateLimit', () => {
       throw new Error('expected window block');
     }
     expect(blocked.status).toBe(429);
-    expect(blocked.body.violations).toBe(1);
+    expect(blocked.errorJson.violations).toBe(1);
   });
 
   it('returns temporary block while blockedUntil is in the future', () => {
@@ -133,7 +133,7 @@ describe('consumeRateLimit', () => {
     expect(denied).toEqual({
       allowed: false,
       status: 429,
-      body: {
+      errorJson: {
         success: false,
         error: 'You are temporarily blocked. Try again in 12 seconds.',
         blocked: true,
@@ -181,7 +181,7 @@ describe('consumeRateLimit', () => {
     if (firstViolation.allowed) {
       throw new Error('expected first violation');
     }
-    expect(firstViolation.body.retryAfter).toBe(1);
+    expect(firstViolation.errorJson.retryAfter).toBe(1);
     expect(store.get('escalator')?.blockedUntil).toBe(t0 + 1_000);
 
     // After block expires, trip again — duration multiplies by min(violations, 5).
@@ -191,7 +191,7 @@ describe('consumeRateLimit', () => {
     if (secondViolation.allowed) {
       throw new Error('expected second violation');
     }
-    expect(secondViolation.body.retryAfter).toBe(2);
+    expect(secondViolation.errorJson.retryAfter).toBe(2);
     expect(store.get('escalator')?.violations).toBe(2);
     expect(store.get('escalator')?.blockedUntil).toBe(t1 + 2_000);
   });
@@ -207,7 +207,7 @@ describe('consumeRateLimit', () => {
     expect(denied).toEqual({
       allowed: false,
       status: 403,
-      body: {
+      errorJson: {
         success: false,
         error: 'Access denied. You have been permanently blocked due to repeated abuse.',
         blocked: true,
@@ -232,7 +232,7 @@ describe('consumeRateLimit', () => {
       throw new Error('expected chat preset burst block');
     }
     expect(over.status).toBe(429);
-    expect(over.body.violations).toBe(1);
+    expect(over.errorJson.violations).toBe(1);
   });
 });
 

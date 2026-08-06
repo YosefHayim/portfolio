@@ -13,7 +13,7 @@ import {
   readOpenAiCompletionText,
   readOpenAiTextStream,
 } from './assistantRuntime.js';
-import { CoreHttpError } from './requestValidation.js';
+import { HTTP_ERROR_MESSAGE } from './httpErrors.js';
 
 const createMapCache = (seed: Record<string, string> = {}): AssistantCache => {
   const values = new Map(Object.entries(seed));
@@ -68,7 +68,7 @@ const readSseStreamText = async (stream: ReadableStream<Uint8Array>): Promise<st
 };
 
 describe('createAssistantReply', () => {
-  it('throws CoreHttpError when the provider returns an empty message', async () => {
+  it('throws plain Error when the provider returns an empty message', async () => {
     await withMockedGitHubFetch(async () => {
       await expect(
         createAssistantReply({
@@ -76,21 +76,7 @@ describe('createAssistantReply', () => {
           cache: createMapCache(),
           complete: async () => '',
         }),
-      ).rejects.toBeInstanceOf(CoreHttpError);
-
-      try {
-        await createAssistantReply({
-          messages: [{ role: 'user', content: 'What are your skills?' }],
-          cache: createMapCache(),
-          complete: async () => '',
-        });
-      } catch (error) {
-        expect(error).toBeInstanceOf(CoreHttpError);
-        if (error instanceof CoreHttpError) {
-          expect(error.status).toBe(500);
-          expect(error.message).toBe('No response from AI');
-        }
-      }
+      ).rejects.toThrow(HTTP_ERROR_MESSAGE.noAiResponse);
     });
   });
 
