@@ -4,6 +4,8 @@ Updated: 2026-08-07
 Mode: **setup-wave complete** (Host A — background subagents)  
 Product tip (PR base): `main` @ `779128c`  
 Repo: https://github.com/YosefHayim/portfolio  
+**Land-wave partial complete** (6 MERGE landed; 4 FIX open). See `HEALTH.md` (post-land).
+
 **Audit complete** — see `AUDIT.md` + `HEALTH.md`. Next: same-branch FIX for #29/#31/#37/#35, then **`/messy-repo land`**. Do **not** open new feature PRs.
 
 ## Backups
