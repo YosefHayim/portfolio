@@ -1,10 +1,14 @@
 name: E2E
 
-# Single-purpose, reusable (workflow_call): the end-to-end suite. OPT-IN — it
-# ships as a template but is NOT wired into ci.yml, because alg has no `test:e2e`
-# script yet (it would run red). Once you add one, uncomment the `e2e:` job in
-# ci.yml (`uses: ./.github/workflows/e2e.yml`) and the Chromium install step below
-# (alg's scanner drives Playwright, so real E2E needs a browser).
+# Placeholder only — portfolio has no Playwright/Cypress (or similar) e2e suite.
+# This workflow is NOT wired into ci.yml so the merge gate stays truthful.
+#
+# When a real suite lands:
+#   1. Add a root `test:e2e` script that runs real browser tests
+#   2. Uncomment the Playwright install step
+#   3. Wire `e2e:` into ci.yml `needs` + the gate success checks
+#
+# Calling this workflow without a suite fails loudly (no fake green).
 
 on:
   workflow_call:
@@ -19,20 +23,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Require a real e2e suite
+        run: |
+          if ! grep -q '"test:e2e"' package.json; then
+            echo "::error::No root test:e2e script. Portfolio has no e2e suite yet."
+            echo "Keep this workflow out of ci.yml until a real suite exists (honest skip — no fake green)."
+            exit 1
+          fi
+
+      - name: Setup packages
+        uses: ./.github/actions/setupPackages
         with:
-          node-version: 24
-          cache: pnpm
+          packages: clientV3 server
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      # Playwright: install the browser before the suite.
+      # Playwright: install the browser before the suite (uncomment with a real suite).
       # - name: Install Playwright browsers
       #   run: pnpm exec playwright install --with-deps chromium
 

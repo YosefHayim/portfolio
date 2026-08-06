@@ -1,9 +1,8 @@
 name: Build
 
-# Single-purpose, reusable (workflow_call): build the deterministic artifact — the
-# widget IIFE bundle (esbuild → web/public/v1/widget.js). The CLI runs via tsx (no
-# build); the Next.js/OpenNext web build + Cloudflare deploy live in the deploy
-# path, not the merge gate.
+# Single-purpose, reusable (workflow_call): build the unified site dist/ the
+# Worker serves (clientV3 at /, nested v1/v2/v4 via scripts/buildAll.sh) and
+# compile the Express API (server tsc).
 
 on:
   workflow_call:
@@ -13,23 +12,18 @@ permissions:
 
 jobs:
   build:
-    name: ubuntu / node 24
+    name: ubuntu / node 22
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup packages
+        uses: ./.github/actions/setupPackages
         with:
-          node-version: 24
-          cache: pnpm
+          # buildAll.sh re-installs era packages; server needs an explicit install.
+          packages: server clientV1 clientV2 clientV3 clientV4
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build widget bundle
+      - name: Build sites (dist/) + server
         run: pnpm build
