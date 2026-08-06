@@ -1,94 +1,50 @@
 # Product health — portfolio
 
-status: post-land (close-wave local cleanup done)
+status: campaign-complete
 updated: 2026-08-07
 
 ## Tips
 
 | Ref | SHA | Role |
 |-----|-----|------|
-| product tip | `c499f38` | main after land-wave MERGE set |
-| origin/main | `c499f38` | same |
-| backup/main-pre-messy-20260807 | `9a9e896` | restore pre-wave tip |
+| product tip | `aa6af89` | main after full messy-repo land |
+| backup/main-pre-messy-20260807 | `9a9e896` | pre-wave restore |
 | backup/origin-main-pre-messy-20260807 | `862db12` | pre-publish origin |
 
-## Land-wave result
+## All MATRIX lanes landed
 
-| Class | PRs |
-|-------|-----|
-| **Merged** | #32 blog, #30 CI, #33 server-errors, #34 worker, #36 apps, #38 onepage |
-| **Left open (FIX)** | #29 server-tests, #31 dual-mode-cli, #37 portfolio-assistant, #35 clientV4-jts |
-| **HOLD** | none |
+| PR | Feature | Final disposition |
+|----|---------|-------------------|
+| #32 | blog-surface | landed (wave 1) |
+| #30 | ci-workflows | landed (wave 1) |
+| #33 | server-effect-errors | landed (wave 1) |
+| #34 | worker-runtime | landed (wave 1) |
+| #36 | apps-catalog | landed (wave 1) |
+| #38 | onepage-portfolio | landed (wave 1) |
+| #29 | server-tests | FIX then landed |
+| #31 | dual-mode-cli | FIX then landed |
+| #37 | portfolio-assistant | FIX then landed |
+| #35 | clientV4-jts | FIX then landed |
 
-Merges via `gh pr merge --merge --admin` (branch protection required up-to-date base / CI Gate). No remote branch deletes. No FIX auto-merged.
+## Post-land prove (tip `aa6af89`)
 
-## Features
-
-| id | paths | tests | risk | wave disposition |
-|----|-------|-------|------|------------------|
-| blog-surface | clientV3 Blog | — | low | **landed** #32 |
-| ci-workflows | .github + root scripts | root→server | med | **landed** #30 |
-| server-effect-errors | server/src | 7 unit | low | **landed** #33 |
-| server-tests | server tests | 56 pending fix | med | **open FIX** #29 |
-| worker-runtime | worker/src | — | low | **landed** #34 |
-| dual-mode-cli | scripts/cli | smoke | med | **open FIX** #31 |
-| apps-catalog | clientV3 data/apps | — | low | **landed** #36 |
-| portfolio-assistant | clientV3 chat | — | med | **open FIX** #37 |
-| onepage-portfolio | OnePage+profile+projects | — | low | **landed** #38 |
-| clientV4-jts | clientV4/src | build | med | **open FIX** #35 |
-
-## Structure tree (top levels)
-
-```text
-clientV3/   living SPA @ /  (blog + OnePage + apps catalog landed)
-clientV4/   JTS @ /v4/      (still open FIX #35)
-server/     plain Error model landed (#33); expanded tests still open (#29)
-worker/     lean runtime landed (#34)
-scripts/cli dual-mode CLI still open (#31)
-shared/     precompiled modules
-```
-
-## Post-land prove (tip `c499f38`)
-
-| Layer | Command | Result |
-|-------|---------|--------|
-| unit | `pnpm test` → server vitest | **pass** 7/7 (`architecture.test.ts`) |
-| e2e | — | **skip** — no root `test:e2e` |
-| clientV3 tsc | `pnpm exec tsc -b` | see land notes |
-
-## Branches
-
-| Class | Count | Names |
-|-------|-------|-------|
-| merged this land | 6 | #32 #30 #33 #34 #36 #38 |
-| FIX still open | 4 | #29 #31 #37 #35 |
-| backups | 2 | backup/main-pre-messy-20260807, backup/origin-main-pre-messy-20260807 |
+| Gate | Result |
+|------|--------|
+| unit | **55/55 pass** (`pnpm test` → server vitest, 7 files) |
+| clientV3 tsc | **pass** |
+| clientV4 tsc | **pass** |
+| CLI smoke | help OK; unknown verb exit 1; non-TTY bare exit 1 |
+| e2e | **skip** — no suite |
 
 ## Worktrees
 
-| Path | Keep? | Reason |
-|------|-------|--------|
-| `.worktrees/*` lane trees | until close-wave | human may still fix FIX PRs there |
-| dry-land worktree | optional remove local only | never product tip |
+| Path | Status |
+|------|--------|
+| all `.worktrees/*` | **removed** (close residual) |
+| remotes / backups | **kept** (no remote deletes) |
 
-## Residual
+## Residual (optional later)
 
-1. **#29** — rewrite tests for plain Error / post-#33 API (same branch), then re-audit → land  
-2. **#31** — rebase CLI onto main; package.json / pnpm install hygiene  
-3. **#37** — restore chat autoscroll deps  
-4. **#35** — sanitize lightMarkdown links + naming  
-5. Full Playwright e2e still deferred  
-6. Optional lean-prove if tip still feels fat  
-
-## Next
-
-- Same-branch FIX commits on open PRs, then `/messy-repo land` again (or land those four after re-audit)  
-- `/messy-repo close` for local worktree cleanup after FIX land
-
-## close-wave
-
-- Local worktrees for **landed** lanes removed after reachability proof.
-- FIX / unmerged work retained under `.worktrees/` (see MATRIX).
-- Remote branches and backups **not** deleted.
-- Worktrees kept: `feat-26-dual-mode-cli` (#31), `refactor-21-portfolio-assistant` (#37), `refactor-25-clientV4-jts` (#35), `test-28-server-tests` (#29 closed-not-merged).
-
+- Full Playwright e2e suite
+- Remote cleanup of merged feature branches (only if you list them)
+- Optional lean-prove scan if tip still feels fat

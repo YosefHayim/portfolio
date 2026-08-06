@@ -118,3 +118,14 @@ residual: tip BlogPost break fixed only on #32; full CI may still be red until l
 ### Still open
 
 - FIX PRs: #31, #37, #35 (and #29 closed-not-merged — re-open or new same-branch work if desired)
+
+## campaign-complete (2026-08-07)
+
+All 10 MATRIX PRs merged to `main` @ `aa6af89`.
+
+- Wave 1 MERGE: #32 #30 #33 #34 #36 #38
+- FIX re-audit + land: #29 #31 #37 #35
+- Local worktrees: none remaining under `.worktrees/`
+- Remote branches + backups: not deleted
+- Post-land unit: 55 pass; clientV3/V4 tsc pass; e2e skip
+
