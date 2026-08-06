@@ -9,17 +9,20 @@ export const ContactSection = () => {
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
-    const data = new FormData(form);
-    const name = String(data.get('name') ?? '').trim();
-    const email = String(data.get('email') ?? '').trim();
-    const message = String(data.get('message') ?? '').trim();
+    const formData = new FormData(form);
+    const nameField = formData.get('name');
+    const emailField = formData.get('email');
+    const messageField = formData.get('message');
+    const name = typeof nameField === 'string' ? nameField.trim() : '';
+    const email = typeof emailField === 'string' ? emailField.trim() : '';
+    const message = typeof messageField === 'string' ? messageField.trim() : '';
 
     const subject = encodeURIComponent(`JTS project — ${name || 'New inquiry'}`);
-    const body = encodeURIComponent(
+    const mailBody = encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\n\n${message}`,
     );
 
-    window.location.href = `mailto:${brand.email}?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${brand.email}?subject=${subject}&body=${mailBody}`;
     setStatus('ready');
   };
 

@@ -62,6 +62,13 @@ const StatCard = ({
   </motion.div>
 );
 
+const SOURCE_LABEL: Record<string, string> = {
+  live: 'Live',
+  cache: 'Cached',
+  fallback: 'Fallback',
+  idle: 'Syncing…',
+};
+
 interface GitHubStatsStripProps {
   stats: GitHubStats;
   isLoading: boolean;
@@ -69,6 +76,8 @@ interface GitHubStatsStripProps {
 }
 
 export const GitHubStatsStrip = ({ stats, isLoading, source }: GitHubStatsStripProps) => {
+  const sourceLabel = isLoading ? 'Syncing…' : (SOURCE_LABEL[source] ?? 'Fallback');
+
   const cards = [
     {
       label: 'Repos',
@@ -152,13 +161,7 @@ export const GitHubStatsStrip = ({ stats, isLoading, source }: GitHubStatsStripP
             </div>
           </div>
           <p className="text-[11px] tracking-[0.16em] text-zinc-600 uppercase">
-            {isLoading
-              ? 'Syncing…'
-              : source === 'live'
-                ? 'Live'
-                : source === 'cache'
-                  ? 'Cached'
-                  : 'Fallback'}
+            {sourceLabel}
           </p>
         </motion.div>
 

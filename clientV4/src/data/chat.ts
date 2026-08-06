@@ -113,12 +113,12 @@ export const createAssistantMessage = (content: string): ChatMessage => ({
 });
 
 /**
- * Maps UI messages into the API payload (drops local welcome).
+ * Maps UI messages into the API request shape (drops local welcome).
  *
  * @param messages - Current dock messages.
  * @returns Request message list.
  */
-export const toRequestMessages = (messages: readonly ChatMessage[]) =>
+export const requestMessages = (messages: readonly ChatMessage[]) =>
   messages
     .filter((message) => message.id !== 'welcome')
     .map((message) => ({

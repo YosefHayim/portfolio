@@ -1,3 +1,4 @@
+/** Authored JTS service card. */
 export type ServiceItem = {
   id: string;
   index: string;
@@ -5,6 +6,7 @@ export type ServiceItem = {
   description: string;
 };
 
+/** Featured product/project card on the work surface. */
 export type ProjectItem = {
   id: string;
   name: string;
@@ -15,6 +17,7 @@ export type ProjectItem = {
   tag: string;
 };
 
+/** Studio process step. */
 export type ProcessStep = {
   id: string;
   index: string;
@@ -22,11 +25,22 @@ export type ProcessStep = {
   description: string;
 };
 
+/** Glass 3D stack mark under public/images-of-me/. */
 export type TechStackItem = {
   id: string;
   label: string;
-  /** Transparent glass 3D icon under public/images-of-me/. */
   icon: string;
+};
+
+/** Floating constellation tile in the hero. */
+export type ConstellationTile = {
+  id: string;
+  src: string;
+  alt: string;
+  className: string;
+  rotate: number;
+  floatDelay: number;
+  isCharacter: boolean;
 };
 
 export const brand = {
@@ -39,7 +53,7 @@ export const brand = {
   since: '2020',
   github: 'https://github.com/YosefHayim',
   linkedin: 'https://www.linkedin.com/in/yosef-hayim-sabag/',
-};
+} as const;
 
 export const navLinks = [
   { id: 'work', label: 'Work', href: '#work' },
@@ -219,7 +233,7 @@ export const realityPoints = [
   },
 ];
 
-export const constellationTiles = [
+export const constellationTiles: readonly ConstellationTile[] = [
   {
     id: 'hero',
     src: 'images-of-me/hero-3d-constellation.webp',
@@ -276,4 +290,4 @@ export const constellationTiles = [
     floatDelay: 0.65,
     isCharacter: false,
   },
-] as const;
+];

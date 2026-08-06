@@ -12,7 +12,7 @@ export type ChatRequestMessage = {
  * @param userMessages - Conversation history for the model.
  * @param onChunk - Called for each streamed content fragment.
  * @param abortSignal - Optional cancel signal.
- * @returns Full assistant response text.
+ * @returns Full assistant reply text.
  * @example
  * await fetchStreamingResponse([{ role: 'user', content: 'Hi' }], console.log)
  */
@@ -21,20 +21,20 @@ export const fetchStreamingResponse = async (
   onChunk: (chunk: string) => void,
   abortSignal?: AbortSignal,
 ): Promise<string> => {
-  let fullResponse = '';
+  let fullReply = '';
 
-  const response = await fetch(`${API_BASE_URL}/api/chat/stream`, {
+  const streamResponse = await fetch(`${API_BASE_URL}/api/chat/stream`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages: userMessages }),
     signal: abortSignal,
   });
 
-  if (!response.ok) {
+  if (!streamResponse.ok) {
     throw new Error('Failed to get AI response');
   }
 
-  const reader = response.body?.getReader();
+  const reader = streamResponse.body?.getReader();
   if (!reader) {
     throw new Error('No response body');
   }
@@ -45,21 +45,21 @@ export const fetchStreamingResponse = async (
   while (true) {
     const { done, value } = await reader.read();
     const chunk = value ? decoder.decode(value, { stream: !done }) : '';
-    const result = done ? parser.flush() : parser.push(chunk);
+    const parsed = done ? parser.flush() : parser.push(chunk);
 
-    for (const event of result.events) {
+    for (const event of parsed.events) {
       if (event.type === 'error') {
         throw new Error(event.error);
       }
 
-      fullResponse += event.content;
+      fullReply += event.content;
       onChunk(event.content);
     }
 
-    if (done || result.done) {
+    if (done || parsed.done) {
       break;
     }
   }
 
-  return fullResponse;
+  return fullReply;
 };
