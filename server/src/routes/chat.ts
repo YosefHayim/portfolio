@@ -42,19 +42,19 @@ chatRouter.post(
   '/stream',
   chatRateLimiter,
   asyncHandler(async (req: Request, res: Response) => {
-    const streamResult = await apiRuntime.createChatReplyStream(req.body);
+    const replyStream = await apiRuntime.createChatReplyStream(req.body);
 
     // Set up streaming response headers
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
-    res.setHeader('X-Cache', streamResult.cacheStatus);
+    res.setHeader('X-Cache', replyStream.cacheStatus);
 
     // Flush headers immediately for faster TTFB
     res.flushHeaders();
 
-    for await (const event of streamResult.events) {
+    for await (const event of replyStream.events) {
       res.write(encodeAssistantSseEvent(event));
     }
 

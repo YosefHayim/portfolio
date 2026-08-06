@@ -1,15 +1,7 @@
 import type { ContactEmailInput } from '@shared/portfolio/contactEmail.js';
 import { Schema } from 'effect';
 import type { ChatMessage } from './assistant.js';
-
-export class CoreHttpError extends Error {
-  readonly status: number;
-
-  constructor(message: string, status: number, options?: ErrorOptions) {
-    super(message, options);
-    this.status = status;
-  }
-}
+import { HTTP_ERROR_MESSAGE, type HttpErrorMessage, throwHttpError } from './httpErrors.js';
 
 // Raw row example: "joseph@example.com" should match the email boundary regex.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,7 +16,7 @@ const ChatMessageSchema: Schema.Schema<ChatMessage> = Schema.Struct({
   content: boundedText(1, 2000),
 });
 
-const ChatRequestBodySchema = Schema.Struct({
+const ChatRequestSchema = Schema.Struct({
   messages: Schema.Array(ChatMessageSchema).pipe(Schema.minItems(1)),
 });
 
@@ -62,61 +54,61 @@ const PortfolioEmailInputSchema: Schema.Schema<ContactEmailInput> = Schema.Struc
 const AudioContentTypeSchema = Schema.String.pipe(Schema.pattern(AUDIO_CONTENT_TYPE_PATTERN));
 
 /**
- * Decodes an API boundary payload with Effect Schema.
+ * Decodes an API boundary value with Effect Schema.
  *
  * @param schema - Effect Schema used for the boundary.
- * @param value - Unknown request payload from Express.
- * @param message - HTTP error message returned when decoding fails.
+ * @param value - Unknown request value from Express.
+ * @param message - Operational HTTP error message when decoding fails.
  * @returns Decoded and normalized value.
  * @example
- * decodeBoundary(ChatRequestBodySchema, { messages: [{ role: 'user', content: ' hi ' }] }, 'Invalid request body')
+ * decodeBoundary(ChatRequestSchema, { messages: [{ role: 'user', content: ' hi ' }] }, HTTP_ERROR_MESSAGE.invalidRequestBody)
  */
 const decodeBoundary = <T, TEncoded>(
   schema: Schema.Schema<T, TEncoded, never>,
   value: unknown,
-  message: string,
+  message: HttpErrorMessage,
 ): T => {
   try {
     return Schema.decodeUnknownSync(schema)(value);
   } catch (error) {
-    throw new CoreHttpError(message, 400, { cause: error });
+    return throwHttpError(message, { cause: error });
   }
 };
 
 /**
- * Parses and trims a chat request body.
+ * Parses and trims a chat request.
  *
- * @param body - Unknown Express request body.
+ * @param rawRequest - Unknown Express request body.
  * @returns Chat messages accepted by the assistant core.
  * @example
- * parseChatRequestBody({ messages: [{ role: 'user', content: ' hello ' }] })
+ * parseChatRequest({ messages: [{ role: 'user', content: ' hello ' }] })
  */
-export const parseChatRequestBody = (
-  body: unknown,
+export const parseChatRequest = (
+  rawRequest: unknown,
 ): { readonly messages: readonly ChatMessage[] } =>
-  decodeBoundary(ChatRequestBodySchema, body, 'Invalid request body');
+  decodeBoundary(ChatRequestSchema, rawRequest, HTTP_ERROR_MESSAGE.invalidRequestBody);
 
 /**
- * Parses and trims a text-to-speech request body.
+ * Parses and trims a text-to-speech request.
  *
- * @param body - Unknown Express request body.
+ * @param rawRequest - Unknown Express request body.
  * @returns Text-to-speech input with the default voice applied.
  * @example
- * parseTextToSpeechRequestBody({ text: 'Hello' })
+ * parseTextToSpeechRequest({ text: 'Hello' })
  */
-export const parseTextToSpeechRequestBody = (body: unknown): TextToSpeechInput =>
-  decodeBoundary(TextToSpeechInputSchema, body, 'Invalid request body');
+export const parseTextToSpeechRequest = (rawRequest: unknown): TextToSpeechInput =>
+  decodeBoundary(TextToSpeechInputSchema, rawRequest, HTTP_ERROR_MESSAGE.invalidRequestBody);
 
 /**
- * Parses and trims a portfolio email request body.
+ * Parses and trims a portfolio email request.
  *
- * @param body - Unknown Express request body.
+ * @param rawRequest - Unknown Express request body.
  * @returns Validated portfolio email input.
  * @example
  * parsePortfolioEmailInput({ senderName: 'Joseph', senderEmail: 'joseph@example.com', subject: 'Hi', message: 'Long enough message.' })
  */
-export const parsePortfolioEmailInput = (body: unknown): ContactEmailInput =>
-  decodeBoundary(PortfolioEmailInputSchema, body, 'Invalid request body');
+export const parsePortfolioEmailInput = (rawRequest: unknown): ContactEmailInput =>
+  decodeBoundary(PortfolioEmailInputSchema, rawRequest, HTTP_ERROR_MESSAGE.invalidRequestBody);
 
 /**
  * Requires an audio request content type for speech-to-text input.
@@ -127,7 +119,7 @@ export const parsePortfolioEmailInput = (body: unknown): ContactEmailInput =>
  * requireAudioContentType('audio/webm')
  */
 export const requireAudioContentType = (contentType: string): string =>
-  decodeBoundary(AudioContentTypeSchema, contentType, 'Invalid content type. Expected audio file.');
+  decodeBoundary(AudioContentTypeSchema, contentType, HTTP_ERROR_MESSAGE.invalidAudioContentType);
 
 /**
  * Checks whether an unknown value is a plain object record.

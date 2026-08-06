@@ -1,38 +1,33 @@
 import type { NextFunction, Request, Response } from 'express';
 import { logger } from '../config/logger.js';
-import { CoreHttpError } from '../core/requestValidation.js';
+import { HTTP_ERROR_MESSAGE } from '../core/httpErrors.js';
 
 const HTTP_INTERNAL_SERVER_ERROR = 500;
 
-export class AppError extends Error {
-  statusCode: number;
-  isOperational: boolean;
+/** Map known operational messages to HTTP status. Unknown errors become 500. */
+const OPERATIONAL_STATUS_BY_MESSAGE: Readonly<Record<string, number>> = {
+  [HTTP_ERROR_MESSAGE.invalidRequestBody]: 400,
+  [HTTP_ERROR_MESSAGE.invalidAudioContentType]: 400,
+  [HTTP_ERROR_MESSAGE.noAudioData]: 400,
+  [HTTP_ERROR_MESSAGE.emailNotConfigured]: 503,
+  [HTTP_ERROR_MESSAGE.aiNotConfigured]: 503,
+  [HTTP_ERROR_MESSAGE.noAiResponse]: 500,
+};
 
-  constructor(message: string, statusCode: number) {
-    super(message);
-    this.statusCode = statusCode;
-    this.isOperational = true;
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
+/**
+ * Resolves an HTTP status for a thrown Error at the Express boundary.
+ *
+ * @param err - Error thrown from routes or core.
+ * @returns Operational status when the message is known; otherwise undefined.
+ */
+const statusOf = (err: Error): number | undefined => OPERATIONAL_STATUS_BY_MESSAGE[err.message];
 
-export const errorHandler = (
-  err: Error | AppError,
-  _req: Request,
-  res: Response,
-  _next: NextFunction,
-) => {
-  if (err instanceof AppError) {
-    logger.warn('operational_error', { message: err.message, statusCode: err.statusCode });
-    return res.status(err.statusCode).json({
-      success: false,
-      error: err.message,
-    });
-  }
+export const errorHandler = (err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  const status = statusOf(err);
 
-  if (err instanceof CoreHttpError) {
-    logger.warn('operational_error', { message: err.message, statusCode: err.status });
-    return res.status(err.status).json({
+  if (status !== undefined) {
+    logger.warn('operational_error', { message: err.message, statusCode: status });
+    return res.status(status).json({
       success: false,
       error: err.message,
     });

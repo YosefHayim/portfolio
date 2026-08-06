@@ -17,7 +17,7 @@ export type RateLimiterOptions = {
   permanentBlockAfterViolations: number;
 };
 
-export type RateLimitResult =
+export type RateLimitDecision =
   | {
       allowed: true;
       headers: Record<string, string>;
@@ -25,7 +25,7 @@ export type RateLimitResult =
   | {
       allowed: false;
       status: 403 | 429;
-      body: Record<string, unknown>;
+      errorJson: Record<string, unknown>;
     };
 
 export const RATE_ENTRY_MAX_AGE_MS = 30 * 60 * 1000;
@@ -83,7 +83,7 @@ export const consumeRateLimit = (
   key: string,
   options: RateLimiterOptions,
   now = Date.now(),
-): RateLimitResult => {
+): RateLimitDecision => {
   let entry = store.get(key);
   if (!entry) {
     entry = createRateLimitEntry(now);
@@ -94,7 +94,7 @@ export const consumeRateLimit = (
     return {
       allowed: false,
       status: 403,
-      body: {
+      errorJson: {
         success: false,
         error: 'Access denied. You have been permanently blocked due to repeated abuse.',
         blocked: true,
@@ -108,7 +108,7 @@ export const consumeRateLimit = (
     return {
       allowed: false,
       status: 429,
-      body: {
+      errorJson: {
         success: false,
         error: `You are temporarily blocked. Try again in ${retryAfter} seconds.`,
         blocked: true,
@@ -139,7 +139,7 @@ export const consumeRateLimit = (
     return {
       allowed: false,
       status: 429,
-      body: {
+      errorJson: {
         success: false,
         error: `Too many requests. You have been blocked for ${retryAfter} seconds.`,
         blocked: true,

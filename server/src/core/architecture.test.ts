@@ -16,11 +16,8 @@ import {
 } from '@shared/portfolio/githubPortfolio.js';
 import { createPortfolioSystemPromptBase } from '@shared/portfolio/portfolioKnowledge.js';
 import { type AssistantCache, createAssistantReply } from './assistantRuntime.js';
-import {
-  CoreHttpError,
-  parseChatRequestBody,
-  parsePortfolioEmailInput,
-} from './requestValidation.js';
+import { HTTP_ERROR_MESSAGE } from './httpErrors.js';
+import { parseChatRequest, parsePortfolioEmailInput } from './requestValidation.js';
 
 const createMapCache = (seed: Record<string, string> = {}): AssistantCache => {
   const values = new Map(Object.entries(seed));
@@ -29,7 +26,7 @@ const createMapCache = (seed: Record<string, string> = {}): AssistantCache => {
       const value = values.get(message);
       return value === undefined ? null : value;
     },
-    set: (message, response) => values.set(message, response),
+    set: (message, replyText) => values.set(message, replyText),
   };
 };
 
@@ -58,15 +55,15 @@ const withMockedGitHubFetch = async (run: () => Promise<void>): Promise<void> =>
 };
 
 it('request validation trims portfolio inputs and rejects invalid roles', () => {
-  expect(parseChatRequestBody({ messages: [{ role: 'user', content: ' hello ' }] })).toEqual({
+  expect(parseChatRequest({ messages: [{ role: 'user', content: ' hello ' }] })).toEqual({
     messages: [{ role: 'user', content: 'hello' }],
   });
 
   expect(() =>
-    parseChatRequestBody({
+    parseChatRequest({
       messages: [{ role: 'system', content: 'hello' }],
     }),
-  ).toThrow(CoreHttpError);
+  ).toThrow(HTTP_ERROR_MESSAGE.invalidRequestBody);
 
   expect(
     parsePortfolioEmailInput({
