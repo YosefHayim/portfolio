@@ -52,13 +52,13 @@ export const createRateLimiter = (options: Partial<RateLimiterOptions> = {}) => 
   const config: RateLimiterOptions = { ...RATE_LIMIT_PRESETS.chat, ...options };
 
   return (req: Request, res: Response, next: NextFunction) => {
-    const result = consumeRateLimit(ipStore, getClientIp(req), config);
+    const decision = consumeRateLimit(ipStore, getClientIp(req), config);
 
-    if (!result.allowed) {
-      return res.status(result.status).json(result.body);
+    if (!decision.allowed) {
+      return res.status(decision.status).json(decision.errorJson);
     }
 
-    for (const [header, value] of Object.entries(result.headers)) {
+    for (const [header, value] of Object.entries(decision.headers)) {
       res.setHeader(header, value);
     }
 

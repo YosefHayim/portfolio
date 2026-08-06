@@ -1,5 +1,5 @@
 type CacheEntry = {
-  response: string;
+  replyText: string;
   timestamp: number;
 };
 
@@ -59,10 +59,10 @@ export class ResponseCache {
       return null;
     }
 
-    return entry.response;
+    return entry.replyText;
   }
 
-  set(message: string, response: string): void {
+  set(message: string, replyText: string): void {
     if (!this.isCacheable(message)) {
       return;
     }
@@ -75,7 +75,7 @@ export class ResponseCache {
     }
 
     this.cache.set(this.generateKey(message), {
-      response,
+      replyText,
       timestamp: Date.now(),
     });
   }
