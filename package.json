@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "cli": "tsx scripts/cli/index.ts",
+    "portfolio": "tsx scripts/cli/index.ts",
     "media:webp": "node scripts/dev/convertV4ImagesToWebp.mjs",
     "media:r2": "node scripts/dev/uploadV4MediaToR2.mjs",
     "perf:lhci": "npx --yes @lhci/cli@0.14.x autorun",
@@ -10,6 +12,7 @@
     "perf:crux": "node .github/perf/runCrux.mjs"
   },
   "devDependencies": {
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.3",
+    "tsx": "^4.19.2"
   }
 }

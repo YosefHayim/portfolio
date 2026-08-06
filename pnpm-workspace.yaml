@@ -1,0 +1,5 @@
+# pnpm 11+ project settings (not a multi-package workspace).
+# Allows postinstall builds required by the CLI runner (tsx → esbuild) and media tooling (sharp).
+allowBuilds:
+  esbuild: true
+  sharp: true
