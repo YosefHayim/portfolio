@@ -1,57 +1,18 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  AlertCircle,
-  ArrowUp,
-  MessageCircle,
-  RotateCcw,
-  Sparkles,
-  X,
-} from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { OPEN_AI_CHAT_EVENT, publishAiChatState, QUICK_ACTIONS } from '@/data/chat';
+import { AlertCircle, MessageCircle, RotateCcw, Sparkles, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { AIChatComposer } from '@/Components/AIChatComposer';
+import { AIChatMessages } from '@/Components/AIChatMessages';
+import { OPEN_AI_CHAT_EVENT, publishAiChatState } from '@/data/chat';
 import { brand } from '@/data/content';
 import { usePortfolioChat } from '@/hooks/usePortfolioChat';
 import { asset, cn } from '@/lib/utils';
-
-// Raw row example: "**bold**" → strong tag.
-const BOLD_PATTERN = /\*\*(.*?)\*\*/g;
-// Raw row example: "`code`" → inline code tag.
-const CODE_PATTERN = /`([^`]+)`/g;
-// Raw row example: "[label](https://example.com)" → external link.
-const LINK_PATTERN = /\[([^\]]+)\]\(([^)]+)\)/g;
-
-/**
- * Light markdown → safe HTML for assistant bubbles (bold, code, links only).
- *
- * @param text - Assistant message text.
- * @returns HTML string for dangerouslySetInnerHTML.
- */
-const renderLightMarkdown = (text: string): string =>
-  text
-    // Raw row example: "Tom & Jerry" → "Tom &amp; Jerry" before markdown tags.
-    .replace(/&/g, '&amp;')
-    // Raw row example: "<tag>" escapes the opening angle bracket.
-    .replace(/</g, '&lt;')
-    // Raw row example: "<tag>" escapes the closing angle bracket.
-    .replace(/>/g, '&gt;')
-    .replace(BOLD_PATTERN, '<strong class="font-semibold text-white">$1</strong>')
-    .replace(
-      CODE_PATTERN,
-      '<code class="rounded bg-white/10 px-1 py-0.5 font-mono text-[11px] text-mint">$1</code>',
-    )
-    .replace(
-      LINK_PATTERN,
-      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-mint underline-offset-2 hover:underline">$1</a>',
-    )
-    // Raw row example: "line1\nline2" → "line1<br />line2".
-    .replace(/\n/g, '<br />');
 
 const PANEL_WIDTH = 420;
 
 export const AIChatDock = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -86,14 +47,12 @@ export const AIChatDock = () => {
   }, [isOpen]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
-
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      const timer = window.setTimeout(() => inputRef.current?.focus(), 180);
-      return () => window.clearTimeout(timer);
+    if (!isOpen) {
+      return;
     }
+
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 180);
+    return () => window.clearTimeout(timer);
   }, [isOpen]);
 
   useEffect(() => {
@@ -115,21 +74,8 @@ export const AIChatDock = () => {
     };
   }, [isOpen, isMobile]);
 
-  const handleSubmit = useCallback(
-    (event: React.FormEvent) => {
-      event.preventDefault();
-      void sendMessage(inputValue);
-    },
-    [inputValue, sendMessage],
-  );
-
-  const handleSend = useCallback(() => {
-    void sendMessage(inputValue);
-  }, [inputValue, sendMessage]);
-
   return (
     <>
-      {/* Scrim */}
       <AnimatePresence>
         {isOpen ? (
           <motion.button
@@ -183,7 +129,6 @@ export const AIChatDock = () => {
         ) : null}
       </AnimatePresence>
 
-      {/* Sidebar / sheet panel */}
       <AnimatePresence>
         {isOpen ? (
           <motion.aside
@@ -206,23 +151,20 @@ export const AIChatDock = () => {
             style={isMobile ? undefined : { width: PANEL_WIDTH }}
             transition={{ type: 'spring', stiffness: 380, damping: 36, mass: 0.85 }}
           >
-            {/* Mobile drag affordance */}
             {isMobile ? (
               <div className="relative z-10 flex justify-center pt-2.5 pb-0.5">
                 <span className="h-1 w-10 rounded-full bg-white/20" />
               </div>
             ) : null}
-            {/* Ambient mint wash */}
+
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_80%_0%,rgba(94,234,212,0.12),transparent_50%)]" />
             <div className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:url('data:image/svg+xml;utf8,<svg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%224%22 stitchTiles=%22stitch%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>')]" />
 
-            {/* Film crop marks */}
             <span className="pointer-events-none absolute top-3 left-3 z-10 size-2 border border-white/35" />
             <span className="pointer-events-none absolute top-3 right-3 z-10 size-2 border border-white/35" />
             <span className="pointer-events-none absolute bottom-3 left-3 z-10 size-2 border border-white/35" />
             <span className="pointer-events-none absolute right-3 bottom-3 z-10 size-2 border border-white/35" />
 
-            {/* Header */}
             <header className="relative z-10 flex items-center gap-3 border-b border-white/10 px-4 py-3.5 sm:px-5">
               <div className="relative shrink-0">
                 <img
@@ -284,120 +226,19 @@ export const AIChatDock = () => {
               </div>
             ) : null}
 
-            {/* Messages */}
-            <div className="relative z-10 flex-1 space-y-3.5 overflow-y-auto px-4 py-4 sm:px-5">
-              {messages.map((message, index) => {
-                const isUser = message.role === 'user';
-                const isLast = index === messages.length - 1;
-                const showCursor =
-                  isStreaming && isLast && !isUser && message.content.length > 0;
+            <AIChatMessages
+              isStreaming={isStreaming}
+              isTyping={isTyping}
+              messages={messages}
+            />
 
-                return (
-                  <motion.div
-                    animate={{ opacity: 1, y: 0 }}
-                    className={cn('flex gap-2', isUser ? 'justify-end' : 'justify-start')}
-                    initial={{ opacity: 0, y: 8 }}
-                    key={message.id}
-                    transition={{ duration: 0.22 }}
-                  >
-                    {!isUser ? (
-                      <span className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full border border-mint/25 bg-mint/10">
-                        <Sparkles className="size-3 text-mint" strokeWidth={2} />
-                      </span>
-                    ) : null}
-                    <div
-                      className={cn(
-                        'max-w-[86%] px-3.5 py-2.5 text-[13px] leading-relaxed',
-                        isUser
-                          ? 'rounded-2xl rounded-br-md bg-gradient-to-br from-mint to-teal-300 text-zinc-950 shadow-[0_8px_24px_rgba(94,234,212,0.18)]'
-                          : 'rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.04] text-zinc-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
-                      )}
-                    >
-                      {isUser ? (
-                        <p className="whitespace-pre-wrap">{message.content}</p>
-                      ) : (
-                        <div
-                          className="[&_a]:text-mint [&_strong]:text-white"
-                          // biome-ignore lint/security/noDangerouslySetInnerHtml: light markdown only, escaped first
-                          dangerouslySetInnerHTML={{
-                            __html: renderLightMarkdown(
-                              message.content || (isStreaming && isLast ? '…' : ''),
-                            ),
-                          }}
-                        />
-                      )}
-                      {showCursor ? (
-                        <span className="ml-0.5 inline-block h-3 w-1 animate-pulse bg-mint align-middle" />
-                      ) : null}
-                    </div>
-                  </motion.div>
-                );
-              })}
-
-              {isTyping ? (
-                <div className="flex justify-start gap-2">
-                  <span className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full border border-mint/25 bg-mint/10">
-                    <Sparkles className="size-3 text-mint" strokeWidth={2} />
-                  </span>
-                  <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.04] px-4 py-3">
-                    <span className="size-1.5 animate-bounce rounded-full bg-mint/80 [animation-delay:0ms]" />
-                    <span className="size-1.5 animate-bounce rounded-full bg-mint/80 [animation-delay:120ms]" />
-                    <span className="size-1.5 animate-bounce rounded-full bg-mint/80 [animation-delay:240ms]" />
-                  </div>
-                </div>
-              ) : null}
-
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Composer */}
-            <div className="relative z-10 border-t border-white/10 bg-gradient-to-t from-black/40 to-transparent p-3 sm:p-4">
-              <div className="mb-3 flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                {QUICK_ACTIONS.map((action) => (
-                  <button
-                    className="shrink-0 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase transition hover:border-mint/35 hover:bg-mint/10 hover:text-mint disabled:opacity-40"
-                    disabled={isBusy}
-                    key={action.id}
-                    onClick={() => void sendMessage(action.prompt)}
-                    type="button"
-                  >
-                    {action.label}
-                  </button>
-                ))}
-              </div>
-
-              <form
-                className="relative overflow-hidden rounded-2xl border border-white/12 bg-white/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition focus-within:border-mint/45 focus-within:shadow-[0_0_0_1px_rgba(94,234,212,0.2),inset_0_1px_0_rgba(255,255,255,0.05)]"
-                onSubmit={handleSubmit}
-              >
-                <textarea
-                  className="max-h-28 min-h-[48px] w-full resize-none bg-transparent px-3.5 pt-3 pr-14 pb-3 text-sm text-white outline-none placeholder:text-zinc-600"
-                  disabled={isBusy}
-                  onChange={(event) => setInputValue(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                      event.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  placeholder="Ask about stack, projects, hire fit…"
-                  ref={inputRef}
-                  rows={1}
-                  value={inputValue}
-                />
-                <button
-                  aria-label="Send message"
-                  className="absolute right-2 bottom-2 inline-flex size-9 items-center justify-center rounded-xl bg-mint text-zinc-950 shadow-[0_0_20px_rgba(94,234,212,0.25)] transition hover:bg-mint/90 disabled:cursor-not-allowed disabled:opacity-35 disabled:shadow-none"
-                  disabled={isBusy || !inputValue.trim()}
-                  type="submit"
-                >
-                  <ArrowUp className="size-4" strokeWidth={2.2} />
-                </button>
-              </form>
-              <p className="mt-2 text-center text-[10px] tracking-[0.08em] text-zinc-600">
-                Grounded in Joseph&apos;s portfolio · not legal or career advice
-              </p>
-            </div>
+            <AIChatComposer
+              inputRef={inputRef}
+              inputValue={inputValue}
+              isBusy={isBusy}
+              sendMessage={sendMessage}
+              setInputValue={setInputValue}
+            />
           </motion.aside>
         ) : null}
       </AnimatePresence>
