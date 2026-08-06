@@ -6,11 +6,17 @@ import { AnimatedPage } from '@/Components/AnimatedPage/AnimatedPage';
 import { BlogContent } from '@/Components/Blog/BlogContent';
 import { BlogCover } from '@/Components/Blog/BlogCover';
 import { SEO } from '@/Components/SEO/SEO';
-import { blogPosts, getCategoryConfig, getPostBySlug } from '@/data/blog';
+import {
+  type BlogPost as BlogPostRecord,
+  blogPosts,
+  getCategoryConfig,
+  getPostBySlug,
+} from '@/data/blog';
 import { useLocale } from '@/i18n/localized';
 import { cn } from '@/lib/utils';
 
 const SITE_URL = 'https://josephsabag.dev';
+const READ_NEXT_LIMIT = 3;
 
 /**
  * Formats a full blog publish date for the active UI language.
@@ -42,27 +48,38 @@ const postNotFoundUrl = (slug: string | undefined): string => {
   return `/blog/${slug}`;
 };
 
+const byNewest = (left: BlogPostRecord, right: BlogPostRecord): number =>
+  new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime();
+
+/**
+ * Picks a few recent posts that are not the current article.
+ *
+ * @param currentPost - Article currently on screen.
+ * @returns Up to three newer/other posts for the "read next" rail.
+ */
+const readNextPosts = (currentPost: BlogPostRecord): BlogPostRecord[] =>
+  blogPosts
+    .filter((candidate) => candidate.id !== currentPost.id)
+    .sort(byNewest)
+    .slice(0, READ_NEXT_LIMIT);
+
 export const BlogPost = () => {
   const { t } = useTranslation();
   const { slug } = useParams();
   const { language, localize } = useLocale();
-  const post = slug ? getPostBySlug(slug) : undefined;
+  const post = slug === undefined ? undefined : getPostBySlug(slug);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, [post?.id]);
 
   const readNext = useMemo(() => {
-    if (!post) {
-      return [];
-    }
-    return [...blogPosts]
-      .filter((candidate) => candidate.id !== post.id)
-      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-      .slice(0, 3);
+    if (post === undefined) return [];
+
+    return readNextPosts(post);
   }, [post]);
 
-  if (!post) {
+  if (post === undefined) {
     return (
       <>
         <SEO noindex={true} title={t('seo.postNotFoundTitle')} url={postNotFoundUrl(slug)} />
@@ -86,6 +103,7 @@ export const BlogPost = () => {
   const excerpt = localize(post.excerpt);
   const content = localize(post.content);
   const categoryLabel = t(`categories.${post.category}`);
+  const modifiedAt = post.updatedAt ?? post.publishedAt;
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -94,7 +112,7 @@ export const BlogPost = () => {
     description: excerpt,
     image: `${SITE_URL}${post.coverImage}`,
     datePublished: post.publishedAt,
-    dateModified: post.updatedAt ?? post.publishedAt,
+    dateModified: modifiedAt,
     author: { '@type': 'Person', name: post.author.name, url: SITE_URL },
     keywords: post.tags.join(', '),
     articleSection: categoryLabel,
@@ -162,52 +180,36 @@ export const BlogPost = () => {
         <BlogContent content={content} />
 
         <div className="flex flex-wrap gap-2 border-t border-[var(--border-subtle)] pt-5">
-          {post.tags.map((tag) => {
-            const href = TAG_LINKS[tag];
-            const icon = TAG_ICONS[tag];
-            return href ? (
-              <a
-                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-xs text-[var(--text-muted)] transition hover:border-[#05df72]/40 hover:text-[#7ff7af]"
-                href={href}
-                key={tag}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {icon}
-                #{tag}
-              </a>
-            ) : (
-              <span
-                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-xs text-[var(--text-muted)]"
-                key={tag}
-              >
-                {icon}
-                #{tag}
-              </span>
-            );
-          })}
+          {post.tags.map((tag) => (
+            <span
+              className="rounded-full border border-[var(--border-subtle)] px-2.5 py-1 text-xs text-[var(--text-muted)]"
+              key={tag}
+            >
+              #{tag}
+            </span>
+          ))}
         </div>
 
         {readNext.length > 0 && (
           <section className="flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-6">
             <h2 className="text-lg font-semibold tracking-tight">{t('blog.readNext')}</h2>
             <div className="grid gap-3 sm:grid-cols-3">
-              {readNext.map((next) => (
+              {readNext.map((nextPost) => (
                 <Link
                   className="group rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-3 transition hover:border-brand/40 hover:bg-[var(--bg-card-hover)]"
-                  key={next.id}
-                  to={`/blog/${next.slug}`}
+                  key={nextPost.id}
+                  to={`/blog/${nextPost.slug}`}
                 >
                   <span
                     className={cn(
                       'text-xs font-medium',
-                      getCategoryConfig(next.category).accentClassName,
+                      getCategoryConfig(nextPost.category).accentClassName,
                     )}
                   >
-                    {t(`categories.${next.category}`)}
+                    {t(`categories.${nextPost.category}`)}
                   </span>
                   <h3 className="mt-1 line-clamp-2 text-sm leading-snug font-medium transition group-hover:text-brand-readable">
-                    {localize(next.title)}
+                    {localize(nextPost.title)}
                   </h3>
                 </Link>
               ))}
