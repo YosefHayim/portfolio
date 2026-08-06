@@ -42,11 +42,22 @@ export const runMenu = async (): Promise<number> => {
     // post new needs a slug; only the TTY menu may prompt (flag mode never does).
     if (selected.id === 'post-new') {
       const slugOrTitle = (await rl.question('slug or title: ')).trim();
+      rl.close();
       return runPostNew([slugOrTitle]);
     }
 
-    return selected.run([]);
-  } finally {
+    // Close readline before long-lived commands (e.g. dev) so stdio is free.
     rl.close();
+    return selected.run([]);
+  } catch (error) {
+    rl.close();
+    throw error;
+  } finally {
+    // Safe if already closed above; ignore double-close errors from readline.
+    try {
+      rl.close();
+    } catch {
+      // already closed
+    }
   }
 };

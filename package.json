@@ -21,5 +21,11 @@
   "devDependencies": {
     "sharp": "^0.35.3",
     "tsx": "^4.19.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
   }
 }
