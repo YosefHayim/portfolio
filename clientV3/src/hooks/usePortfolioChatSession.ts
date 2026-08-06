@@ -67,11 +67,11 @@ export const usePortfolioChatSession = ({ isOpen, openPanel }: UsePortfolioChatS
   }, [welcomeContent]);
 
   const notifyResponseReady = useCallback(
-    (response: string) => {
+    (reply: string) => {
       notifyHiddenChatResponse({
         isOpen: isOpenRef.current,
         openPanel,
-        response,
+        reply,
         labels: {
           ready: t('chat.responseReady'),
           view: t('chat.viewResponse'),
@@ -121,7 +121,7 @@ export const usePortfolioChatSession = ({ isOpen, openPanel }: UsePortfolioChatS
         },
       });
     },
-    [autoSpeak, messages, notifyResponseReady, speechSynthesis, useAI],
+    [autoSpeak, i18n.language, messages, notifyResponseReady, speechSynthesis, useAI],
   );
 
   const handleVoiceRecord = useCallback(async () => {
@@ -169,7 +169,7 @@ export const usePortfolioChatSession = ({ isOpen, openPanel }: UsePortfolioChatS
   useEffect(() => {
     const pendingEmail = findPendingEmailRequest(messages, isStreaming);
     if (pendingEmail) {
-      sendEmailFromMarker(pendingEmail.messageId, pendingEmail.emailData);
+      void sendEmailFromMarker(pendingEmail.messageId, pendingEmail.emailData);
     }
   }, [messages, isStreaming, sendEmailFromMarker]);
 

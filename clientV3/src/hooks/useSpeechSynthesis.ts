@@ -42,7 +42,7 @@ export const useSpeechSynthesis = (
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const timeUpdateIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeUpdateIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const cleanup = useCallback(() => {
     if (timeUpdateIntervalRef.current) {
@@ -62,23 +62,70 @@ export const useSpeechSynthesis = (
 
   useEffect(() => cleanup, [cleanup]);
 
+  const speakWithBrowserTTS = useCallback(
+    (text: string) => {
+      cleanup();
+
+      if (!('speechSynthesis' in window)) {
+        onError?.(new Error('Browser does not support speech synthesis'));
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utteranceRef.current = utterance;
+
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoice =
+        voices.find((voice) => voice.lang.startsWith('en') && voice.name.includes('Google')) ||
+        voices.find((voice) => voice.lang.startsWith('en'));
+
+      if (englishVoice) {
+        utterance.voice = englishVoice;
+      }
+
+      utterance.onstart = () => {
+        setState('playing');
+        onStart?.();
+      };
+
+      utterance.onend = () => {
+        setState('idle');
+        onEnd?.();
+      };
+
+      utterance.onerror = (event) => {
+        if (event.error !== 'canceled') {
+          onError?.(new Error(`Speech synthesis error: ${event.error}`));
+        }
+        setState('idle');
+      };
+
+      window.speechSynthesis.speak(utterance);
+    },
+    [cleanup, onStart, onEnd, onError],
+  );
+
   const speak = useCallback(
     async (text: string): Promise<void> => {
       cleanup();
       setState('loading');
 
       try {
-        const response = await fetch(`${apiUrl}/api/chat/tts`, {
+        const ttsResponse = await fetch(`${apiUrl}/api/chat/tts`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text }),
         });
 
-        if (!response.ok) {
+        if (!ttsResponse.ok) {
           throw new Error('Failed to generate speech');
         }
 
-        const audioBlob = await response.blob();
+        const audioBlob = await ttsResponse.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
 
         audioRef.current = new Audio(audioUrl);
@@ -117,8 +164,7 @@ export const useSpeechSynthesis = (
         };
 
         audioRef.current.onerror = () => {
-          const error = new Error('Audio playback failed');
-          onError?.(error);
+          onError?.(new Error('Audio playback failed'));
           setState('idle');
           URL.revokeObjectURL(audioUrl);
         };
@@ -131,61 +177,17 @@ export const useSpeechSynthesis = (
         speakWithBrowserTTS(text);
       }
     },
-    [apiUrl, cleanup, onStart, onEnd, onError],
-  );
-
-  const speakWithBrowserTTS = useCallback(
-    (text: string) => {
-      cleanup();
-
-      if (!('speechSynthesis' in window)) {
-        onError?.(new Error('Browser does not support speech synthesis'));
-        return;
-      }
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utteranceRef.current = utterance;
-
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-
-      const voices = window.speechSynthesis.getVoices();
-      const englishVoice =
-        voices.find((v) => v.lang.startsWith('en') && v.name.includes('Google')) ||
-        voices.find((v) => v.lang.startsWith('en'));
-
-      if (englishVoice) {
-        utterance.voice = englishVoice;
-      }
-
-      utterance.onstart = () => {
-        setState('playing');
-        onStart?.();
-      };
-
-      utterance.onend = () => {
-        setState('idle');
-        onEnd?.();
-      };
-
-      utterance.onerror = (event) => {
-        if (event.error !== 'canceled') {
-          onError?.(new Error(`Speech synthesis error: ${event.error}`));
-        }
-        setState('idle');
-      };
-
-      window.speechSynthesis.speak(utterance);
-    },
-    [cleanup, onStart, onEnd, onError],
+    [apiUrl, cleanup, onStart, onEnd, onError, speakWithBrowserTTS],
   );
 
   const pause = useCallback(() => {
     if (audioRef.current && state === 'playing') {
       audioRef.current.pause();
       setState('paused');
-    } else if (utteranceRef.current && state === 'playing') {
+      return;
+    }
+
+    if (utteranceRef.current && state === 'playing') {
       window.speechSynthesis.pause();
       setState('paused');
     }
@@ -193,8 +195,11 @@ export const useSpeechSynthesis = (
 
   const resume = useCallback(() => {
     if (audioRef.current && state === 'paused') {
-      audioRef.current.play();
-    } else if (utteranceRef.current && state === 'paused') {
+      void audioRef.current.play();
+      return;
+    }
+
+    if (utteranceRef.current && state === 'paused') {
       window.speechSynthesis.resume();
       setState('playing');
     }

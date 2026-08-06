@@ -1,10 +1,11 @@
+import { stripContactEmailMarker } from '@shared/portfolio/contactEmail.js';
 import { motion } from 'framer-motion';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiAlertCircle, FiCheck } from 'react-icons/fi';
 import { useLocale } from '@/i18n/localized';
 import { cn } from '@/lib/utils';
-import { type Message, stripEmailMarker } from '@/utils/chatUtils';
+import type { Message } from '@/utils/chatUtils';
 
 // Raw row example: "**text**" becomes a strong tag.
 const BOLD_ASTERISK_PATTERN = /\*\*(.*?)\*\*/g;
@@ -37,22 +38,22 @@ const RELATIVE_TIME_THRESHOLDS: RelativeTimeThreshold[] = [
 ];
 
 const renderMarkdown = (text: string): string =>
-  stripEmailMarker(text)
+  stripContactEmailMarker(text)
     .replace(
       BOLD_ASTERISK_PATTERN,
-      '<strong className="font-semibold text-[var(--text-primary)]">$1</strong>',
+      '<strong class="font-semibold text-[var(--text-primary)]">$1</strong>',
     )
     .replace(
       BOLD_UNDERSCORE_PATTERN,
-      '<strong className="font-semibold text-[var(--text-primary)]">$1</strong>',
+      '<strong class="font-semibold text-[var(--text-primary)]">$1</strong>',
     )
     .replace(
       INLINE_CODE_PATTERN,
-      '<code className="bg-[var(--bg-elevated)] p-2 p-2 rounded text-brand-secondary font-mono text-xs">$1</code>',
+      '<code class="bg-[var(--bg-elevated)] p-2 rounded text-brand-secondary font-mono text-xs">$1</code>',
     )
     .replace(
       MARKDOWN_LINK_PATTERN,
-      '<a href="$2" target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">$1</a>',
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-brand hover:underline">$1</a>',
     );
 
 /**
@@ -79,11 +80,11 @@ const formatTimeAgo = (date: Date, language: string): string => {
   return formatter.format(Math.round(diffMs / YEAR_MS), 'year');
 };
 
-type ChatMessageProps = {
+interface ChatMessageProps {
   message: Message;
   isStreaming: boolean;
   isLastMessage: boolean;
-};
+}
 
 export const ChatMessage = memo(
   ({ message, isStreaming, isLastMessage }: ChatMessageProps) => {
@@ -99,7 +100,7 @@ export const ChatMessage = memo(
       >
         <div
           className={cn(
-            'max-w-[85%] rounded-xl p-2 p-2 text-[13px] leading-relaxed',
+            'max-w-[85%] rounded-xl p-2 text-[13px] leading-relaxed',
             message.role === 'user'
               ? 'bg-brand text-black'
               : 'bg-[var(--bg-surface)] text-(--text-secondary)',
@@ -107,7 +108,7 @@ export const ChatMessage = memo(
         >
           <div className="whitespace-pre-wrap">
             {message.isVoice && message.role === 'user' && (
-              <span className="mr-1 text-black/60">🎤</span>
+              <span className="me-1 text-black/60">🎤</span>
             )}
             {message.role === 'assistant' ? (
               <span
@@ -119,13 +120,13 @@ export const ChatMessage = memo(
               message.content
             )}
             {isStreaming && message.role === 'assistant' && isLastMessage && (
-              <span className="ml-0.5 inline-block h-3 w-0.5 animate-pulse bg-[var(--text-muted)]" />
+              <span className="ms-0.5 inline-block h-3 w-0.5 animate-pulse bg-[var(--text-muted)]" />
             )}
           </div>
           {message.emailStatus && (
             <div
               className={cn(
-                ' flex items-center gap-2 rounded-md p-2 p-2 text-[11px] font-medium',
+                'flex items-center gap-2 rounded-md p-2 font-medium text-[11px]',
                 message.emailStatus === 'sending' && 'bg-brand-accent/20 text-brand-accent',
                 message.emailStatus === 'sent' && 'bg-brand/20 text-brand',
                 message.emailStatus === 'failed' && 'bg-brand-danger/20 text-brand-danger',
@@ -162,7 +163,7 @@ export const ChatMessage = memo(
         </div>
         <span
           className={cn(
-            ' text-[10px]',
+            'text-[10px]',
             message.role === 'user' ? 'text-[var(--text-muted)]' : 'text-[var(--text-dim)]',
           )}
         >
@@ -171,7 +172,6 @@ export const ChatMessage = memo(
       </motion.div>
     );
   },
-  // Custom comparison for memoization
   (prevProps, nextProps) =>
     prevProps.message.id === nextProps.message.id &&
     prevProps.message.content === nextProps.message.content &&
@@ -181,27 +181,3 @@ export const ChatMessage = memo(
 );
 
 ChatMessage.displayName = 'ChatMessage';
-
-// Typing indicator component
-export const TypingIndicator = memo(() => {
-  const { t } = useTranslation();
-
-  return (
-    <motion.div
-      animate={{ opacity: 1 }}
-      className="flex flex-col items-start"
-      initial={{ opacity: 0 }}
-    >
-      <div className="flex items-center gap-2 rounded-xl bg-[var(--bg-surface)] p-2 p-2">
-        <div className="flex gap-2">
-          <span className="h-2 w-2 animate-bounce rounded-full bg-brand [animation-delay:-0.3s]" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-brand [animation-delay:-0.15s]" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-brand" />
-        </div>
-        <span className="text-xs text-[var(--text-muted)]">{t('chat.thinking')}</span>
-      </div>
-    </motion.div>
-  );
-});
-
-TypingIndicator.displayName = 'TypingIndicator';

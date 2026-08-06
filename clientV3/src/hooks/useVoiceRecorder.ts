@@ -34,14 +34,14 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
 
   const [state, setState] = useState<RecordingState>('idle');
   const [duration, setDuration] = useState(0);
-  const [audioLevels, setAudioLevels] = useState<number[]>(Array(AUDIO_LEVELS_COUNT).fill(0));
+  const [audioLevels, setAudioLevels] = useState<number[]>(new Array(AUDIO_LEVELS_COUNT).fill(0));
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
   const cleanup = useCallback(() => {
@@ -60,7 +60,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       streamRef.current = null;
     }
     if (audioContextRef.current?.state !== 'closed') {
-      audioContextRef.current?.close();
+      void audioContextRef.current?.close();
     }
     audioContextRef.current = null;
     analyserRef.current = null;
@@ -69,29 +69,33 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
   }, []);
 
   const updateAudioLevels = useCallback(() => {
-    if (!analyserRef.current || state !== 'recording') return;
-
-    const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-    analyserRef.current.getByteFrequencyData(dataArray);
-
-    const bucketSize = Math.floor(dataArray.length / AUDIO_LEVELS_COUNT);
-    const levels: number[] = [];
-
-    for (let i = 0; i < AUDIO_LEVELS_COUNT; i++) {
-      let sum = 0;
-      for (let j = 0; j < bucketSize; j++) {
-        sum += dataArray[i * bucketSize + j];
-      }
-      const avg = sum / bucketSize / 255;
-      levels.push(avg);
+    if (!analyserRef.current || state !== 'recording') {
+      return;
     }
 
-    setAudioLevels((prev) =>
-      levels.map((level, i) => prev[i] * VOLUME_SMOOTHING + level * (1 - VOLUME_SMOOTHING)),
+    const frequencyBins = new Uint8Array(analyserRef.current.frequencyBinCount);
+    analyserRef.current.getByteFrequencyData(frequencyBins);
+
+    const bucketSize = Math.floor(frequencyBins.length / AUDIO_LEVELS_COUNT);
+    const levels: number[] = [];
+
+    for (let bucketIndex = 0; bucketIndex < AUDIO_LEVELS_COUNT; bucketIndex++) {
+      let sum = 0;
+      for (let offset = 0; offset < bucketSize; offset++) {
+        sum += frequencyBins[bucketIndex * bucketSize + offset];
+      }
+      const average = sum / bucketSize / 255;
+      levels.push(average);
+    }
+
+    setAudioLevels((previousLevels) =>
+      levels.map(
+        (level, index) => previousLevels[index] * VOLUME_SMOOTHING + level * (1 - VOLUME_SMOOTHING),
+      ),
     );
 
-    const avgVolume = levels.reduce((a, b) => a + b, 0) / levels.length;
-    onVolumeChange?.(avgVolume);
+    const averageVolume = levels.reduce((total, level) => total + level, 0) / levels.length;
+    onVolumeChange?.(averageVolume);
 
     animationFrameRef.current = requestAnimationFrame(updateAudioLevels);
   }, [state, onVolumeChange]);
@@ -122,9 +126,9 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
       chunksRef.current = [];
 
-      mediaRecorderRef.current.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          chunksRef.current.push(e.data);
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
         }
       };
 
@@ -133,7 +137,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
       setDuration(0);
 
       timerRef.current = setInterval(() => {
-        setDuration((d) => d + 1);
+        setDuration((seconds) => seconds + 1);
       }, 1000);
 
       updateAudioLevels();
@@ -152,9 +156,9 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
 
     setState('processing');
 
-    return new Promise((resolve) => {
+    return new Promise((settle) => {
       if (!mediaRecorderRef.current) {
-        resolve(null);
+        settle(null);
         return;
       }
 
@@ -168,9 +172,9 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
         cleanup();
         setState('idle');
         setDuration(0);
-        setAudioLevels(Array(AUDIO_LEVELS_COUNT).fill(0));
+        setAudioLevels(new Array(AUDIO_LEVELS_COUNT).fill(0));
 
-        resolve(audioBlob);
+        settle(audioBlob);
       };
 
       mediaRecorderRef.current.stop();
@@ -181,7 +185,7 @@ export const useVoiceRecorder = (options: UseVoiceRecorderOptions = {}): UseVoic
     cleanup();
     setState('idle');
     setDuration(0);
-    setAudioLevels(Array(AUDIO_LEVELS_COUNT).fill(0));
+    setAudioLevels(new Array(AUDIO_LEVELS_COUNT).fill(0));
   }, [cleanup]);
 
   return {
