@@ -148,6 +148,7 @@ export const ChatInput = memo(
         <form className="flex items-center gap-2 p-2 sm:gap-2 sm:p-2" onSubmit={onSubmit}>
           <div className="relative flex-1">
             <input
+              aria-label={inputPlaceholder}
               type="text"
               className={cn(
                 'h-10 w-full rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-2 text-[var(--text-primary)] text-sm transition-colors placeholder:text-[var(--text-muted)] sm:h-11 sm:p-2',

@@ -56,8 +56,11 @@ export const AIChatSidebar = () => {
   } = usePortfolioChatSession({ isOpen, openPanel });
 
   useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
+  }, [isOpen, messages, isTyping]);
 
   useEffect(() => {
     if (isOpen && inputRef.current && !voiceRecorder.isRecording) {
