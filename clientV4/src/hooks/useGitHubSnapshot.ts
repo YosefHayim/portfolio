@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  clearGitHubCache,
   fallbackGitHubRepos,
   fallbackGitHubStats,
   loadGitHubSnapshot,
   type GitHubRepoPreview,
+  type GitHubSnapshotSource,
   type GitHubStats,
 } from '@/data/github';
 
@@ -12,14 +12,14 @@ type UseGitHubSnapshotResult = {
   stats: GitHubStats;
   repos: GitHubRepoPreview[];
   isLoading: boolean;
-  source: 'cache' | 'live' | 'fallback' | 'idle';
+  source: GitHubSnapshotSource | 'idle';
   error: string | null;
   refetch: () => Promise<void>;
 };
 
 /**
  * Client hook for live GitHub stats + ranked public repos with README heroes.
- * Forces a one-time cache purge of legacy keys on mount.
+ * Uses the versioned localStorage cache on first paint; `refetch` force-refreshes.
  *
  * @returns Snapshot state with loading and refetch.
  * @example
@@ -34,21 +34,16 @@ export const useGitHubSnapshot = (): UseGitHubSnapshotResult => {
 
   const load = useCallback(async (force = false) => {
     setIsLoading(true);
-    if (force) {
-      clearGitHubCache();
-    }
-    const result = await loadGitHubSnapshot({ force });
-    setStats(result.stats);
-    setRepos(result.repos);
-    setSource(result.source);
-    setError(result.error);
+    const snapshot = await loadGitHubSnapshot({ force });
+    setStats(snapshot.stats);
+    setRepos(snapshot.repos);
+    setSource(snapshot.source);
+    setError(snapshot.error);
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    // Drop legacy cache keys once, then load (versioned key may still hit).
-    clearGitHubCache();
-    void load(true);
+    void load(false);
   }, [load]);
 
   return {
