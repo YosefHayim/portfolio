@@ -87,3 +87,4 @@ kilo.jsonc
 scripts/dev/
 !scripts/dev/convertV4ImagesToWebp.mjs
 !scripts/dev/uploadV4MediaToR2.mjs
+.worktrees/
