@@ -21,7 +21,7 @@ export const RESUME_URL = portfolioKnowledge.links.resume;
  * createChatMessageId()
  */
 export const createChatMessageId = (): string =>
-  Math.random().toString(RADIX).substring(ID_START, ID_END);
+  Math.random().toString(RADIX).slice(ID_START, ID_END);
 
 /**
  * Creates the initial assistant welcome message.
@@ -73,7 +73,7 @@ export const createAssistantPlaceholder = (messageId = createChatMessageId()): M
 /**
  * Creates a completed assistant message.
  *
- * @param content - Assistant response text.
+ * @param content - Assistant reply text.
  * @returns Assistant chat message.
  * @example
  * createAssistantMessage('Joseph builds AI tools.')
@@ -86,14 +86,14 @@ export const createAssistantMessage = (content: string): Message => ({
 });
 
 /**
- * Converts UI messages into the assistant request payload.
+ * Filters UI messages into the assistant request shape (no local welcome row).
  *
  * @param messages - Current UI chat messages.
  * @returns Request messages without the local welcome message.
  * @example
- * toAssistantRequestMessages([createWelcomeMessage(), createUserChatMessage('Hi')])
+ * assistantRequestMessages([createWelcomeMessage(), createUserChatMessage('Hi')])
  */
-export const toAssistantRequestMessages = (messages: readonly Message[]) =>
+export const assistantRequestMessages = (messages: readonly Message[]) =>
   messages
     .filter((message) => message.id !== 'welcome')
     .map((message) => ({
@@ -152,13 +152,13 @@ export const findPendingEmailRequest = (
   findPendingContactEmailRequest(messages, isStreaming);
 
 /**
- * Creates a compact notification preview from an assistant response.
+ * Creates a compact notification preview from an assistant reply.
  *
- * @param response - Assistant response text.
+ * @param reply - Assistant reply text.
  * @param maxLength - Maximum preview length.
  * @returns Preview without email marker metadata.
  * @example
  * createResponsePreview('Long assistant response', 12)
  */
-export const createResponsePreview = (response: string, maxLength = 80): string =>
-  createContactEmailPreview(response, maxLength);
+export const createResponsePreview = (reply: string, maxLength = 80): string =>
+  createContactEmailPreview(reply, maxLength);

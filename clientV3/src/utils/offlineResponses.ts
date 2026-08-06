@@ -68,19 +68,19 @@ const SAMPLE_RESPONSES_HE: Record<string, string> = {
  * Checks whether a lowercased message contains any keyword in the set.
  *
  * @param message - Lowercased user message.
- * @param needles - Keywords that route to the same response.
+ * @param needles - Keywords that route to the same reply.
  * @returns Whether one keyword was found.
  * @example
  * includesAny('tell me about projects', ['project'])
  */
-const includesAny = (message: string, needles: string[]): boolean =>
+const includesAny = (message: string, needles: readonly string[]): boolean =>
   needles.some((needle) => message.includes(needle));
 
 /**
- * Selects the best Hebrew local fallback response for a user message.
+ * Selects the best Hebrew local fallback reply for a user message.
  *
  * @param lowerMessage - Lowercased user message.
- * @returns Hebrew offline assistant response.
+ * @returns Hebrew offline assistant reply.
  * @example
  * getHebrewOfflineResponse('פרויקטים')
  */
@@ -146,60 +146,31 @@ const getHebrewOfflineResponse = (lowerMessage: string): string => {
 };
 
 /**
- * Selects the best local fallback response for a user message.
+ * Selects the best English local fallback reply for a user message.
  *
- * @param userMessage - User message text.
- * @param language - Active UI language.
- * @returns Offline assistant response.
+ * @param lowerMessage - Lowercased user message.
+ * @returns English offline assistant reply.
  * @example
- * getOfflineResponse('Tell me about projects', 'en')
+ * getEnglishOfflineResponse('tell me about projects')
  */
-export const getOfflineResponse = (userMessage: string, language = 'en'): string => {
-  const lowerMessage = userMessage.toLowerCase();
-
-  if (normalizeLanguage(language) === 'he') {
-    return getHebrewOfflineResponse(lowerMessage);
-  }
-
-  if (
-    lowerMessage.includes('skill') ||
-    lowerMessage.includes('tech') ||
-    lowerMessage.includes('proficien')
-  ) {
+const getEnglishOfflineResponse = (lowerMessage: string): string => {
+  if (includesAny(lowerMessage, ['skill', 'tech', 'proficien'])) {
     return SAMPLE_RESPONSES.skills;
   }
 
-  if (
-    lowerMessage.includes('project') ||
-    lowerMessage.includes('built') ||
-    lowerMessage.includes('portfolio')
-  ) {
+  if (includesAny(lowerMessage, ['project', 'built', 'portfolio'])) {
     return SAMPLE_RESPONSES.projects;
   }
 
-  if (
-    lowerMessage.includes('experience') ||
-    lowerMessage.includes('work') ||
-    lowerMessage.includes('job') ||
-    lowerMessage.includes('career')
-  ) {
+  if (includesAny(lowerMessage, ['experience', 'work', 'job', 'career'])) {
     return SAMPLE_RESPONSES.experience;
   }
 
-  if (
-    lowerMessage.includes('hire') ||
-    lowerMessage.includes('why') ||
-    lowerMessage.includes('candidate') ||
-    lowerMessage.includes('good fit')
-  ) {
+  if (includesAny(lowerMessage, ['hire', 'why', 'candidate', 'good fit'])) {
     return SAMPLE_RESPONSES.hire;
   }
 
-  if (
-    lowerMessage.includes('contact') ||
-    lowerMessage.includes('reach') ||
-    lowerMessage.includes('email')
-  ) {
+  if (includesAny(lowerMessage, ['contact', 'reach', 'email'])) {
     return `You can reach Joseph through:
 
 - **GitHub**: github.com/YosefHayim
@@ -209,11 +180,7 @@ export const getOfflineResponse = (userMessage: string, language = 'en'): string
 Feel free to download his resume for more details!`;
   }
 
-  if (
-    lowerMessage.includes('education') ||
-    lowerMessage.includes('degree') ||
-    lowerMessage.includes('bootcamp')
-  ) {
+  if (includesAny(lowerMessage, ['education', 'degree', 'bootcamp'])) {
     return `**Education**
 
 - **Open University of Israel** - B.Sc Computer Science (Oct 2025 - Present)
@@ -223,7 +190,7 @@ Feel free to download his resume for more details!`;
  - Covered JavaScript, React, Node.js, Python, and more`;
   }
 
-  if (lowerMessage.includes('military') || lowerMessage.includes('idf')) {
+  if (includesAny(lowerMessage, ['military', 'idf'])) {
     return `**Military Service**
 
 Joseph served as an Infantry Commander in the IDF (Nov 2018 - Jul 2021):
@@ -245,4 +212,23 @@ This experience shaped his discipline, leadership skills, and ability to perform
 - **Why he'd be a great hire**
 
 What would you like to know?`;
+};
+
+/**
+ * Selects the best local fallback reply for a user message.
+ *
+ * @param userMessage - User message text.
+ * @param language - Active UI language.
+ * @returns Offline assistant reply.
+ * @example
+ * getOfflineResponse('Tell me about projects', 'en')
+ */
+export const getOfflineResponse = (userMessage: string, language = 'en'): string => {
+  const lowerMessage = userMessage.toLowerCase();
+
+  if (normalizeLanguage(language) === 'he') {
+    return getHebrewOfflineResponse(lowerMessage);
+  }
+
+  return getEnglishOfflineResponse(lowerMessage);
 };

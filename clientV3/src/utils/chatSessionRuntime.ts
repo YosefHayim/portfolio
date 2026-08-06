@@ -1,12 +1,12 @@
 import {
   appendAssistantChunk,
+  assistantRequestMessages,
   createAssistantMessage,
   createAssistantPlaceholder,
   createResponsePreview,
   createUserChatMessage,
   DOWNLOAD_RESUME_ACTION,
   RESUME_URL,
-  toAssistantRequestMessages,
 } from './chatSession.ts';
 import type { Message } from './chatUtils.ts';
 
@@ -36,17 +36,144 @@ export type ChatSessionAdapters = {
     abortSignal?: AbortSignal,
   ) => Promise<string>;
   getOfflineResponse: (content: string) => string;
-  notifyResponseReady: (response: string) => void;
+  notifyResponseReady: (reply: string) => void;
   schedule: (callback: () => void, delayMs: number) => void;
   speak: (text: string) => void;
   speakWithBrowserTTS: (text: string) => void;
+};
+
+type RunChatSessionMessageInput = {
+  content: string;
+  isVoiceMessage?: boolean;
+  snapshot: ChatSessionSnapshot;
+  actions: ChatSessionActions;
+  adapters: ChatSessionAdapters;
+};
+
+type RunVoiceChatInputArgs = {
+  isRecording: boolean;
+  startRecording: () => Promise<void>;
+  stopRecording: () => Promise<Blob | null>;
+  stopSpeech: () => void;
+  transcribeAudio: (audioBlob: Blob) => Promise<string>;
+  sendMessage: (content: string, isVoiceMessage: boolean) => Promise<void>;
+  setError: (error: string | null) => void;
+  setIsTranscribing: (isTranscribing: boolean) => void;
+};
+
+type SpeakLastAssistantMessageInput = {
+  messages: readonly Message[];
+  speak: (content: string) => void;
+};
+
+type NotifyHiddenChatResponseInput = {
+  isOpen: boolean;
+  openPanel: () => void;
+  reply: string;
+  labels: {
+    ready: string;
+    view: string;
+  };
+  notify: (
+    message: string,
+    options: {
+      description: string;
+      action: { label: string; onClick: () => void };
+      duration: number;
+    },
+  ) => void;
+};
+
+const scheduleOfflineReply = ({
+  trimmedContent,
+  isVoiceMessage,
+  snapshot,
+  actions,
+  adapters,
+}: {
+  trimmedContent: string;
+  isVoiceMessage: boolean;
+  snapshot: ChatSessionSnapshot;
+  actions: ChatSessionActions;
+  adapters: ChatSessionAdapters;
+}): void => {
+  actions.setIsTyping(true);
+  adapters.schedule(() => {
+    const offlineReply = adapters.getOfflineResponse(trimmedContent);
+    actions.updateMessages((messages) => [...messages, createAssistantMessage(offlineReply)]);
+    actions.setIsTyping(false);
+    adapters.notifyResponseReady(offlineReply);
+
+    if (snapshot.autoSpeak && isVoiceMessage) {
+      adapters.speakWithBrowserTTS(offlineReply);
+    }
+  }, TYPING_DELAY);
+};
+
+const streamAssistantReply = async ({
+  trimmedContent,
+  isVoiceMessage,
+  snapshot,
+  userMessage,
+  actions,
+  adapters,
+}: {
+  trimmedContent: string;
+  isVoiceMessage: boolean;
+  snapshot: ChatSessionSnapshot;
+  userMessage: Message;
+  actions: ChatSessionActions;
+  adapters: ChatSessionAdapters;
+}): Promise<void> => {
+  actions.setIsStreaming(true);
+  const assistantMessage = createAssistantPlaceholder();
+  actions.updateMessages((messages) => [...messages, assistantMessage]);
+
+  try {
+    const requestMessages = assistantRequestMessages([...snapshot.messages, userMessage]);
+    const fullReply = await adapters.fetchStreamingResponse(
+      requestMessages,
+      (chunk) => {
+        actions.updateMessages((messages) =>
+          appendAssistantChunk(messages, assistantMessage.id, chunk),
+        );
+      },
+      adapters.createAbortSignal(),
+    );
+
+    adapters.notifyResponseReady(fullReply);
+
+    if (snapshot.autoSpeak && isVoiceMessage && fullReply) {
+      adapters.speak(fullReply);
+    }
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      return;
+    }
+
+    actions.updateMessages((messages) =>
+      messages.filter((message) => message.id !== assistantMessage.id),
+    );
+
+    const fallbackReply = adapters.getOfflineResponse(trimmedContent);
+    actions.updateMessages((messages) => [...messages, createAssistantMessage(fallbackReply)]);
+    actions.setError('AI unavailable. Using offline responses.');
+    actions.setUseAI(false);
+    adapters.notifyResponseReady(fallbackReply);
+
+    if (snapshot.autoSpeak && isVoiceMessage) {
+      adapters.speakWithBrowserTTS(fallbackReply);
+    }
+  } finally {
+    actions.setIsStreaming(false);
+  }
 };
 
 /**
  * Runs one chat message through offline or streaming assistant mode.
  *
  * @param input - Message content, state snapshot, actions, and external adapters.
- * @returns Promise that resolves after state updates and side effects complete.
+ * @returns Promise that settles after state updates and side effects complete.
  * @example
  * await runChatSessionMessage({ content, snapshot, actions, adapters })
  */
@@ -56,13 +183,7 @@ export const runChatSessionMessage = async ({
   snapshot,
   actions,
   adapters,
-}: {
-  content: string;
-  isVoiceMessage?: boolean;
-  snapshot: ChatSessionSnapshot;
-  actions: ChatSessionActions;
-  adapters: ChatSessionAdapters;
-}): Promise<void> => {
+}: RunChatSessionMessageInput): Promise<void> => {
   const trimmedContent = content.trim();
   if (!trimmedContent) {
     return;
@@ -80,69 +201,25 @@ export const runChatSessionMessage = async ({
   actions.setError(null);
 
   if (!snapshot.useAI) {
-    actions.setIsTyping(true);
-    adapters.schedule(() => {
-      const response = adapters.getOfflineResponse(trimmedContent);
-      actions.updateMessages((messages) => [...messages, createAssistantMessage(response)]);
-      actions.setIsTyping(false);
-      adapters.notifyResponseReady(response);
-
-      if (snapshot.autoSpeak && isVoiceMessage) {
-        adapters.speakWithBrowserTTS(response);
-      }
-    }, TYPING_DELAY);
+    scheduleOfflineReply({ trimmedContent, isVoiceMessage, snapshot, actions, adapters });
     return;
   }
 
-  actions.setIsStreaming(true);
-  const assistantMessage = createAssistantPlaceholder();
-  actions.updateMessages((messages) => [...messages, assistantMessage]);
-
-  try {
-    const requestMessages = toAssistantRequestMessages([...snapshot.messages, userMessage]);
-    const fullResponse = await adapters.fetchStreamingResponse(
-      requestMessages,
-      (chunk) => {
-        actions.updateMessages((messages) =>
-          appendAssistantChunk(messages, assistantMessage.id, chunk),
-        );
-      },
-      adapters.createAbortSignal(),
-    );
-
-    adapters.notifyResponseReady(fullResponse);
-
-    if (snapshot.autoSpeak && isVoiceMessage && fullResponse) {
-      adapters.speak(fullResponse);
-    }
-  } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
-      return;
-    }
-
-    actions.updateMessages((messages) =>
-      messages.filter((message) => message.id !== assistantMessage.id),
-    );
-
-    const fallbackResponse = adapters.getOfflineResponse(trimmedContent);
-    actions.updateMessages((messages) => [...messages, createAssistantMessage(fallbackResponse)]);
-    actions.setError('AI unavailable. Using offline responses.');
-    actions.setUseAI(false);
-    adapters.notifyResponseReady(fallbackResponse);
-
-    if (snapshot.autoSpeak && isVoiceMessage) {
-      adapters.speakWithBrowserTTS(fallbackResponse);
-    }
-  } finally {
-    actions.setIsStreaming(false);
-  }
+  await streamAssistantReply({
+    trimmedContent,
+    isVoiceMessage,
+    snapshot,
+    userMessage,
+    actions,
+    adapters,
+  });
 };
 
 /**
  * Toggles voice recording or submits the stopped recording to transcription.
  *
  * @param input - Voice recorder state, callbacks, and UI state setters.
- * @returns Promise that resolves after recording/transcription work completes.
+ * @returns Promise that settles after recording/transcription work completes.
  * @example
  * await runVoiceChatInput({ isRecording, startRecording, stopRecording, stopSpeech, transcribeAudio, sendMessage, setError, setIsTranscribing })
  */
@@ -155,16 +232,7 @@ export const runVoiceChatInput = async ({
   sendMessage,
   setError,
   setIsTranscribing,
-}: {
-  isRecording: boolean;
-  startRecording: () => Promise<void>;
-  stopRecording: () => Promise<Blob | null>;
-  stopSpeech: () => void;
-  transcribeAudio: (audioBlob: Blob) => Promise<string>;
-  sendMessage: (content: string, isVoiceMessage: boolean) => Promise<void>;
-  setError: (error: string | null) => void;
-  setIsTranscribing: (isTranscribing: boolean) => void;
-}): Promise<void> => {
+}: RunVoiceChatInputArgs): Promise<void> => {
   if (!isRecording) {
     stopSpeech();
     await startRecording();
@@ -190,7 +258,7 @@ export const runVoiceChatInput = async ({
 };
 
 /**
- * Speaks the newest assistant message with browser speech synthesis.
+ * Speaks the newest assistant message with the provided speech callback.
  *
  * @param input - Messages and speech callback.
  * @returns Nothing.
@@ -200,10 +268,7 @@ export const runVoiceChatInput = async ({
 export const speakLastAssistantMessage = ({
   messages,
   speak,
-}: {
-  messages: readonly Message[];
-  speak: (content: string) => void;
-}): void => {
+}: SpeakLastAssistantMessageInput): void => {
   const lastAssistantMessage = [...messages]
     .reverse()
     .find((message) => message.role === 'assistant' && message.content);
@@ -214,42 +279,26 @@ export const speakLastAssistantMessage = ({
 };
 
 /**
- * Notifies the user when a response arrives while the chat panel is closed.
+ * Notifies the user when a reply arrives while the chat panel is closed.
  *
- * @param input - Panel state, response, and notifier callback.
+ * @param input - Panel state, reply text, and notifier callback.
  * @returns Nothing.
  * @example
- * notifyHiddenChatResponse({ isOpen: false, openPanel, response, notify })
+ * notifyHiddenChatResponse({ isOpen: false, openPanel, reply, notify, labels })
  */
 export const notifyHiddenChatResponse = ({
   isOpen,
   openPanel,
-  response,
+  reply,
   notify,
   labels,
-}: {
-  isOpen: boolean;
-  openPanel: () => void;
-  response: string;
-  labels: {
-    ready: string;
-    view: string;
-  };
-  notify: (
-    message: string,
-    options: {
-      description: string;
-      action: { label: string; onClick: () => void };
-      duration: number;
-    },
-  ) => void;
-}): void => {
-  if (isOpen || !response) {
+}: NotifyHiddenChatResponseInput): void => {
+  if (isOpen || !reply) {
     return;
   }
 
   notify(labels.ready, {
-    description: createResponsePreview(response),
+    description: createResponsePreview(reply),
     action: {
       label: labels.view,
       onClick: openPanel,

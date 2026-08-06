@@ -1,6 +1,14 @@
 import { cx } from 'class-variance-authority';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  type FormEvent,
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiAlertCircle } from 'react-icons/fi';
 import { ColorOrb } from '@/Components/ui/AIInput';
@@ -9,8 +17,9 @@ import { usePortfolioChatSession } from '@/hooks/usePortfolioChatSession';
 import { cn } from '@/lib/utils';
 import { ChatHeader } from './ChatHeader.tsx';
 import { ChatInput } from './ChatInput.tsx';
-import { ChatMessage, TypingIndicator } from './ChatMessage.tsx';
+import { ChatMessage } from './ChatMessage.tsx';
 import { QuickActions } from './QuickActions.tsx';
+import { TypingIndicator } from './TypingIndicator.tsx';
 
 const SPEED_FACTOR = 1;
 const PANEL_WIDTH = 380;
@@ -47,8 +56,11 @@ export const AIChatSidebar = () => {
   } = usePortfolioChatSession({ isOpen, openPanel });
 
   useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [isOpen, messages, isTyping]);
 
   useEffect(() => {
     if (isOpen && inputRef.current && !voiceRecorder.isRecording) {
@@ -57,10 +69,10 @@ export const AIChatSidebar = () => {
   }, [isOpen, voiceRecorder.isRecording]);
 
   useEffect(() => {
-    const handleSidebarOutsideClick = (e: MouseEvent) => {
+    const handleSidebarOutsideClick = (event: MouseEvent) => {
       if (
         wrapperRef.current &&
-        !(e.target instanceof Node && wrapperRef.current.contains(e.target)) &&
+        !(event.target instanceof Node && wrapperRef.current.contains(event.target)) &&
         isOpen
       ) {
         setIsOpen(false);
@@ -78,21 +90,21 @@ export const AIChatSidebar = () => {
   }, []);
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      sendMessage(inputValue);
+    (event: FormEvent) => {
+      event.preventDefault();
+      void sendMessage(inputValue);
     },
     [inputValue, sendMessage],
   );
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Escape') {
+    (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Escape') {
         setIsOpen(false);
       }
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage(inputValue);
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        void sendMessage(inputValue);
       }
     },
     [inputValue, sendMessage],
@@ -141,12 +153,14 @@ export const AIChatSidebar = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="flex h-[52px] items-center justify-center whitespace-nowrap select-none"
+              className="flex h-[52px] select-none items-center justify-center whitespace-nowrap"
             >
               <Tooltip>
                 <TooltipTrigger asChild={true}>
-                  <div
-                    className="flex cursor-pointer items-center justify-center gap-2 p-2"
+                  <button
+                    type="button"
+                    aria-label={t('chat.askAi')}
+                    className="flex cursor-pointer items-center justify-center gap-2 p-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-surface)] hover:text-brand"
                     onClick={openPanel}
                   >
                     <ColorOrb
@@ -158,13 +172,8 @@ export const AIChatSidebar = () => {
                         accent3: 'oklch(75% 0.18 280)',
                       }}
                     />
-                    <button
-                      type="button"
-                      className="flex items-center gap-2 rounded-full p-2 text-[var(--text-primary)] transition-colors hover:bg-[var(--bg-surface)] hover:text-brand"
-                    >
-                      <span className="text-sm font-medium">{t('chat.askAi')}</span>
-                    </button>
-                  </div>
+                    <span className="rounded-full p-2 font-medium text-sm">{t('chat.askAi')}</span>
+                  </button>
                 </TooltipTrigger>
                 <TooltipContent side="top" sideOffset={8}>
                   {t('chat.collapsedTooltip')}
@@ -192,8 +201,8 @@ export const AIChatSidebar = () => {
               />
 
               {error && (
-                <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] bg-brand-accent/10 p-2 text-xs text-brand-accent">
-                  <FiAlertCircle size={12} />
+                <div className="flex items-center gap-2 border-[var(--border-subtle)] border-b bg-brand-accent/10 p-2 text-brand-accent text-xs">
+                  <FiAlertCircle size={12} aria-hidden="true" />
                   {error}
                 </div>
               )}
@@ -213,7 +222,7 @@ export const AIChatSidebar = () => {
                 </div>
               </div>
 
-              <div className="border-t border-[var(--border-subtle)] p-2 sm:p-2">
+              <div className="border-[var(--border-subtle)] border-t p-2 sm:p-2">
                 {!voiceRecorder.isRecording && (
                   <QuickActions
                     onAction={sendMessage}
