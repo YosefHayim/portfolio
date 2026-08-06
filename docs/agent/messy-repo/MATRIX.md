@@ -87,3 +87,34 @@ merged: none
 skills_reused: coordinate-worktrees, messy-repo-orchestrator
 residual: tip BlogPost break fixed only on #32; full CI may still be red until land
 ```
+
+
+## close-wave (2026-08-07)
+
+### Reachability
+
+| Lane | PR | Disposition | Proof |
+|------|-----|-------------|-------|
+| blog-surface | #32 | **closed local** | head `1752d4d` ancestor of `origin/main` |
+| ci-workflows | #30 | **closed local** | head `7051966` on tip |
+| server-effect-errors | #33 | **closed local** | head `e4d92e6` on tip |
+| worker-runtime | #34 | **closed local** | head `0cdfcfd` on tip |
+| apps-catalog | #36 | **closed local** | head `176edf2` on tip |
+| onepage-portfolio | #38 | **closed local** | head `6e51015` on tip |
+| server-tests | #29 | **retained** | PR CLOSED but not on tip; worktree kept |
+| dual-mode-cli | #31 | **retained** | PR OPEN; worktree kept |
+| portfolio-assistant | #37 | **retained** | PR OPEN; worktree kept |
+| clientV4-jts | #35 | **retained** | PR OPEN; worktree kept |
+| audit dry-land | — | **closed local** | never product tip |
+
+### Local cleanup done
+
+- Removed worktrees: landed 6 lanes + dry-land
+- Deleted **local** branches for landed lanes only
+- **No remote branch deletes** (feature + backup remotes intact)
+- **No backup deletes**
+- Retained worktrees: `feat-26-dual-mode-cli`, `refactor-21-portfolio-assistant`, `refactor-25-clientV4-jts`, `test-28-server-tests`
+
+### Still open
+
+- FIX PRs: #31, #37, #35 (and #29 closed-not-merged — re-open or new same-branch work if desired)
