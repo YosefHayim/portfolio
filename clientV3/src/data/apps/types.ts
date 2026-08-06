@@ -1,16 +1,12 @@
 import type { ReactNode } from 'react';
 
-export const DEVELOPER_INFO = {
-  name: 'Yosef Hayim Sabag',
-  email: 'yosefisabag@gmail.com',
-  website: 'https://yosefhayimsabag.com',
-};
-
-export type FeatureCopy = {
+/** Marketing feature line before icons are attached. */
+export type AppFeature = {
   title: string;
   description: string;
 };
 
+/** Authored app copy plus Product Route Registry fields. */
 export type AppMetadata = {
   id: string;
   name: string;
@@ -19,14 +15,15 @@ export type AppMetadata = {
   pagePath: string;
   legalSlug?: string;
   chromeStoreUrl?: string;
-  features: FeatureCopy[];
+  features: AppFeature[];
 };
 
-export type FeatureItem = FeatureCopy & {
+export type AppFeatureWithIcon = AppFeature & {
   icon: ReactNode;
 };
 
+/** Renderable app entry used by app landing UI. */
 export type AppConfig = Omit<AppMetadata, 'features'> & {
   logoIcon: ReactNode;
-  features: FeatureItem[];
+  features: AppFeatureWithIcon[];
 };

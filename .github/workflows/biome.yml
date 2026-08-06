@@ -1,8 +1,9 @@
 name: Biome
 
-# Single-purpose, reusable (workflow_call): lint + format in one pass. Biome does
-# both, so there is no separate lint/format workflow. Deterministic across OS/Node,
-# so it runs single-leg (ubuntu, one Node) — no matrix.
+# Single-purpose, reusable (workflow_call): lint + format check for living
+# packages (server + clientV3). Biome does both, so there is no separate
+# lint/format workflow. clientV1/clientV2 are frozen snapshots (Biome-exempt).
+# clientV4 has no biome config yet.
 
 on:
   workflow_call:
@@ -12,23 +13,17 @@ permissions:
 
 jobs:
   biome:
-    name: Lint & format (biome ci)
+    name: Lint & format (biome check)
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup packages
+        uses: ./.github/actions/setupPackages
         with:
-          node-version: 24
-          cache: pnpm
+          packages: server clientV3
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint & format (biome ci)
-        run: pnpm check:ci
+      - name: Lint server + clientV3
+        run: pnpm lint

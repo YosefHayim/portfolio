@@ -1,3 +1,3 @@
-import { createWorkerRuntime } from "./workerRuntime.js";
+import { createWorkerRuntime } from './workerRuntime.js';
 
 export default createWorkerRuntime();

@@ -1,15 +1,15 @@
 name: CI
 
 # Local gate composing the single-purpose reusable workflows (biome / typecheck /
-# test / build), each `on: workflow_call`. It's yours to edit.
+# test / build), each `on: workflow_call`.
 #
 # - `CI Gate` is the single aggregated status check: require it in branch
 #   protection so a red leg blocks merges.
 # - `report-failure` opens/updates a ci-failure issue when main goes red (never
 #   for PRs).
-# - E2E is opt-in: alg has no `test:e2e` script yet, so the `e2e:` job stays
-#   commented. Add a script, then uncomment it here and add `e2e` to the gate's
-#   `needs` + success check (e2e.yml ships alongside; it installs Chromium).
+# - E2E is not wired: this monorepo has no Playwright/Cypress suite yet. Keep
+#   e2e.yml out of `needs` until a real `test:e2e` script exists (honest skip —
+#   no fake green).
 
 on:
   push:
@@ -33,8 +33,7 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-  # e2e:
-  #   uses: ./.github/workflows/e2e.yml
+  # e2e: not enabled — no suite. See e2e.yml.
 
   gate:
     name: CI Gate

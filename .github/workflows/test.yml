@@ -1,8 +1,9 @@
 name: Test
 
-# Single-purpose, reusable (workflow_call): the unified vitest suite (workerd D1
-# route handlers + node/effect domain tests) via `alg test`. alg targets Node 24+
-# (uses `node:sqlite`), so this pins Node 24 rather than a legacy matrix.
+# Single-purpose, reusable (workflow_call): real unit/integration tests.
+# Today that is server vitest (`pnpm --dir server test`). clientV3 declares a
+# test script pointing at a missing file — root `pnpm test` does not call it.
+# No e2e suite lives here (see e2e.yml).
 
 on:
   workflow_call:
@@ -12,23 +13,17 @@ permissions:
 
 jobs:
   test:
-    name: ubuntu / node 24
+    name: ubuntu / node 22
     if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup packages
+        uses: ./.github/actions/setupPackages
         with:
-          node-version: 24
-          cache: pnpm
+          packages: server
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run tests
+      - name: Run server tests
         run: pnpm test

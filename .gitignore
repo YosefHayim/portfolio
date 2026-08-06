@@ -10,6 +10,9 @@
 !PROJECT.md
 !README.md
 !docs/agents/*.md
+!docs/agent/
+!docs/agent/**/
+!docs/agent/**/*.md
 !docs/adr/current/*.md
 !clientV3/biome.json
 !clientV3/src/i18n/locales/

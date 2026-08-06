@@ -6,15 +6,15 @@ import {
 import type { PortfolioAssistantProvider, TextToSpeechOutput } from './assistantProvider.js';
 import {
   type AssistantReply,
-  type AssistantStreamResult,
+  type AssistantReplyStream,
   createAssistantReply,
   createAssistantReplyStream,
 } from './assistantRuntime.js';
+import { HTTP_ERROR_MESSAGE, throwHttpError } from './httpErrors.js';
 import {
-  CoreHttpError,
-  parseChatRequestBody,
+  parseChatRequest,
   parsePortfolioEmailInput,
-  parseTextToSpeechRequestBody,
+  parseTextToSpeechRequest,
   requireAudioContentType,
 } from './requestValidation.js';
 import { responseCache } from './responseCache.js';
@@ -48,14 +48,14 @@ export type PortfolioEmailDelivery = {
 export type PortfolioApiRuntime = {
   getChatHealth: () => Record<string, unknown>;
   getEmailHealth: () => Record<string, unknown>;
-  createChatReply: (body: unknown) => Promise<AssistantReply>;
-  createChatReplyStream: (body: unknown) => Promise<AssistantStreamResult>;
-  createTextToSpeech: (body: unknown) => Promise<TextToSpeechOutput>;
+  createChatReply: (rawRequest: unknown) => Promise<AssistantReply>;
+  createChatReplyStream: (rawRequest: unknown) => Promise<AssistantReplyStream>;
+  createTextToSpeech: (rawRequest: unknown) => Promise<TextToSpeechOutput>;
   createSpeechToText: (input: {
     contentType: string;
     audio: ArrayBuffer | ArrayBufferView;
   }) => Promise<string>;
-  sendPortfolioEmail: (body: unknown) => Promise<{ success: true; message: string }>;
+  sendPortfolioEmail: (rawRequest: unknown) => Promise<{ success: true; message: string }>;
 };
 
 export const createPortfolioApiRuntime = ({
@@ -73,46 +73,46 @@ export const createPortfolioApiRuntime = ({
   getEmailHealth: () => ({
     configured: Boolean(emailDelivery?.isConfigured()),
   }),
-  createChatReply: (body) => {
+  createChatReply: (rawRequest) => {
     const provider = requireAssistantProvider(assistantProvider);
-    const { messages } = parseChatRequestBody(body);
+    const { messages } = parseChatRequest(rawRequest);
     return createAssistantReply({
       messages,
       complete: provider.complete,
     });
   },
-  createChatReplyStream: (body) => {
+  createChatReplyStream: (rawRequest) => {
     const provider = requireAssistantProvider(assistantProvider);
-    const { messages } = parseChatRequestBody(body);
+    const { messages } = parseChatRequest(rawRequest);
     return createAssistantReplyStream({
       messages,
       stream: provider.stream,
     });
   },
-  createTextToSpeech: (body) => {
+  createTextToSpeech: (rawRequest) => {
     const provider = requireAssistantProvider(assistantProvider);
-    const input = parseTextToSpeechRequestBody(body);
-    return provider.textToSpeech(input);
+    const speechInput = parseTextToSpeechRequest(rawRequest);
+    return provider.textToSpeech(speechInput);
   },
   createSpeechToText: ({ contentType, audio }) => {
     const provider = requireAssistantProvider(assistantProvider);
     const validatedContentType = requireAudioContentType(contentType);
     if (audio.byteLength === 0) {
-      throw new CoreHttpError('No audio data received', 400);
+      return throwHttpError(HTTP_ERROR_MESSAGE.noAudioData);
     }
 
     return provider.speechToText({
-      file: new File([toArrayBuffer(audio)], 'audio.webm', {
+      file: new File([copyAudioBytes(audio)], 'audio.webm', {
         type: validatedContentType,
       }),
     });
   },
-  sendPortfolioEmail: async (body) => {
-    if (!emailDelivery?.isConfigured()) {
-      throw new CoreHttpError('Email service is not configured', 503);
+  sendPortfolioEmail: async (rawRequest) => {
+    if (!emailDelivery || !emailDelivery.isConfigured()) {
+      return throwHttpError(HTTP_ERROR_MESSAGE.emailNotConfigured);
     }
 
-    const emailInput = parsePortfolioEmailInput(body);
+    const emailInput = parsePortfolioEmailInput(rawRequest);
     const email = createPortfolioEmail(emailInput);
     await emailDelivery.send({
       emailInput,
@@ -124,7 +124,7 @@ export const createPortfolioApiRuntime = ({
   },
 });
 
-const toArrayBuffer = (audio: ArrayBuffer | ArrayBufferView): ArrayBuffer => {
+const copyAudioBytes = (audio: ArrayBuffer | ArrayBufferView): ArrayBuffer => {
   const buffer = new ArrayBuffer(audio.byteLength);
   const bytes = new Uint8Array(buffer);
   const source =
@@ -139,7 +139,7 @@ const requireAssistantProvider = (
   assistantProvider: PortfolioAssistantProvider | undefined,
 ): PortfolioAssistantProvider => {
   if (!assistantProvider) {
-    throw new CoreHttpError('AI provider is not configured', 503);
+    return throwHttpError(HTTP_ERROR_MESSAGE.aiNotConfigured);
   }
 
   return assistantProvider;
