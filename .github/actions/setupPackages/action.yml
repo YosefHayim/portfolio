@@ -1,0 +1,47 @@
+name: Setup portfolio packages
+description: >
+  Install pnpm + Node, then install shared and the package directories this job
+  needs. Each package has its own lockfile (not a single pnpm workspace).
+
+inputs:
+  packages:
+    description: Space-separated package dirs after shared (e.g. "server clientV3")
+    required: false
+    default: 'server clientV3'
+  node-version:
+    description: Node.js version
+    required: false
+    default: '22'
+
+runs:
+  using: composite
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 10
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: pnpm
+        cache-dependency-path: |
+          shared/pnpm-lock.yaml
+          server/pnpm-lock.yaml
+          clientV1/pnpm-lock.yaml
+          clientV2/pnpm-lock.yaml
+          clientV3/pnpm-lock.yaml
+          clientV4/pnpm-lock.yaml
+          package.json
+
+    - name: Install shared + selected packages
+      shell: bash
+      run: |
+        set -euo pipefail
+        echo "▶ shared"
+        (cd shared && HUSKY=0 pnpm install --frozen-lockfile)
+        for dir in ${{ inputs.packages }}; do
+          echo "▶ ${dir}"
+          (cd "${dir}" && HUSKY=0 pnpm install --frozen-lockfile)
+        done

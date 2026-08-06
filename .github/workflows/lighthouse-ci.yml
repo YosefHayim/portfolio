@@ -20,13 +20,18 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: clientV4/pnpm-lock.yaml
+          cache-dependency-path: |
+            clientV4/pnpm-lock.yaml
+            shared/pnpm-lock.yaml
 
-      - name: Install + build clientV4
+      - name: Install shared + clientV4
         run: |
-          cd clientV4
-          HUSKY=0 pnpm install --frozen-lockfile
-          pnpm build
+          set -euo pipefail
+          (cd shared && HUSKY=0 pnpm install --frozen-lockfile)
+          (cd clientV4 && HUSKY=0 pnpm install --frozen-lockfile)
+
+      - name: Build clientV4
+        run: pnpm --dir clientV4 build
 
       - name: Lighthouse CI
         run: npx --yes @lhci/cli@0.14.x autorun
