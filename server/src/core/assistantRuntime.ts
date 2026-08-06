@@ -12,7 +12,8 @@ import {
   getLastUserMessage,
   getSystemPrompt,
 } from './assistant.js';
-import { CoreHttpError, isRecord } from './requestValidation.js';
+import { HTTP_ERROR_MESSAGE, throwHttpError } from './httpErrors.js';
+import { isRecord } from './requestValidation.js';
 import { responseCache as defaultResponseCache } from './responseCache.js';
 
 export type AssistantProviderMessage = {
@@ -35,7 +36,7 @@ export type StreamAssistantResponse = (
 
 export type AssistantCache = {
   get: (message: string) => string | null;
-  set: (message: string, response: string) => void;
+  set: (message: string, replyText: string) => void;
 };
 
 export type AssistantCacheStatus = 'HIT' | 'MISS';
@@ -49,7 +50,7 @@ export type AssistantStreamEvent =
   | { type: 'content'; content: string }
   | { type: 'error'; error: string };
 
-export type AssistantStreamResult = {
+export type AssistantReplyStream = {
   cacheStatus: AssistantCacheStatus;
   events: AsyncIterable<AssistantStreamEvent>;
 };
@@ -74,7 +75,7 @@ export const createAssistantReply = async ({
 
   const message = await complete(await createProviderInput(messages));
   if (!message) {
-    throw new CoreHttpError('No response from AI', 500);
+    return throwHttpError(HTTP_ERROR_MESSAGE.noAiResponse);
   }
 
   if (canUseAssistantResponseCache(messages)) {
@@ -92,7 +93,7 @@ export const createAssistantReplyStream = async ({
   messages: readonly ChatMessage[];
   stream: StreamAssistantResponse;
   cache?: AssistantCache;
-}): Promise<AssistantStreamResult> => {
+}): Promise<AssistantReplyStream> => {
   const lastUserMessage = getLastUserMessage(messages);
 
   if (canUseAssistantResponseCache(messages)) {
@@ -159,9 +160,11 @@ export const readOpenAiCompletionText = (completion: unknown): string => {
   return typeof content === 'string' ? content : '';
 };
 
-export const readOpenAiTextStream = (body: ReadableStream<Uint8Array>): AsyncIterable<string> => ({
+export const readOpenAiTextStream = (
+  byteStream: ReadableStream<Uint8Array>,
+): AsyncIterable<string> => ({
   async *[Symbol.asyncIterator]() {
-    const reader = body.getReader();
+    const reader = byteStream.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
     let shouldRead = true;
@@ -203,9 +206,9 @@ const createProviderInput = async (
   temperature: AI_CHAT_TEMPERATURE,
 });
 
-const streamCachedAssistantReply = (response: string): AsyncIterable<AssistantStreamEvent> => ({
+const streamCachedAssistantReply = (replyText: string): AsyncIterable<AssistantStreamEvent> => ({
   async *[Symbol.asyncIterator]() {
-    for (const chunk of createCachedResponseChunks(response)) {
+    for (const chunk of createCachedResponseChunks(replyText)) {
       yield { type: 'content', content: chunk };
     }
   },
@@ -223,16 +226,16 @@ const streamLiveAssistantReply = ({
   stream: StreamAssistantResponse;
 }): AsyncIterable<AssistantStreamEvent> => ({
   async *[Symbol.asyncIterator]() {
-    let fullResponse = '';
+    let fullReply = '';
 
     try {
       for await (const content of await stream(input)) {
-        fullResponse += content;
+        fullReply += content;
         yield { type: 'content', content };
       }
 
-      if (cacheKey && fullResponse) {
-        cache.set(cacheKey, fullResponse);
+      if (cacheKey && fullReply) {
+        cache.set(cacheKey, fullReply);
       }
     } catch {
       yield { type: 'error', error: 'AI provider unavailable' };
@@ -254,12 +257,12 @@ const readOpenAiTextStreamLine = (line: string): string | null | typeof OPENAI_S
     return null;
   }
 
-  const data = trimmed.slice(6);
-  if (data === '[DONE]') {
+  const ssePayload = trimmed.slice(6);
+  if (ssePayload === '[DONE]') {
     return OPENAI_STREAM_DONE;
   }
 
-  const parsed = parseJson(data);
+  const parsed = parseJson(ssePayload);
   if (!(isRecord(parsed) && Array.isArray(parsed.choices))) {
     return null;
   }

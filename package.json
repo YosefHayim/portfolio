@@ -2,6 +2,7 @@
   "name": "portfolio",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.33.2",
   "scripts": {
     "cli": "tsx scripts/cli/index.ts",
     "portfolio": "tsx scripts/cli/index.ts",
@@ -9,7 +10,13 @@
     "media:r2": "node scripts/dev/uploadV4MediaToR2.mjs",
     "perf:lhci": "npx --yes @lhci/cli@0.14.x autorun",
     "perf:psi": "node .github/perf/runPagespeed.mjs",
-    "perf:crux": "node .github/perf/runCrux.mjs"
+    "perf:crux": "node .github/perf/runCrux.mjs",
+    "lint": "pnpm --dir server lint && pnpm --dir clientV3 lint",
+    "test": "pnpm --dir server test",
+    "typecheck": "pnpm --dir server exec tsc --noEmit && pnpm --dir clientV3 exec tsc -b --pretty false && pnpm --dir clientV4 exec tsc -b --pretty false",
+    "build": "bash scripts/buildAll.sh && pnpm --dir server build",
+    "build:sites": "bash scripts/buildAll.sh",
+    "build:server": "pnpm --dir server build"
   },
   "devDependencies": {
     "sharp": "^0.35.3",

@@ -1,8 +1,8 @@
 name: Typecheck
 
-# Single-purpose, reusable (workflow_call): tsc --noEmit across all four projects
-# (root/cli, scan, web, widget). Type results are deterministic across OS/Node, so
-# this runs single-leg (ubuntu, one Node) — no matrix.
+# Single-purpose, reusable (workflow_call): tsc --noEmit / tsc -b across living
+# TypeScript packages (server, clientV3, clientV4). Frozen v1/v2 are built in
+# the build workflow, not typechecked here.
 
 on:
   workflow_call:
@@ -17,18 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup packages
+        uses: ./.github/actions/setupPackages
         with:
-          node-version: 24
-          cache: pnpm
+          packages: server clientV3 clientV4
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Type check
+      - name: Type check server + clientV3 + clientV4
         run: pnpm typecheck

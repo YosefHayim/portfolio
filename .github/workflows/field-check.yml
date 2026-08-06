@@ -4,7 +4,7 @@
 # the real-user trend, not the just-shipped change. Requires:
 #   - secret   PSI_API_KEY     (a Google API key with the "Chrome UX Report API" enabled)
 #   - variable PSI_TARGET_URL  (fallback URL for scheduled runs)
-#   - .github/perf/runCrux.mjs (copied from the skill's scripts/)
+#   - .github/perf/runCrux.mjs
 name: Field check (Core Web Vitals)
 on:
   deployment_status:
@@ -14,7 +14,7 @@ on:
         description: URL to check
         required: true
   schedule:
-    - cron: "0 12 * * 1"
+    - cron: '0 12 * * 1'
 
 jobs:
   field:
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Resolve target URL
         id: target
         run: |

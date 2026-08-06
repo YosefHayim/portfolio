@@ -9,10 +9,10 @@ import { type BlogCategory, type BlogPost, blogPosts, getAllCategories } from '@
 import { useLocale } from '@/i18n/localized';
 import { cn } from '@/lib/utils';
 
-type Filter = 'all' | BlogCategory;
+type CategoryFilter = 'all' | BlogCategory;
 
-const byNewest = (a: BlogPost, b: BlogPost): number =>
-  new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+const byNewest = (left: BlogPost, right: BlogPost): number =>
+  new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime();
 
 /**
  * Formats a blog publish date for the active UI language.
@@ -30,15 +30,13 @@ const formatPostDate = (isoDate: string, language: string): string =>
     year: 'numeric',
   });
 
-const FilterChip = ({
-  active,
-  label,
-  onClick,
-}: {
+interface FilterChipProps {
   active: boolean;
   label: string;
   onClick: () => void;
-}) => (
+}
+
+const FilterChip = ({ active, label, onClick }: FilterChipProps) => (
   <button
     className={cn(
       'rounded-full border px-3 py-1.5 text-xs font-medium transition',
@@ -53,7 +51,12 @@ const FilterChip = ({
   </button>
 );
 
-const PostCard = ({ post, priority = false }: { post: BlogPost; priority?: boolean }) => {
+interface PostCardProps {
+  post: BlogPost;
+  priority?: boolean;
+}
+
+const PostCard = ({ post, priority = false }: PostCardProps) => {
   const { t } = useTranslation();
   const { language, localize } = useLocale();
 
@@ -84,12 +87,14 @@ const PostCard = ({ post, priority = false }: { post: BlogPost; priority?: boole
 
 export const BlogList = () => {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<CategoryFilter>('all');
   const categories = getAllCategories();
 
   const posts = useMemo(() => {
     const sorted = [...blogPosts].sort(byNewest);
-    return filter === 'all' ? sorted : sorted.filter((post) => post.category === filter);
+    if (filter === 'all') return sorted;
+
+    return sorted.filter((post) => post.category === filter);
   }, [filter]);
 
   return (

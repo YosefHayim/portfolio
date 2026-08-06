@@ -1,15 +1,49 @@
 import {
   CoreHttpError,
   DEFAULT_SPEECH_LANGUAGE,
-  TEXT_TO_SPEECH_CACHE_CONTROL,
   isRecord,
+  type PortfolioAssistantProvider,
   readOpenAiCompletionText,
   readOpenAiTextStream,
-  type PortfolioAssistantProvider,
+  TEXT_TO_SPEECH_CACHE_CONTROL,
 } from '../../shared/portfolio/portfolioRuntime.js';
 
 export type OpenAiWorkerEnv = {
   OPENAI_API_KEY?: string;
+};
+
+const requireOpenAiKey = (env: OpenAiWorkerEnv): void => {
+  if (!env.OPENAI_API_KEY) {
+    throw new CoreHttpError('OPENAI_API_KEY is not configured', 503);
+  }
+};
+
+const fetchOpenAi = (
+  env: OpenAiWorkerEnv,
+  path: string,
+  requestBody: unknown,
+): Promise<Response> => {
+  requireOpenAiKey(env);
+  return fetch(`https://api.openai.com${path}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  });
+};
+
+const fetchOpenAiJson = async (
+  env: OpenAiWorkerEnv,
+  path: string,
+  requestBody: unknown,
+): Promise<unknown> => {
+  const openAiResponse = await fetchOpenAi(env, path, requestBody);
+  if (!openAiResponse.ok) {
+    throw new CoreHttpError('AI provider unavailable', 502);
+  }
+  return openAiResponse.json();
 };
 
 export const createFetchOpenAiAssistantProvider = (
@@ -26,7 +60,7 @@ export const createFetchOpenAiAssistantProvider = (
     return readOpenAiCompletionText(completion);
   },
   stream: async (input) => {
-    const response = await fetchOpenAi(env, '/v1/chat/completions', {
+    const openAiResponse = await fetchOpenAi(env, '/v1/chat/completions', {
       model: input.model,
       messages: input.messages,
       max_tokens: input.maxTokens,
@@ -34,14 +68,14 @@ export const createFetchOpenAiAssistantProvider = (
       stream: true,
     });
 
-    if (!response.ok || !response.body) {
+    if (!openAiResponse.ok || !openAiResponse.body) {
       throw new CoreHttpError('AI provider unavailable', 502);
     }
 
-    return readOpenAiTextStream(response.body);
+    return readOpenAiTextStream(openAiResponse.body);
   },
   textToSpeech: async ({ text, voice }) => {
-    const response = await fetchOpenAi(env, '/v1/audio/speech', {
+    const openAiResponse = await fetchOpenAi(env, '/v1/audio/speech', {
       model: 'tts-1',
       voice,
       input: text,
@@ -49,12 +83,12 @@ export const createFetchOpenAiAssistantProvider = (
       speed: 1,
     });
 
-    if (!response.ok) {
+    if (!openAiResponse.ok) {
       throw new CoreHttpError('Text-to-speech provider unavailable', 502);
     }
 
     return {
-      audio: await response.arrayBuffer(),
+      audio: await openAiResponse.arrayBuffer(),
       contentType: 'audio/mpeg',
       cacheControl: TEXT_TO_SPEECH_CACHE_CONTROL,
     };
@@ -67,7 +101,7 @@ export const createFetchOpenAiAssistantProvider = (
     form.append('model', 'whisper-1');
     form.append('language', language);
 
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    const openAiResponse = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${env.OPENAI_API_KEY}`,
@@ -75,45 +109,13 @@ export const createFetchOpenAiAssistantProvider = (
       body: form,
     });
 
-    if (!response.ok) {
+    if (!openAiResponse.ok) {
       throw new CoreHttpError('Speech-to-text provider unavailable', 502);
     }
 
-    const data = await response.json();
-    return isRecord(data) && typeof data.text === 'string' ? data.text : '';
+    const transcription = await openAiResponse.json();
+    return isRecord(transcription) && typeof transcription.text === 'string'
+      ? transcription.text
+      : '';
   },
 });
-
-const fetchOpenAiJson = async (
-  env: OpenAiWorkerEnv,
-  path: string,
-  body: unknown,
-): Promise<unknown> => {
-  const response = await fetchOpenAi(env, path, body);
-  if (!response.ok) {
-    throw new CoreHttpError('AI provider unavailable', 502);
-  }
-  return response.json();
-};
-
-const fetchOpenAi = (
-  env: OpenAiWorkerEnv,
-  path: string,
-  body: unknown,
-): Promise<Response> => {
-  requireOpenAiKey(env);
-  return fetch(`https://api.openai.com${path}`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
-};
-
-const requireOpenAiKey = (env: OpenAiWorkerEnv): void => {
-  if (!env.OPENAI_API_KEY) {
-    throw new CoreHttpError('OPENAI_API_KEY is not configured', 503);
-  }
-};

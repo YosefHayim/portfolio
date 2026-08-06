@@ -18,9 +18,7 @@ const TITLE_WORD_PATTERN = /\s+/;
 const initialsFrom = (title: string): string => {
   const trimmedTitle = title.trim();
 
-  if (trimmedTitle.length === 0) {
-    return '';
-  }
+  if (trimmedTitle.length === 0) return '';
 
   const words = trimmedTitle.split(TITLE_WORD_PATTERN);
   const initials: string[] = [];
@@ -36,26 +34,26 @@ const initialsFrom = (title: string): string => {
   return initials.join('');
 };
 
-type BlogCoverProps = {
+interface BlogCoverProps {
   post: BlogPost;
   className?: string;
   priority?: boolean;
-};
+}
 
 /**
  * Post cover with a graceful fallback. If the generated image is missing (or
  * 404s), it renders an on-brand gradient keyed to the post's category color
- * instead of a broken image mirrors the LogoBadge `onError` pattern used
+ * instead of a broken image — mirrors the LogoBadge `onError` pattern used
  * elsewhere in the portfolio, so a cover-less post still looks intentional.
  */
 export const BlogCover = ({ post, className, priority = false }: BlogCoverProps) => {
   const { t } = useTranslation();
   const { localize } = useLocale();
-  const [failed, setFailed] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const category = getCategoryConfig(post.category);
   const title = localize(post.title);
-  const showImage = Boolean(post.coverImage) && !failed;
-  const handleImageError = useCallback(() => setFailed(true), []);
+  const showImage = Boolean(post.coverImage) && !imageFailed;
+  const handleImageError = useCallback(() => setImageFailed(true), []);
 
   return (
     <div className={cn('relative overflow-hidden bg-[var(--bg-card)]', className)}>

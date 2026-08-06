@@ -1,24 +1,6 @@
+import { CONTACT_RECIPIENT_DEFAULT } from '@shared/portfolio/contactEmail.js';
 import { portfolioKnowledge } from '@shared/portfolio/portfolioKnowledge.js';
 import type { Localized } from '@/i18n/localized';
-
-export type RecruiterMetric = {
-  label: string;
-  value: string;
-};
-
-export type RecruiterCertification = {
-  id: string;
-  title: string;
-  issuer: string;
-  date: string;
-  link: string;
-};
-
-export type ImpactHighlight = {
-  id: string;
-  label: string;
-  value: string;
-};
 
 export type ExperienceItem = {
   id: string;
@@ -132,13 +114,13 @@ const PRODUCT_HE: Record<string, { description: string; status: string; dateRang
 const requireExperienceHebrew = (
   id: string,
 ): { role: string; dateRange: string; bullets: string[] } => {
-  const he = EXPERIENCE_HE[id];
+  const hebrew = EXPERIENCE_HE[id];
 
-  if (he === undefined) {
+  if (hebrew === undefined) {
     throw new Error(`Missing Hebrew experience translation for ${id}`);
   }
 
-  return he;
+  return hebrew;
 };
 
 /**
@@ -152,14 +134,16 @@ const requireExperienceHebrew = (
 const requireProductHebrew = (
   id: string,
 ): { description: string; status: string; dateRange: string } => {
-  const he = PRODUCT_HE[id];
+  const hebrew = PRODUCT_HE[id];
 
-  if (he === undefined) {
+  if (hebrew === undefined) {
     throw new Error(`Missing Hebrew product translation for ${id}`);
   }
 
-  return he;
+  return hebrew;
 };
+
+const knowledgeEmail = portfolioKnowledge.links.contactEmail.trim();
 
 export const recruiterProfile = {
   name: portfolioKnowledge.person.displayName,
@@ -171,27 +155,21 @@ export const recruiterProfile = {
   githubUsername: portfolioKnowledge.links.githubUsername,
   linkedinUrl: portfolioKnowledge.links.linkedin,
   whatsappUrl: portfolioKnowledge.links.whatsapp,
-  contactEmail: portfolioKnowledge.links.contactEmail,
+  contactEmail: knowledgeEmail.length > 0 ? knowledgeEmail : CONTACT_RECIPIENT_DEFAULT,
   resumeUrl: portfolioKnowledge.links.resume,
 };
-
-export const recruiterMetrics: RecruiterMetric[] = [
-  { label: 'Public Repositories', value: 'Live from GitHub' },
-  { label: 'Open-Source Focus', value: 'Shipping weekly' },
-  { label: 'Core Stack', value: 'React + Node + TS + AI' },
-];
 
 export const coreTechStack: string[] = [...portfolioKnowledge.coreTechStack];
 
 export const experienceItems: ExperienceItem[] = portfolioKnowledge.experience
   .filter((item) => PROFILE_EXPERIENCE_IDS.has(item.id))
   .map(({ promptDateRange: _promptDateRange, ...item }) => {
-    const he = requireExperienceHebrew(item.id);
+    const hebrew = requireExperienceHebrew(item.id);
     return {
       ...item,
-      role: { en: item.role, he: he.role },
-      dateRange: { en: item.dateRange, he: he.dateRange },
-      bullets: { en: item.bullets, he: he.bullets },
+      role: { en: item.role, he: hebrew.role },
+      dateRange: { en: item.dateRange, he: hebrew.dateRange },
+      bullets: { en: item.bullets, he: hebrew.bullets },
     };
   });
 
@@ -199,49 +177,11 @@ export const featuredOffGitHubProjects: FeaturedOffGitHubProject[] =
   portfolioKnowledge.featuredProducts
     .filter((product) => PROFILE_FEATURED_PRODUCT_IDS.has(product.id))
     .map(({ promptSummary: _promptSummary, ...product }) => {
-      const he = requireProductHebrew(product.id);
+      const hebrew = requireProductHebrew(product.id);
       return {
         ...product,
-        description: { en: product.description, he: he.description },
-        status: { en: product.status, he: he.status },
-        dateRange: { en: product.dateRange, he: he.dateRange },
+        description: { en: product.description, he: hebrew.description },
+        status: { en: product.status, he: hebrew.status },
+        dateRange: { en: product.dateRange, he: hebrew.dateRange },
       };
     });
-
-export const recruiterCertifications: RecruiterCertification[] = [
-  {
-    id: 'github-actions',
-    title: 'GitHub Actions - The Complete Guide',
-    issuer: 'Udemy',
-    date: 'Sep 2025',
-    link: 'https://www.udemy.com/certificate/UC-6da4399d-15db-4b8c-84ec-3b56953a0766/',
-  },
-  {
-    id: 'nextjs',
-    title: 'Next.js App Router Fundamentals',
-    issuer: 'Vercel',
-    date: 'Sep 2025',
-    link: 'https://www.linkedin.com/in/yosef-hayim-sabag/details/certifications/1758366776092/single-media-viewer/?profileId=ACoAADtj-18BDUMzABOGjZh335dfWV5OYcgy63g',
-  },
-  {
-    id: 'react-native',
-    title: 'React Native - The Practical Guide [2025]',
-    issuer: 'Udemy',
-    date: 'Jun 2025',
-    link: 'https://www.udemy.com/certificate/UC-fb20f1dd-ba51-4300-b378-b46c170f30b8/',
-  },
-  {
-    id: 'nodejs-bootcamp',
-    title: 'Node.js, Express, MongoDB and More Bootcamp',
-    issuer: 'Udemy',
-    date: 'Feb 2025',
-    link: 'https://www.udemy.com/certificate/UC-830343b5-2bb6-44ae-baf3-af70748ea84c/',
-  },
-  {
-    id: 'python-bootcamp',
-    title: '100 Days of Code: Complete Python Pro Bootcamp',
-    issuer: 'Udemy',
-    date: 'Oct 2024',
-    link: 'https://www.udemy.com/certificate/UC-65f92c9d-6851-4700-9ced-8cfa8d192b41/',
-  },
-];
