@@ -1,8 +1,40 @@
-import { createAppCatalog } from './catalogBuilder.ts';
-import type { AppMetadata } from './types.ts';
+import { requirePortfolioProductFact } from '@shared/portfolio/productRegistry.js';
+import type { AppFeature, AppMetadata } from './types.ts';
 
-export const appCatalog = createAppCatalog({
-  'prompt-queue': {
+/** Local copy only — `pagePath` / `legalSlug` come from the product registry. */
+type AppSeed = {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  chromeStoreUrl?: string;
+  features: AppFeature[];
+};
+
+/**
+ * Fills `pagePath` and `legalSlug` from the shared Product Route Registry.
+ *
+ * @param seed - Authored app copy without registry-owned route fields.
+ * @returns App metadata ready for UI config assembly.
+ * @example
+ * appFromSeed({ id: 'sorqa', name: 'Sorqa', tagline: '…', description: '…', features: [] })
+ */
+const appFromSeed = (seed: AppSeed): AppMetadata => {
+  const product = requirePortfolioProductFact(seed.id);
+
+  if (!product.pagePath) {
+    throw new Error(`Portfolio product ${seed.id} is missing a page path`);
+  }
+
+  return {
+    ...seed,
+    pagePath: product.pagePath,
+    legalSlug: product.legalSlug,
+  };
+};
+
+export const appCatalog = {
+  'prompt-queue': appFromSeed({
     id: 'prompt-queue',
     name: 'PromptQueue',
     tagline: 'Bulk Image Generation & Automation for Gemini',
@@ -42,8 +74,8 @@ export const appCatalog = createAppCatalog({
           'Unlock unlimited prompts, advanced features, and priority support with Pro. Generate 500+ images monthly without limits. Perfect for high-volume creators and agencies.',
       },
     ],
-  },
-  'quick-apply': {
+  }),
+  'quick-apply': appFromSeed({
     id: 'quick-apply',
     name: 'QuickApply',
     tagline: 'Streamline Your Job Application Process with AI',
@@ -81,8 +113,8 @@ export const appCatalog = createAppCatalog({
           'Get AI-powered job suggestions based on your profile and preferences. Discover opportunities that match your skills and goals.',
       },
     ],
-  },
-  sorqa: {
+  }),
+  sorqa: appFromSeed({
     id: 'sorqa',
     name: 'Sorqa',
     tagline: 'Automate Prompt Generation & Queueing for Sora AI',
@@ -122,5 +154,5 @@ export const appCatalog = createAppCatalog({
           'Watch as prompts are submitted to Sora automatically. Perfect for AI artists, video generation enthusiasts, and anyone who needs bulk prompt processing.',
       },
     ],
-  },
-}) satisfies Record<string, AppMetadata>;
+  }),
+} satisfies Record<string, AppMetadata>;
