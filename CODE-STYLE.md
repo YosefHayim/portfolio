@@ -1,4 +1,4 @@
-# CODE-STYLE.md
+# portfolio code style
 
 How code is written in the portfolio. This file is prescriptive: it records the desired
 end-state for `clientV3/`, `server/`, `worker/`, and `shared/`. `clientV1/` and `clientV2/`
@@ -7,61 +7,47 @@ are frozen snapshots and are exempt.
 `AGENTS.md` mirrors only the load-bearing digest. Edit this file first, then refresh the
 digest.
 
-## Scope
+## How to read a rule
 
-- `clientV3/`: living React 19 + Vite + Tailwind v4 app.
-- `server/`: Express API, moving to Effect programs, services, schemas, and typed errors.
-- `worker/`: one Cloudflare Worker serving the unified `dist/`.
-- `shared/`: runtime-neutral contracts and generated/precompiled modules used by more than
-  one runtime.
-
-## Stack Practices
-
-- Effect docs are the source for Effect API details; this file defines how this repo uses
-  Effect.
-- React stays idiomatic for local UI: props, events, `useState`, and JSX.
-- TanStack Query owns client server-state caching/loading/refetch.
-- React Hook Form owns multi-field client forms.
-- Tailwind theme tokens own reusable colors and class patterns.
-- Biome owns formatting and lint rules where a rule exists.
+| Slot | Meaning |
+| --- | --- |
+| rule ID | Stable review and detector key |
+| verify | Cheapest command that proves the rule, or judgment |
+| chosen / rejected | The local idiom and the concrete failure shape |
 
 ## Rules
 
 ### Function Form
+[rule:function.form] · verify: judgment
 
-Use named arrow functions. Do not write function declarations.
+Use named arrow functions.
 
 ```ts
-// Good
+// ✓
 export const formatTenure = (startedAt: Date, endedAt: Date): string => {
   return `${startedAt.getFullYear()}-${endedAt.getFullYear()}`;
 };
 
-// Bad
+// ✗
 export function formatTenure(startedAt: Date, endedAt: Date): string {
   return `${startedAt.getFullYear()}-${endedAt.getFullYear()}`;
 }
 ```
 
-Effect generator callbacks may use `function*` because `yield*` requires generator syntax.
-That exception is for the callback only, not for declaring helpers.
+Why: Keeps the local idiom consistent and reviewable.
 
 ### Components And Props
+[rule:components.and-props] · verify: judgment
 
-One React component per file. Helpers may live beside the component only when they are
-private and small.
-
-Use inline props only when a component has one simple prop. Use `interface XProps` when a
-component has multiple props or a meaningful public component contract. Defaults belong in
-the destructuring pattern.
+One React component per file.
 
 ```tsx
-// Good: one simple prop stays inline.
+// ✓: one simple prop stays inline.
 export const StatusDot = ({ tone = 'idle' }: { tone?: StatusTone }) => {
   return <span data-tone={tone} className="size-2 rounded-full" />;
 };
 
-// Good: multiple props get an interface and destructuring defaults.
+// ✓: multiple props get an interface and destructuring defaults.
 interface LanguageSwitchProps {
   locale?: string;
   onLocaleChange: (locale: string) => void;
@@ -74,7 +60,7 @@ export const LanguageSwitch = ({
   return <button type="button" onClick={() => onLocaleChange(locale)}>EN</button>;
 };
 
-// Bad: multiple props hidden inline.
+// ✗: multiple props hidden inline.
 export const LanguageSwitch = ({
   locale = 'en',
   onLocaleChange,
@@ -84,42 +70,33 @@ export const LanguageSwitch = ({
 }) => null;
 ```
 
-Use `type` for domain data, DTOs, unions, utility shapes, and hook input objects. Use
-`interface` for component props and Effect service contracts.
+Why: Keeps the local idiom consistent and reviewable.
 
 ### File Layout
+[rule:file.layout] · verify: judgment
 
-Use this order:
+Use this order.
 
 ```txt
+// ✓ chosen
 imports
 module constants
 types/interfaces
 schemas
 helpers
 component or exported API
+// ✗ rejected
 ```
 
-Inside React components, use:
-
-```txt
-hooks
-derived values
-handlers
-early-return guards
-JSX
-```
+Why: Keeps the local idiom consistent and reviewable.
 
 ### File Naming
+[rule:file.naming] · verify: judgment
 
-Source and script file names use `camelCase`. React component files use `PascalCase` and
-match the exported component name. Do not create kebab-case source files.
-
-Barrels are the standard exception: use `index.ts` for non-JSX folders and `index.tsx` for
-component folders. Standard tool/config/doc names that are fixed by ecosystem convention may
-keep their required names.
+Source and script file names use `camelCase`.
 
 ```txt
+// ✓ chosen
 Good
 LanguageSwitch.tsx
 usePortfolioQuery.ts
@@ -135,18 +112,18 @@ chat-session-runtime.ts
 build-all.sh
 generate-blog-covers.sh
 prism-portfolio.css
+// ✗ rejected
 ```
 
-When touching an existing kebab-case source/script file, rename it in the same slice and
-rewrite every import or command that referenced it. Do not add a compatibility wrapper.
+Why: Keeps the local idiom consistent and reviewable.
 
 ### Control Flow
+[rule:control.flow] · verify: judgment
 
-Prefer early-return guards. Do not nest ternaries. Use a one-line ternary only for tiny value
-selection; use `switch` for multi-way branching.
+Prefer early-return guards.
 
 ```ts
-// Good
+// ✓
 if (!session.isOpen) return null;
 
 switch (session.status) {
@@ -158,24 +135,19 @@ switch (session.status) {
     return <FailedState error={session.error} />;
 }
 
-// Bad
+// ✗
 const label = active ? (saving ? 'Saving' : 'Active') : disabled ? 'Disabled' : 'Idle';
 ```
 
+Why: Keeps the local idiom consistent and reviewable.
+
 ### Collections, Parsing, And Examples
+[rule:collections.parsing-and-examples] · verify: judgment
 
-Small `map`/`filter`/`slice` chains are fine when they read directly. Extract named helpers
-for parsing, regex, split/index logic, nested transforms, or anything that needs a raw
-example comment.
-
-Use `for...of` when the code needs early exit, mutation, async sequencing, or clearer
-intermediate names.
-
-Do not use assertion shortcuts like `as SomeType` or `as readonly string[]` to silence the
-language service. Narrow with schemas, typed constants, or guards. If a platform boundary
-forces a cast, isolate it and explain the boundary.
+Small `map`/`filter`/`slice` chains are fine when they read directly.
 
 ```ts
+// ✓ chosen
 const SUPPORTED_LANGUAGE_CODES = new Set<string>(['en', 'he']);
 
 /**
@@ -223,39 +195,31 @@ export const getInitials = (fullName: string): string => {
   // Raw example: ["Y", "H", "S"] -> "YHS"
   return firstLetters.join('');
 };
+// ✗ rejected
 ```
 
-Avoid `?? ''` as a quiet fallback when data should exist. Guard, validate, or make the empty
-value an explicit domain case.
+Why: Keeps the local idiom consistent and reviewable.
 
 ### Effect Usage
+[rule:effect.usage] · verify: judgment
 
-Use Effect fully for effectful code: validation, I/O, configuration, provider access,
-logging, retries/timeouts, typed errors, and tests. React component-local UI state remains
-plain React.
-
-Use typed errors. Never swallow. A UI may render a fallback, but the code path must not erase
-the error with `catch { return null }`.
-
-Use Effect Schema as the only runtime boundary contract system. It replaces zod and
-hand-rolled guards like `isRecord`, `asString`, and `asEnum`.
-
-Keep provider access behind Effect services and Layers. OpenAI, GitHub, email, browser
-storage, fetch, env/config, clocks, and random IDs should be services when business logic
-depends on them.
-
-Routes and handlers stay thin:
+Use Effect fully for effectful code: validation, I/O, configuration, provider access, logging, retries/timeouts, typed errors, and tests.
 
 ```txt
+// ✓ chosen
 decode input -> run Effect program -> map tagged errors -> encode response
+// ✗ rejected
 ```
 
-### Client Data And Forms
+Why: Keeps the local idiom consistent and reviewable.
 
-Effect owns the data program. TanStack Query owns cache, loading, error, and refetch state.
-Do not duplicate manual `isLoading`/`error`/`refetch` state in every hook.
+### Client Data And Forms
+[rule:client.data-and-forms] · verify: judgment
+
+Effect owns the data program.
 
 ```ts
+// ✓ chosen
 import { useQuery } from '@tanstack/react-query';
 import type { QueryKey } from '@tanstack/react-query';
 import { Effect } from 'effect';
@@ -279,100 +243,68 @@ export const usePortfolioQuery = <A, E>({ queryKey, program }: UsePortfolioQuery
     queryFn: () => Effect.runPromise(program),
   });
 };
+// ✗ rejected
 ```
 
-Use React Hook Form for multi-field forms. Effect Schema remains the source of validation;
-wire it through a small local resolver/helper instead of zod.
-
-One-field chat inputs may stay controlled React state.
+Why: Keeps the local idiom consistent and reviewable.
 
 ### Logging
+[rule:logging] · verify: judgment
 
-Use structured keyed logs through Effect logger annotations. Do not interpolate log strings.
+Use structured keyed logs through Effect logger annotations.
 
 ```ts
-// Good
+// ✓
 yield* Effect.logInfo('chat_request').pipe(
   Effect.annotateLogs({ messageCount: request.messages.length }),
 );
 
-// Bad
+// ✗
 logger.info(`chat request with ${request.messages.length} messages`);
 ```
 
-### Modules, Imports, And Exports
+Why: Keeps the local idiom consistent and reviewable.
 
-Use named inline exports. Do not add default exports unless a framework boundary forces one.
-Do not use bottom export blocks, redundant double exports, one-use re-export aliases, or
-backward-compatibility aliases.
+### Modules, Imports, And Exports
+[rule:modules.imports-and-exports] · verify: judgment
+
+Use named inline exports.
 
 ```ts
-// Good
+// ✓
 export const parseContactEmailMarker = (content: string): ContactEmailMarker | null => {
   return decodeContactEmailMarker(content);
 };
 
-// Bad
+// ✗
 const parseContactEmailMarker = (content: string) => decodeContactEmailMarker(content);
 const parseEmailMarker = parseContactEmailMarker;
 
 export { parseContactEmailMarker, parseEmailMarker };
 ```
 
-Use `import type` for type-only imports.
-
-Use cross-root aliases instead of deep relative crawls:
-
-```ts
-// Good
-import { productRegistry } from '@shared/portfolio/productRegistry.js';
-
-// Bad
-import { productRegistry } from '../../../shared/portfolio/productRegistry.js';
-```
-
-The Worker must not import `server/src/*`. Move shared runtime logic into `shared/` or a
-dedicated runtime-neutral module.
-
-Feature/component folders get leaf barrels. Use `index.tsx` for component folders and
-`index.ts` for non-JSX module folders.
-
-```ts
-// clientV3/src/Components/Navbar/index.tsx
-export * from './LanguageSwitch';
-export * from './Navbar';
-export * from './VersionSwitch';
-```
-
-Never import a folder's own barrel from inside that folder.
+Why: Keeps the local idiom consistent and reviewable.
 
 ### UI Styling
+[rule:ui.styling] · verify: judgment
 
-Use Tailwind theme tokens and semantic classes. Do not scatter inline arbitrary hex classes.
-
-If a class/color pattern repeats more than 3-4 times, promote it to Tailwind config, a theme
-token, a small component, or a named helper.
-
-Product/technology brand colors belong in one typed map, not repeated in components.
-
-Icon-only buttons need an `aria-label`; a tooltip is not enough. Buttons must declare
-`type="button"` unless they intentionally submit a form.
-
-Recruiter-facing copy should be localized. Use `Localized<T>` for authored data and
-translation keys for UI chrome. RTL should come from root `dir`, logical CSS, and no
-hardcoded LTR spacing assumptions.
-
-Use React 19 native metadata. Do not use `react-helmet-async`.
-
-### TSDoc
-
-Exported reusable APIs get TSDoc when their contract, side effect, boundary, parsing, or
-default is not obvious. Include `@param`, `@returns`, and `@example` when an example makes
-the behavior easier to follow.
-
-Do not restate TypeScript.
+Use Tailwind theme tokens and semantic classes.
 
 ```ts
+// ✓ portfolio idiom
+
+// ✗ rejected shape
+```
+
+Why: Keeps the local idiom consistent and reviewable.
+
+### TSDoc
+[rule:tsdoc] · verify: judgment
+
+Exported reusable APIs get TSDoc when their contract, side effect, boundary, parsing, or default is not obvious.
+
+```ts
+// ✓ chosen
 /**
  * Decodes an unknown payload into a contact request.
  *
@@ -384,30 +316,90 @@ Do not restate TypeScript.
 export const decodeContactRequest = (payload: unknown) => {
   return Schema.decodeUnknown(ContactRequestSchema)(payload);
 };
+// ✗ rejected
 ```
 
-Add raw example comments above regex/split/index parsing even when the function has TSDoc.
+Why: Keeps the local idiom consistent and reviewable.
 
 ### Tests And Format
+[rule:tests.and-format] · verify: judgment
 
 Use colocated `*.test.ts` / `*.test.tsx` files.
 
-Use Vitest and `@effect/vitest`. Test core, schemas, and boundaries first. Component tests
-should cover focused behavior or accessibility, not broad snapshots.
+```ts
+// ✓ portfolio idiom
 
-Mock external providers at the Effect service boundary with test Layers. Browser APIs should
-sit behind services/fakes when core behavior depends on them.
+// ✗ rejected shape
+```
 
-Biome formatting is fixed:
+Why: Keeps the local idiom consistent and reviewable.
 
-- Single quotes.
-- Semicolons.
-- 2 spaces.
-- Line width 100.
-- Trailing commas all.
-- Organized imports.
+### Add An API Endpoint
+[rule:add.an-api-endpoint] · verify: judgment
 
-## Canonical Slice
+1.
+
+```ts
+// ✓ portfolio idiom
+
+// ✗ rejected shape
+```
+
+Why: Keeps the local idiom consistent and reviewable.
+
+### Add A Client Data Source
+[rule:add.a-client-data-source] · verify: judgment
+
+1.
+
+```ts
+// ✓ portfolio idiom
+
+// ✗ rejected shape
+```
+
+Why: Keeps the local idiom consistent and reviewable.
+
+### Add A Form
+[rule:add.a-form] · verify: judgment
+
+1.
+
+```ts
+// ✓ portfolio idiom
+
+// ✗ rejected shape
+```
+
+Why: Keeps the local idiom consistent and reviewable.
+
+### Add A CLI Command
+[rule:add.a-cli-command] · verify: judgment
+
+1.
+
+```ts
+// ✓ portfolio idiom
+
+// ✗ rejected shape
+```
+
+Why: Keeps the local idiom consistent and reviewable.
+
+### Target CLI Layout
+[rule:target.cli-layout] · verify: judgment
+
+Follow this project rule as specified.
+
+```ts
+// ✓ portfolio idiom
+
+// ✗ rejected shape
+```
+
+Why: Keeps the local idiom consistent and reviewable.
+
+## Canonical example
 
 This is the target shape for a migrated feature. It is illustrative; use the surrounding
 repo names when implementing.
@@ -518,63 +510,18 @@ export const LanguageSwitch = ({
 };
 ```
 
-## Recipes
+## Golden path — adding a unit
 
-### Add An API Endpoint
+1. Name vocabulary changes in LANGUAGE.md / CONTEXT.md when needed.
+2. Implement at the owning path for this repository.
+3. Wire the unit at its registration seam.
+4. Colocate or place tests per the rules above and run the project gate.
 
-1. Define request/response Effect Schemas in `shared/` when more than one runtime needs the
-   contract.
-2. Write the core as an Effect program in `server/src/core/`.
-3. Put new I/O behind an Effect service and Layer in `server/src/adapters/`.
-4. Keep the route thin: decode, run, map tagged errors, encode.
-5. Add colocated Vitest coverage with `@effect/vitest` and test Layers.
+Definition of done:
 
-### Add A Client Data Source
-
-1. Write an Effect loader that fetches and decodes.
-2. Wrap it with the unified TanStack bridge hook.
-3. Consume the query result directly; do not recreate manual loading/error/refetch state.
-
-### Add A Form
-
-1. Use React Hook Form for multi-field forms.
-2. Keep validation in Effect Schema.
-3. Use a small resolver/helper that maps decoded success and typed errors into form errors.
-4. Keep one-field chat inputs as controlled state when RHF would add noise.
-
-### Add A CLI Command
-
-1. Add the command function under `scripts/cli/commands/`.
-2. Register it in the command registry.
-3. Wire both entrypoints to the same function: interactive menu and flags/non-TTY direct run.
-4. Ensure non-TTY/flagged invocations never hang.
-5. Update ADR 0002 if the command is a new public verb.
-
-## Target CLI Layout
-
-```txt
-scripts/
-├── buildAll.sh
-├── cli/
-│   ├── index.ts
-│   ├── commands.ts
-│   ├── menu.ts
-│   ├── runCommand.ts
-│   └── commands/
-│       ├── assets.ts
-│       ├── build.ts
-│       ├── deploy.ts
-│       ├── dev.ts
-│       ├── format.ts
-│       ├── lint.ts
-│       ├── post.ts
-│       └── test.ts
-└── dev/
-    ├── generateBlogCovers.sh
-    └── generateHero.sh
-```
-
-`scripts/dev/` stays local and gitignored. Build/deploy surfaces stay committed.
+- Focused tests pass.
+- Style and typecheck pass.
+- No `## Never` tell was introduced.
 
 ## Exemplars
 
@@ -606,3 +553,13 @@ migration destination.
 - Duplicated fetch/query state hooks.
 - `PRODUCT.md` alongside `PROJECT.md`.
 - Kebab-case source/script filenames.
+
+## Stack and framework practices
+
+- Effect docs are the source for Effect API details; this file defines how this repo uses
+  Effect.
+- React stays idiomatic for local UI: props, events, `useState`, and JSX.
+- TanStack Query owns client server-state caching/loading/refetch.
+- React Hook Form owns multi-field client forms.
+- Tailwind theme tokens own reusable colors and class patterns.
+- Biome owns formatting and lint rules where a rule exists.

@@ -1,4 +1,4 @@
-# CONTEXT.md
+# CONTEXT.md — portfolio
 
 Orientation for the portfolio repo — what it is, who acts on it, and how it is shaped. Read
 this before non-trivial work. For **why** it exists see `PROJECT.md`; for **names** see
