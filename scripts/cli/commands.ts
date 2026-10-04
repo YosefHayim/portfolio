@@ -122,7 +122,7 @@ export const menuCommands: readonly MenuCommand[] = [
 ];
 
 export const printHelp = (): void => {
-  console.log(`portfolio — dual-mode dev+ops CLI (ADR 0002)
+  console.log(`portfolio — dual-mode dev+ops CLI
 
 Usage:
   portfolio                  Interactive menu (TTY only)

@@ -2,8 +2,7 @@
 
 Orientation for the portfolio repo — what it is, who acts on it, and how it is shaped. Read
 this before non-trivial work. For **why** it exists see `PROJECT.md`; for **names** see
-`LANGUAGE.md`; for **how to write code** see `CODE-STYLE.md`; for **decisions** see
-`docs/adr/`.
+`LANGUAGE.md`; for **how to write code** see `CODE-STYLE.md`.
 
 ## What it is
 
@@ -14,8 +13,7 @@ Cloudflare via `wrangler`:
 - **`clientV3/`** — React 19 + Vite 6 + Tailwind v4 single-page app (the portfolio UI, blog,
   and the Portfolio Assistant chat surface); served at `/`, with the `[v1][v2][v3]` toggle.
 - **`server/`** — Express API for the AI chat and contact email; layered into
-  `adapters / core / middleware / routes / config / utils`. Adopting **Effect** at its edges
-  (see ADR 0001).
+  `adapters / core / middleware / routes / config / utils`. Adopting **Effect** at its edges.
 - **`worker/`** — one Cloudflare Worker that serves the unified `dist/` (v3 at `/`, v1+v2
   nested) and honors the Product Route Registry (product pages, extension legal redirects).
 - **`shared/`** — precompiled JS modules shared by client, server, and worker (Product Route
@@ -63,4 +61,4 @@ served by one worker** — the eras are paths, not separate deployments:
 - Server entry: `server/src/index.ts`; core in `server/src/core/`, I/O in `server/src/adapters/`.
 - Worker + deploy: `worker/`, `wrangler.jsonc`.
 - Shared modules: `shared/portfolio/`.
-- The dev+ops CLI (dual-mode: menu in a TTY, flags otherwise) — see ADR 0002.
+- The dev+ops CLI (dual-mode: menu in a TTY, flags otherwise): `scripts/cli/`.
