@@ -3,7 +3,6 @@
 *.jsonc
 *.md
 !AGENTS.md
-!clientV1/CLAUDE.md
 !CODE-STYLE.md
 !CONTEXT.md
 !LANGUAGE.md
