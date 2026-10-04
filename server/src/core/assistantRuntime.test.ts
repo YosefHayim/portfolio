@@ -1,8 +1,8 @@
+import { describe, expect, it } from '@effect/vitest';
 import {
   createAssistantStreamParser,
   encodeAssistantSseEvent,
 } from '@shared/portfolio/assistantStream.js';
-import { describe, expect, it } from '@effect/vitest';
 import type { ChatMessage } from './assistant.js';
 import {
   type AssistantCache,
@@ -30,7 +30,8 @@ const createMapCache = (seed: Record<string, string> = {}): AssistantCache => {
 
 const withMockedGitHubFetch = async (run: () => Promise<void>): Promise<void> => {
   const originalFetch = globalThis.fetch;
-  globalThis.fetch = (async () => new Response(JSON.stringify([]), { status: 200 })) as typeof fetch;
+  globalThis.fetch = (async () =>
+    new Response(JSON.stringify([]), { status: 200 })) as typeof fetch;
 
   try {
     await run();
@@ -111,7 +112,7 @@ describe('createAssistantReplyStream', () => {
       const streamResult = await createAssistantReplyStream({
         messages: [{ role: 'user', content: 'What are Joseph skills' }],
         cache,
-        stream: async function* () {
+        async *stream() {
           yield 'should not run';
         },
       });
@@ -132,7 +133,7 @@ describe('createAssistantReplyStream', () => {
       const live = await createAssistantReplyStream({
         messages: [{ role: 'user', content: 'Tell me about your background' }],
         cache,
-        stream: async function* () {
+        async *stream() {
           streamCalls += 1;
           yield 'Hello ';
           yield 'world';
@@ -150,9 +151,7 @@ describe('createAssistantReplyStream', () => {
       const failing = await createAssistantReplyStream({
         messages: [{ role: 'user', content: 'Introduce yourself please' }],
         cache,
-        stream: async function* () {
-          throw new Error('provider down');
-        },
+        stream: () => Promise.reject(new Error('provider down')),
       });
 
       expect(await collectStreamEvents(failing.events)).toEqual([
