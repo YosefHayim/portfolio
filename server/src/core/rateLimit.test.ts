@@ -1,10 +1,10 @@
 import { describe, expect, it } from '@effect/vitest';
 import {
-  RATE_ENTRY_MAX_AGE_MS,
-  RATE_LIMIT_PRESETS,
   cleanupRateLimitStore,
   consumeRateLimit,
   createRateLimitEntry,
+  RATE_ENTRY_MAX_AGE_MS,
+  RATE_LIMIT_PRESETS,
   type RateLimitEntry,
   type RateLimiterOptions,
 } from './rateLimit.js';
@@ -14,7 +14,7 @@ const tightLimits: RateLimiterOptions = {
   maxRequests: 3,
   burstWindowMs: 10_000,
   maxBurst: 2,
-  blockDurationMs: 5_000,
+  blockDurationMs: 5000,
   maxViolations: 3,
   permanentBlockAfterViolations: 3,
 };
@@ -38,7 +38,7 @@ describe('createRateLimitEntry', () => {
 describe('consumeRateLimit', () => {
   it('allows traffic under both window and burst caps and sets remaining headers', () => {
     const store = emptyStore();
-    const now = 1_000;
+    const now = 1000;
 
     const first = consumeRateLimit(store, 'client-a', tightLimits, now);
     const second = consumeRateLimit(store, 'client-a', tightLimits, now + 1);
@@ -64,7 +64,7 @@ describe('consumeRateLimit', () => {
 
   it('tracks clients independently in the same store', () => {
     const store = emptyStore();
-    const now = 5_000;
+    const now = 5000;
 
     expect(consumeRateLimit(store, 'alpha', tightLimits, now).allowed).toBe(true);
     expect(consumeRateLimit(store, 'beta', tightLimits, now).allowed).toBe(true);
@@ -171,7 +171,7 @@ describe('consumeRateLimit', () => {
       ...tightLimits,
       maxRequests: 1,
       maxBurst: 0,
-      blockDurationMs: 1_000,
+      blockDurationMs: 1000,
       permanentBlockAfterViolations: 10,
     };
     const t0 = 50_000;
@@ -182,10 +182,10 @@ describe('consumeRateLimit', () => {
       throw new Error('expected first violation');
     }
     expect(firstViolation.errorJson.retryAfter).toBe(1);
-    expect(store.get('escalator')?.blockedUntil).toBe(t0 + 1_000);
+    expect(store.get('escalator')?.blockedUntil).toBe(t0 + 1000);
 
     // After block expires, trip again — duration multiplies by min(violations, 5).
-    const t1 = t0 + 1_001;
+    const t1 = t0 + 1001;
     const secondViolation = consumeRateLimit(store, 'escalator', options, t1);
     expect(secondViolation.allowed).toBe(false);
     if (secondViolation.allowed) {
@@ -193,7 +193,7 @@ describe('consumeRateLimit', () => {
     }
     expect(secondViolation.errorJson.retryAfter).toBe(2);
     expect(store.get('escalator')?.violations).toBe(2);
-    expect(store.get('escalator')?.blockedUntil).toBe(t1 + 2_000);
+    expect(store.get('escalator')?.blockedUntil).toBe(t1 + 2000);
   });
 
   it('permanently blocks once violations reach the permanent threshold', () => {
@@ -241,11 +241,11 @@ describe('cleanupRateLimitStore', () => {
     const store = emptyStore();
     const now = 100_000;
 
-    store.set('fresh', createRateLimitEntry(now - 1_000));
+    store.set('fresh', createRateLimitEntry(now - 1000));
     store.set('stale', createRateLimitEntry(now - RATE_ENTRY_MAX_AGE_MS - 1));
     store.set('blocked-stale', {
       ...createRateLimitEntry(now - RATE_ENTRY_MAX_AGE_MS - 1),
-      blockedUntil: now + 5_000,
+      blockedUntil: now + 5000,
     });
 
     cleanupRateLimitStore(store, now);

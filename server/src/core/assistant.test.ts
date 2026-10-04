@@ -37,9 +37,9 @@ describe('assistant pure helpers', () => {
   });
 
   it('bypasses cache only when the last user message is dynamic', () => {
-    expect(
-      shouldBypassAssistantCache([{ role: 'user', content: 'latest github projects' }]),
-    ).toBe(true);
+    expect(shouldBypassAssistantCache([{ role: 'user', content: 'latest github projects' }])).toBe(
+      true,
+    );
     expect(shouldBypassAssistantCache([{ role: 'user', content: 'skills list' }])).toBe(false);
   });
 
