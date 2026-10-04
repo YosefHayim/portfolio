@@ -34,7 +34,6 @@ const COMMON_HERO_PATHS = [
   'public/banner.png',
   'assets/hero.png',
   'assets/cover.png',
-  'docs/hero.png',
   'media/hero.png',
   'images/hero.png',
 ] as const;
@@ -66,7 +65,7 @@ const isOpenGraphCard = (url: string): boolean =>
   url.includes('opengraph.githubassets.com') ||
   url.includes('repository-images.githubusercontent.com');
 
-// Raw row example: path "/docs/hero.png" → "docs/hero.png" in the raw.githubusercontent URL.
+// Raw row example: path "/assets/hero.png" → "assets/hero.png" in the raw.githubusercontent URL.
 const rawFileUrl = (repoName: string, branch: string, path: string): string =>
   `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${repoName}/${branch}/${path.replace(/^\/+/, '')}`;
 
@@ -102,7 +101,7 @@ export const absoluteReadmeImageUrl = (
     return isBadgeUrl(decoded) ? null : decoded;
   }
 
-  // Raw row example: "./docs/hero.png" or "/docs/hero.png" → "docs/hero.png".
+  // Raw row example: "./assets/hero.png" or "/assets/hero.png" → "assets/hero.png".
   const path = decoded.replace(/^\.\//, '').replace(/^\/+/, '');
   if (!path || path.startsWith('#')) {
     return null;

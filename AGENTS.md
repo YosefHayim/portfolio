@@ -4,18 +4,16 @@
 
 ### Issue Tracker
 
-Issues are tracked in GitHub Issues for `YosefHayim/portfolio` using the `gh` CLI. See
-`docs/agents/issue-tracker.md`.
+Issues are tracked in GitHub Issues for `YosefHayim/portfolio` using the `gh` CLI.
 
 ### Triage Labels
 
-Use the default five-label triage vocabulary. See `docs/agents/triage-labels.md`.
+Use the default five-label triage vocabulary.
 
 ### Domain Docs
 
 This is a single-context repo with one root `CONTEXT.md` (orientation), `LANGUAGE.md`
-(glossary), and `PROJECT.md` (purpose); ADRs live under `docs/adr/current/`. See
-`docs/agents/domain.md`.
+(glossary), and `PROJECT.md` (purpose). Decisions go in the PR description.
 
 ## Conventions
 
@@ -26,7 +24,7 @@ offenders.
 
 - **Effect program model.** Use Effect fully for I/O, validation, config, provider access,
   retries/timeouts, typed errors, structured logs, and tests. React local UI state stays
-  idiomatic. Effect Schema replaces zod and hand-rolled guards. (ADR 0001, ADR 0005)
+  idiomatic. Effect Schema replaces zod and hand-rolled guards.
 - **Client state.** Effect owns data programs; TanStack Query owns server-state cache,
   loading, error, and refetch. Multi-field forms use React Hook Form with Effect Schema
   validation. One-field chat inputs may stay controlled React.
@@ -58,7 +56,7 @@ offenders.
   `PROJECT.md`.
 - **CLI:** one dual-mode front door. Bare TTY opens a menu; flags/non-TTY run direct and
   never hang. Verbs: `dev`, `build`, `deploy`, `lint`, `test`, `format`, `post new`,
-  `assets generate`. Both modes call the same command functions. (ADR 0002)
+  `assets generate`. Both modes call the same command functions.
 
 ## Repo Layout
 
@@ -71,7 +69,6 @@ server/   Express AI chat + contact-email API - adapters / core / middleware / r
 worker/   ONE Cloudflare Worker - serves unified dist/ + Product Route Registry static pages
 shared/   Runtime-neutral modules shared by clientV3 / server / worker
 scripts/  Current build wrapper plus target dual-mode CLI under scripts/cli/
-docs/adr/ decisions - 0001 Effect · 0002 CLI · 0003 deps · 0004 versions · 0005 runtime target
 ```
 
 Eras are one site: v1/v2/v3/v4 are paths served by the single Worker's assets binding,

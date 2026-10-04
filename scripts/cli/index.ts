@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Dual-mode portfolio CLI (ADR 0002).
+ * Dual-mode portfolio CLI.
  *
  * - Bare TTY → interactive menu
  * - Flags / non-TTY → direct run; never hangs waiting on input

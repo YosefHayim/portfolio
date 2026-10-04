@@ -1,92 +1,30 @@
-.*
-*.json
-*.jsonc
-*.md
-!AGENTS.md
-!CODE-STYLE.md
-!CONTEXT.md
-!LANGUAGE.md
-!PROJECT.md
-!README.md
-!docs/agents/*.md
-!docs/agent/
-!docs/agent/**/
-!docs/agent/**/*.md
-!docs/adr/current/*.md
-!clientV3/biome.json
-!clientV3/src/i18n/locales/
-!clientV3/src/i18n/locales/**/
-!clientV3/src/i18n/locales/**/*.json
-!server/biome.json
-# Frozen version snapshots (clientV1/clientV2): track source + build configs.
-# Their nested .gitignore still excludes node_modules/ and dist/, and git cannot
-# re-include a file whose parent dir is excluded — so these only surface real config.
-!clientV1/**/*.json
-!clientV2/**/*.json
-!clientV4/**/*.json
-!package.json
-!wrangler.jsonc
-!lighthouserc.json
-!.github/**/*.json
-!.github/**/*.yml
-!.gitignore
-!.github
-.dedup.json
+# dependencies
 node_modules/
-clientV4/node_modules/
-clientV4/dist/
-# Assembled deploy artifact (scripts/buildAll.sh): v3 at /, v1+v2 nested
-/dist/
-infra/aws/keys/*.pem
-.ai-guard/
-.cursor/
-.claude/
-.codex/
-.gemini/
-GEMINI.md
-.opencode/
-opencode.json
-.kilo/
-kilo.jsonc
-.clinerules/
 
-# Ignore all dotfiles and dotfolders (added by request)
-.*
-# but keep these commonly-tracked ones
-!.gitignore
-!.gitattributes
-!.gitkeep
-!.github/
-!.vscode/
-!.idea/
+# build
+dist/
+.wrangler/
+
+# env
+.env
+.env.*
 !.env.example
-!.env.sample
-!.editorconfig
-!.eslintrc*
-!.prettierrc*
-!.prettierignore
-!.stylelintrc*
-!.babelrc*
-!.npmrc
-!.nvmrc
-!.node-version
-!.tool-versions
-!.dockerignore
-!.husky/
-!.changeset/
-!.cursorrules
-!.cursorignore
-!.claude/
-!.agents/
 
-# Kiro CLI agent config (local)
-.kiro
+# logs
+*.log
 
-# Kimi Code CLI local config + skills
-.kimi-code/
+# testing
+.lighthouseci/
 
-# Local dev scripts (not committed), except media pipeline used by v4 deploy
-scripts/dev/
-!scripts/dev/convertV4ImagesToWebp.mjs
-!scripts/dev/uploadV4MediaToR2.mjs
+# secrets
+*.pem
+
+# editor and OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# local
 .worktrees/

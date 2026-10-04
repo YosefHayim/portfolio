@@ -548,7 +548,7 @@ export const LanguageSwitch = ({
 2. Register it in the command registry.
 3. Wire both entrypoints to the same function: interactive menu and flags/non-TTY direct run.
 4. Ensure non-TTY/flagged invocations never hang.
-5. Update ADR 0002 if the command is a new public verb.
+5. Decisions go in the PR description.
 
 ## Target CLI Layout
 
