@@ -46,7 +46,8 @@ pnpm build
 pnpm --dir client preview
 ```
 
-Preview uses the real local Worker at http://127.0.0.1:4173, including redirects and 404s.
+Preview uses the real local Worker at http://127.0.0.1:4173, including Worker asset handling and 404s. The preview command explicitly uses localhost
+as its upstream so production domain routes cannot trigger local redirect loops.
 Unknown URLs do not fall back to the home page.
 
 Deployment requires explicit approval after mobile screenshot review. CI does not deploy.

@@ -14,6 +14,10 @@ for (const language of languages) {
       await page.addInitScript((choice) => localStorage.setItem('jts-language', choice), language);
       const pageErrors: string[] = [];
       page.on('pageerror', (error) => pageErrors.push(error.message));
+      page.on('console', (message) => {
+        if (message.type() === 'error') pageErrors.push(message.text());
+      });
+      page.on('requestfailed', (request) => pageErrors.push(request.url()));
       const response = await page.goto('/');
       expect(response?.status()).toBe(200);
       await expect(page.locator('html')).toHaveAttribute('lang', language);

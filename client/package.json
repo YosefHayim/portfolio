@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "preview": "wrangler dev --local --ip 127.0.0.1 --port 4173",
+    "preview": "wrangler dev --local --local-upstream localhost --ip 127.0.0.1 --port 4173",
     "lint": "biome check .",
     "format": "biome check --write .",
     "typecheck": "tsc --noEmit",

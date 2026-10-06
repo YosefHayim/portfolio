@@ -170,11 +170,9 @@ export const scenarios: Record<Language, Scenario[]> = {
 
 export const nextScenario = (remaining: string[], current: string, random: number) => {
   const available = remaining.filter((id) => id !== current);
-  const pool =
-    available.length > 0
-      ? available
-      : scenarios.en.map((scenario) => scenario.id).filter((id) => id !== current);
-  const position = Math.floor(random * pool.length);
-  const selected = pool[position];
+  const pool = available.length > 0 ? available : scenarios.en.map((scenario) => scenario.id);
+  const candidates = pool.filter((id) => id !== current);
+  const position = Math.floor(random * candidates.length);
+  const selected = candidates[position];
   return { selected, remaining: pool.filter((id) => id !== selected) };
 };

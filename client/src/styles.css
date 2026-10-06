@@ -936,7 +936,7 @@ h3 {
 }
 @keyframes scene-enter {
   from {
-    opacity: 0.3;
+    opacity: 1;
     transform: translateY(28px);
   }
   to {
@@ -946,7 +946,7 @@ h3 {
 }
 @keyframes step-enter {
   from {
-    opacity: 0.4;
+    opacity: 1;
     translate: 0 12px;
   }
   to {

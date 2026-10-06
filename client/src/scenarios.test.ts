@@ -16,6 +16,18 @@ describe('scenario shuffle bag', () => {
     const refill = nextScenario(state.remaining, state.current, 0.5);
     expect(refill.selected).not.toBe(state.current);
   });
+  it('includes all eight situations in each new round', () => {
+    const state: { current: string; remaining: string[] } = { current: 'manual', remaining: [] };
+    const visited = new Set<string>();
+    for (const random of [0, 0.1, 0.8, 0.3, 0.4, 0.6, 0.2, 0.9]) {
+      const next = nextScenario(state.remaining, state.current, random);
+      expect(visited.has(next.selected)).toBe(false);
+      visited.add(next.selected);
+      state.current = next.selected;
+      state.remaining = next.remaining;
+    }
+    expect(visited.size).toBe(8);
+  });
   it('uses the random sample and handles a manual selection', () => {
     const first = nextScenario([], 'launch', 0);
     const last = nextScenario([], 'launch', 0.999);
