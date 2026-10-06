@@ -36,6 +36,8 @@ const fetchSite = (request: Request, env: Env): Promise<Response> => {
   const fetchAsset = Effect.tryPromise(() => env.ASSETS.fetch(request));
   const serveAsset = Effect.map(fetchAsset, (asset) => {
     const response = new Response(asset.body, asset);
+    const cacheControl = response.headers.get('Cache-Control') || 'public';
+    response.headers.set('Cache-Control', `${cacheControl}, no-transform`);
     for (const [name, value] of Object.entries(securityHeaders)) response.headers.set(name, value);
     return response;
   });
