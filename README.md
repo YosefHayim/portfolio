@@ -55,7 +55,7 @@ After approval, squash merge the PR, check out the approved main commit, and run
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm --dir client deploy
+pnpm --dir client run deploy
 ```
 
 The Worker remains named `portfolio` in the existing account. The six intended domain routes are declared in configuration and applied only by an

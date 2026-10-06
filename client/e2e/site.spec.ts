@@ -226,6 +226,7 @@ test('retired routes are actual 404s and assets have security headers', async ({
     expect(body).not.toContain('<div id="root">');
   }
   const response = await request.get('/');
+  expect(response.headers()['cache-control']).toContain('no-transform');
   expect(response.headers()['x-content-type-options']).toBe('nosniff');
   expect(response.headers()['content-security-policy']).toContain("frame-ancestors 'none'");
   const portrait = await request.get('/portrait.webp');
