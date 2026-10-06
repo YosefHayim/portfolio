@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://joseph-tech-solutions.dev/sitemap.xml

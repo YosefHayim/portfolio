@@ -1,64 +1,21 @@
-# CONTEXT.md
+# Repository context
 
-Orientation for the portfolio repo — what it is, who acts on it, and how it is shaped. Read
-this before non-trivial work. For **why** it exists see `PROJECT.md`; for **names** see
-`LANGUAGE.md`; for **how to write code** see `CODE-STYLE.md`.
+One pnpm workspace with a single `client/` package.
 
-## What it is
+- `client/src/`: React/TypeScript components, authored bilingual copy, state, CSS, unit tests.
+- `client/public/`: optimized portraits, favicon, robots, sitemap, and bilingual 404 page.
+- `client/deploy/`: Worker entry, generated binding types, and redirect tests.
+- `client/e2e/`: Chromium and WebKit tests of the production build through Wrangler.
+- `client/wrangler.jsonc`: static assets, Worker configuration, and observability.
+- `.github/workflows/ci.yml`: install, lint, typecheck, unit tests, build, browser checks.
 
-A personal portfolio web app and publishing surface that works as a proof-of-work journey for
-recruiters — not a static resume. One repository, four cooperating parts, deployed on
-Cloudflare via `wrangler`:
+`pnpm dev` starts Vite. `pnpm build` produces `client/dist/`.
+`pnpm --dir client preview` serves the built site through the local Cloudflare runtime.
+Root scripts delegate to the client package. No database, remote media, secrets, or business API.
 
-- **`clientV3/`** — React 19 + Vite 6 + Tailwind v4 single-page app (the portfolio UI, blog,
-  and the Portfolio Assistant chat surface); served at `/`, with the `[v1][v2][v3]` toggle.
-- **`server/`** — Express API for the AI chat and contact email; layered into
-  `adapters / core / middleware / routes / config / utils`. Adopting **Effect** at its edges.
-- **`worker/`** — one Cloudflare Worker that serves the unified `dist/` (v3 at `/`, v1+v2
-  nested) and honors the Product Route Registry (product pages, extension legal redirects).
-- **`shared/`** — precompiled JS modules shared by client, server, and worker (Product Route
-  Registry, GitHub Portfolio Snapshot, contact-email + assistant-stream helpers).
+The Worker redirects known former domains and JTS www to the canonical HTTPS apex,
+preserving paths and queries. Static assets use 404-page handling rather than an SPA fallback.
+All hosts go through the Worker so assets on old hosts redirect too.
 
-## Actors
-
-- **Recruiter / visitor** — the primary reader; skims the journey, asks the Portfolio
-  Assistant, may trigger a contact email.
-- **Owner** (Joseph Sabag) — publishes work and evolves the site.
-- **Portfolio Assistant** — the AI surface answering questions from the GitHub Portfolio
-  Snapshot and App Catalog.
-- **Agents** — Claude Code and `deslop`, governed by `CODE-STYLE.md` + `AGENTS.md`.
-
-## Shape
-
-- The **client** is a lazy-routed SPA; data comes from the server API and the GitHub
-  Portfolio Snapshot through Effect loaders wrapped by the unified TanStack Query hook. React
-  components stay idiomatic for local UI state.
-- The **server** keeps a pure Effect core with I/O (OpenAI, GitHub, email) behind Effect
-  services + Layers; routes are thin edges that decode with Effect Schema, run the core, and
-  map tagged errors to HTTP.
-- The **worker** is the deploy front door — it serves the built client and resolves routes
-  from the shared Product Route Registry so the static server and the Worker never drift.
-
-## Version showcase — clientV1 / clientV2 / clientV3 / clientV4
-
-The site preserves eras for visitors to compare (see `LANGUAGE.md`), all on **one site
-served by one worker** — the eras are paths, not separate deployments:
-
-- **clientV3** — the living recruiter portfolio at `/`, governed by `CODE-STYLE.md`.
-- **clientV4** — JTS (Joseph Tech Solutions) studio landing at `/v4/` — client-facing company
-  surface with Fractal-style motion, constellation hero, and project theater.
-- **clientV1 / clientV2** — frozen buildable snapshots at `/v1/` and `/v2/` (each built with a
-  Vite `base`), **exempt** from the style rules; they stay authentic to their era rather than
-  being restyled, and build with their own pinned deps (e.g. clientV2 pins `react-icons@5.6.0`).
-- `scripts/buildAll.sh` builds all eras and assembles `dist/` (clientV3 at root, nested
-  `v1`/`v2`/`v4`); the Navbar carries the `[v1][v2][v3][v4]` toggle.
-
-## Where things live
-
-- Client entry: `clientV3/src/App.tsx` (routes, Navbar, global chat sidebar, scroll progress).
-- Portfolio page: `clientV3/src/Pages/OnePage/OnePagePortfolio.tsx`.
-- Version toggle: `clientV3/src/Components/Navbar/` (Navbar, VersionSwitch, NavMobileDrawer).
-- Server entry: `server/src/index.ts`; core in `server/src/core/`, I/O in `server/src/adapters/`.
-- Worker + deploy: `worker/`, `wrangler.jsonc`.
-- Shared modules: `shared/portfolio/`.
-- The dev+ops CLI (dual-mode: menu in a TTY, flags otherwise): `scripts/cli/`.
+Root environment examples document that no application secrets are needed. Wrangler uses
+its existing local login for deployment; never add credentials to source control.

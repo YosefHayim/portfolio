@@ -1,60 +1,31 @@
-name: CI
-
-# Local gate composing the single-purpose reusable workflows (biome / typecheck /
-# test / build), each `on: workflow_call`.
-#
-# - `CI Gate` is the single aggregated status check: require it in branch
-#   protection so a red leg blocks merges.
-# - `report-failure` opens/updates a ci-failure issue when main goes red (never
-#   for PRs).
-# - E2E is not wired: this monorepo has no Playwright/Cypress suite yet. Keep
-#   e2e.yml out of `needs` until a real `test:e2e` script exists (honest skip —
-#   no fake green).
-
+name: Client checks
 on:
+  pull_request:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-
 permissions:
   contents: read
-
+concurrency:
+  group: client-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  biome:
-    uses: ./.github/workflows/biome.yml
-
-  typecheck:
-    uses: ./.github/workflows/typecheck.yml
-
-  test:
-    uses: ./.github/workflows/test.yml
-
-  build:
-    uses: ./.github/workflows/build.yml
-
-  # e2e: not enabled — no suite. See e2e.yml.
-
-  gate:
+  check:
     name: CI Gate
-    needs: [biome, typecheck, test, build]
-    if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Require every gate to pass
-        run: |
-          echo "biome=${{ needs.biome.result }} typecheck=${{ needs.typecheck.result }} test=${{ needs.test.result }} build=${{ needs.build.result }}"
-          test "${{ needs.biome.result }}" = "success" \
-            && test "${{ needs.typecheck.result }}" = "success" \
-            && test "${{ needs.test.result }}" = "success" \
-            && test "${{ needs.build.result }}" = "success"
-
-  report-failure:
-    name: Open issue on main failure
-    needs: [biome, typecheck, test, build]
-    if: failure() && github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      contents: read
-      issues: write
-      actions: read
-    uses: ./.github/workflows/report-failure.yml
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --dir client exec playwright install --with-deps chromium webkit
+      - run: pnpm check
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failures
+          path: client/test-results
+          retention-days: 7
