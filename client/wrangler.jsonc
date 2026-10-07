@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "portfolio",
-  "main": "deploy/worker.ts",
+  "main": "worker/main.ts",
   "compatibility_date": "2026-10-06",
   "account_id": "b0ba5fea46c96d72bfc6f12e1dafaf7b",
   "workers_dev": true,

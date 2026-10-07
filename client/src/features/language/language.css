@@ -1,0 +1,66 @@
+.language-flag-button {
+  position: relative;
+  direction: ltr;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.language-flag-button .language-flag {
+  position: relative;
+  z-index: 1;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: block;
+  transition:
+    opacity 0.3s,
+    filter 0.3s,
+    transform 0.5s var(--spring-ease);
+}
+
+.language-flag-button .language-flag svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.language-flag-ring {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--blue);
+  transition: transform 0.55s var(--spring-ease);
+}
+
+html[lang="he"] .language-flag-button .language-flag-ring {
+  transform: translateX(34px);
+}
+
+html[lang="en"] .language-flag.hebrew-flag,
+html[lang="he"] .language-flag.english-flag {
+  opacity: 0.45;
+  filter: grayscale(0.7);
+  transform: scale(0.84);
+}
+
+.language-flag-button:hover .language-flag {
+  transform: rotate(-10deg);
+}
+
+html[lang="en"] .language-flag-button:hover .language-flag.hebrew-flag,
+html[lang="he"] .language-flag-button:hover .language-flag.english-flag {
+  opacity: 0.9;
+  filter: none;
+  transform: scale(0.92) rotate(10deg);
+}

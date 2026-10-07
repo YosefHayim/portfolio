@@ -1,7 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "files": {
-    "includes": ["**", "!dist", "!deploy/workerBindings.d.ts", "!.wrangler"]
+    "includes": ["**", "!dist", "!worker/cloudflareBindings.d.ts", "!.wrangler"]
   },
   "formatter": {
     "indentStyle": "space",
@@ -15,11 +15,6 @@
       "trailingCommas": "all"
     }
   },
-  "css": {
-    "parser": {
-      "tailwindDirectives": true
-    }
-  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -28,5 +23,47 @@
         "noDescendingSpecificity": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["**/worker/**"],
+                    "message": "The page runs in the browser and must not import Worker code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["worker/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["**/src/**"],
+                    "message": "The Worker runs on Cloudflare and must not import page code."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

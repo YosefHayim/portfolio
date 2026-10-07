@@ -1,0 +1,109 @@
+.order-table {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 9cqw;
+  border-radius: 2cqw;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e3e8ef;
+  box-shadow: 0 2cqw 5cqw -2cqw rgba(20, 40, 80, 0.3);
+}
+
+.order-table-header,
+.order-table-cells {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.order-table-header span {
+  padding: 1.4cqw 1.8cqw;
+  font-size: 1.8cqw;
+  font-weight: 600;
+  color: var(--muted-dark);
+  background: #f6f8fb;
+  border-bottom: 1px solid #e3e8ef;
+}
+
+.order-cell {
+  height: 5.2cqw;
+  padding: 0 1.8cqw;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f0f2f5;
+  border-inline-end: 1px solid #f0f2f5;
+}
+
+.order-cell b {
+  height: 1.6cqw;
+  border-radius: 1cqw;
+  background: #cbd5e1;
+  opacity: 0;
+  transform-origin: 0 50%;
+}
+
+.manual-data-entry-animation.is-active .order-cell b {
+  animation: type-in 0.5s ease-out forwards;
+  animation-delay: calc(0.4s + var(--order) * 0.32s);
+}
+
+.problem-animation-panel.is-showing-fix .manual-data-entry-animation.is-active .order-cell b {
+  animation: fill-in-fast 0.35s ease-out forwards;
+  animation-delay: calc(var(--order) * 30ms);
+  background: #86e3a8;
+}
+
+@keyframes type-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fill-in-fast {
+  from {
+    opacity: 0;
+    transform: scaleX(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.time-spent {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4cqw;
+  display: grid;
+  justify-items: center;
+  font-size: 2.3cqw;
+  font-weight: 600;
+}
+
+.time-spent > * {
+  grid-area: 1 / 1;
+  padding: 1.2cqw 2.8cqw;
+  border-radius: 99px;
+}
+
+.time-spent .is-bad {
+  background: #ffecec;
+}
+
+.time-spent .is-good {
+  background: #e8f8ee;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .manual-data-entry-animation.is-active .order-cell b,
+  .problem-animation-panel.is-showing-fix .manual-data-entry-animation.is-active .order-cell b {
+    animation: none;
+    opacity: 1;
+  }
+}
