@@ -23,3 +23,8 @@ Read `PROJECT.md`, `CONTEXT.md`, `LANGUAGE.md`, and `CODE-STYLE.md` before chang
   remove only resources created by that run. Never globally prune Docker.
 - Preserve unrelated local work. Put temporary review artifacts in the session scratchpad.
   Stop servers started for verification when finished.
+
+## Local CI
+
+Run `act workflow_dispatch -W .github/workflows/ci.yml` before opening a PR.
+The root `.actrc` selects the local Docker runner and keeps the pnpm store outside the workspace.

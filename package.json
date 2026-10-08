@@ -12,5 +12,8 @@
     "test": "pnpm --dir client test",
     "test:browser": "pnpm --dir client test:browser",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:browser"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
