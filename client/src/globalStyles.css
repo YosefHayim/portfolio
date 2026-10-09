@@ -7,6 +7,12 @@
   --hairline: #ececec;
   --blue-light: #3bb2ff;
   --blue: #1e86ff;
+  --blue-dark: #0a5fc4;
+  --blue-wash: #e8f2ff;
+  --green: #166534;
+  --green-wash: #dcfce7;
+  --soft-gray: #f6f7f9;
+  --placeholder-gray: #e3e6ea;
   --heading-font:
     -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Variable", "Heebo Variable",
     system-ui, sans-serif;

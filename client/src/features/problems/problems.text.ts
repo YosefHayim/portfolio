@@ -16,40 +16,40 @@ type ProblemsText = {
 
 export const problemsText: Record<Language, ProblemsText> = {
   en: {
-    heading: 'Sound familiar?',
-    mutedHeading: "I've fixed every one of these",
+    heading: 'What people message me about most',
+    mutedHeading: 'and what I do about it',
     tablistLabel: 'Common problems',
     fixLabel: 'The fix:',
     problems: [
       {
         title: '"It works on my laptop, I swear."',
         subtitle: "Customers still can't buy it",
-        fix: "I put it online properly: a real domain, payments, sign-in, alerts and backups. I've done this enough times that it's boring, and boring is exactly what you want.",
+        fix: "I put it online properly: domain, payments, sign-in, alerts and backups, and for an app, all the way through the App Store. I've done this enough times that it's boring, and trust me, boring is exactly what you want here.",
       },
       {
         title: '"Back to you tomorrow." That was May.',
         subtitle: 'Half-done code, zero docs',
-        fix: "I take over the mess, no judgment. First I map what's there, then I fix the risky parts, then we move. And I answer my phone. Apparently that's rare.",
+        fix: "I take over the mess, no judgment. First I sort out what's there, then I close the risky parts, then we move. And I pick up the phone. Turns out that's not a given.",
       },
       {
         title: '"AI wrote it. I just hit enter."',
         subtitle: 'Now nobody wants to touch it',
-        fix: 'AI is a fast junior with no memory. I do the senior part: read it, lock it down, add tests, and leave code the next person can follow. No rewrite.',
+        fix: 'AI is a fast junior with no memory. I do the senior part: go through the code, close the holes, add tests and leave code the next person can follow. No wiping it all and starting over.',
       },
       {
         title: '"It\'s 90% done." Since March.',
         subtitle: 'The date moves, so does the budget',
-        fix: 'I write a short scope we both agree on, show you a working demo every week, and commit to a date. No more "almost".',
+        fix: 'We write a short scope together: what\'s in, what\'s out. Every week you see a working demo, and I commit to a date. No more "just a few more days".',
       },
       {
         title: '"Why does nobody finish checkout?"',
         subtitle: 'The page takes 8 seconds to load',
-        fix: "I measure before I touch anything. Usually it's heavy images or slow database calls. I fix the worst one first, then the next. The goal is under a second.",
+        fix: "Measure first, touch second. It's usually heavy images or slow database calls. I fix whatever hurts most, then the next one. The goal is under a second.",
       },
       {
         title: '"Wait, which spreadsheet is the real one?"',
         subtitle: 'Five tools, all copy-paste',
-        fix: 'I connect the tools you already pay for, so the CRM, sheets, shop and invoices update each other. You stop being the copy-paste in between.',
+        fix: 'I connect the tools you already pay for, so the CRM, sheets, shop and invoices talk to each other. You stop being the copy-paste in between.',
       },
       {
         title: '"I just need a tech co-founder."',
@@ -59,55 +59,55 @@ export const problemsText: Record<Language, ProblemsText> = {
       {
         title: '"Can someone please automate this?"',
         subtitle: 'Your team types it all by hand',
-        fix: 'I find the stuff someone does the same way every day and hand it to a script. Your team gets their afternoons back.',
+        fix: 'I find the stuff someone does the same way every day and hand it to a script. Your team gets their afternoons back, and their sanity.',
       },
     ],
   },
   he: {
-    heading: 'נשמע מוכר?',
-    mutedHeading: 'תיקנתי כל אחד מאלה',
+    heading: 'על מה כותבים לי הכי הרבה',
+    mutedHeading: 'ומה אני עושה עם זה',
     tablistLabel: 'בעיות נפוצות',
     fixLabel: 'הפתרון:',
     problems: [
       {
         title: '"אצלי במחשב זה עובד, נשבע."',
         subtitle: 'אבל לקוחות עדיין לא יכולים לקנות',
-        fix: 'אני מעלה את זה לאוויר כמו שצריך: דומיין אמיתי, תשלומים, התחברות, התראות וגיבויים. עשיתי את זה מספיק פעמים שזה כבר משעמם, ומשעמם זה בדיוק מה שאתם צריכים.',
+        fix: 'אני מעלה את זה לאוויר כמו שצריך: דומיין, תשלומים, התחברות, התראות וגיבויים, ואם זו אפליקציה, גם עד ה-App Store. עשיתי את זה מספיק פעמים שזה כבר משעמם, ותאמינו לי, משעמם זה בדיוק מה שאתם רוצים פה.',
       },
       {
         title: '"אחזור אליך מחר." זה היה במאי.',
         subtitle: 'קוד חצי גמור, אפס תיעוד',
-        fix: 'אני לוקח את הבלגן בלי לשפוט. קודם ממפה מה יש, אחר כך מתקן את מה שמסוכן, ואז מתקדמים. ואני עונה לטלפון. מסתבר שזה נדיר.',
+        fix: 'אני לוקח את הבלגן בלי לשפוט. קודם עושה סדר במה שיש, אחר כך סוגר את מה שמסוכן, ואז מתקדמים. ואני עונה לטלפון. מסתבר שזה לא מובן מאליו.',
       },
       {
         title: '"ה-AI כתב, אני רק לחצתי אנטר."',
         subtitle: 'ועכשיו אף אחד לא מעז לגעת בזה',
-        fix: "AI זה ג'וניור מהיר בלי זיכרון. אני עושה את החלק של הסניור: קורא את הקוד, סוגר פרצות, מוסיף טסטים ומשאיר קוד שגם הבא בתור יבין. בלי לכתוב מאפס.",
+        fix: "AI זה ג'וניור זריז בלי זיכרון. אני עושה את החלק של הסניור: עובר על הקוד, סוגר פרצות, מוסיף טסטים ומשאיר קוד שגם הבא בתור יבין. בלי למחוק הכול ולהתחיל מאפס.",
       },
       {
         title: '"זה 90% מוכן." מאז מרץ.',
         subtitle: 'התאריך זז, והתקציב איתו',
-        fix: 'אני כותב תכולה קצרה ששנינו מסכימים עליה, מראה לכם דמו עובד כל שבוע ומתחייב לתאריך. בלי עוד "כמעט".',
+        fix: 'כותבים יחד תכולה קצרה, מה נכנס ומה לא. כל שבוע אתם רואים דמו שעובד, ואני מתחייב לתאריך. נגמר הסיפור של "עוד כמה ימים וזהו".',
       },
       {
         title: '"למה אף אחד לא מסיים לקנות?"',
         subtitle: 'הדף נטען 8 שניות',
-        fix: 'אני מודד לפני שאני נוגע במשהו. בדרך כלל זה תמונות כבדות או שאילתות איטיות. מתקן קודם את הכי גרוע, ואז את הבא. המטרה: פחות משנייה.',
+        fix: 'קודם מודדים, אחר כך נוגעים. בדרך כלל זה תמונות כבדות או שאילתות איטיות. אני מתקן קודם את מה שהכי מעיק, ואז את הבא בתור. המטרה: פחות משנייה.',
       },
       {
         title: '"רגע, איזה אקסל הוא הנכון?"',
         subtitle: 'חמישה כלים, והכול בהעתק-הדבק',
-        fix: 'אני מחבר את הכלים שאתם כבר משלמים עליהם, כך שה-CRM, האקסלים, החנות והחשבוניות מעדכנים אחד את השני. אתם מפסיקים להיות ההעתק-הדבק באמצע.',
+        fix: 'אני מחבר את הכלים שאתם כבר משלמים עליהם, כך שה-CRM, האקסלים, החנות והחשבוניות מדברים אחד עם השני. חלאס להיות ההעתק-הדבק באמצע.',
       },
       {
         title: '"רק צריך שותף טכני."',
         subtitle: 'והפוסט עדיין על 0 תגובות',
-        fix: 'אני מצטרף כמהנדס שלכם. לפי פרויקט, תמורת אקוויטי, או שילוב שמרגיש הוגן לשנינו. אתם מביאים את הלקוחות, אני בונה משהו שמחזיק.',
+        fix: 'אני נכנס כמהנדס שלכם. לפי פרויקט, תמורת אקוויטי, או שילוב שמרגיש הוגן לשנינו. אתם מביאים את הלקוחות, אני בונה משהו שמחזיק מעמד.',
       },
       {
-        title: '"מישהו יכול לעשות לזה אוטומציה כבר?"',
+        title: '"מישהו יכול כבר לעשות לזה אוטומציה?"',
         subtitle: 'הצוות מקליד הכול ידנית',
-        fix: 'אני מוצא את מה שמישהו עושה כל יום באותה דרך ומעביר את זה לסקריפט. הצוות שלכם מקבל בחזרה את אחר הצהריים.',
+        fix: 'אני מוצא את מה שמישהו עושה כל יום באותה צורה ומעביר את זה לסקריפט. הצוות מקבל בחזרה את אחר הצהריים, ואת השפיות.',
       },
     ],
   },

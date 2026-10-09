@@ -134,7 +134,7 @@
   position: relative;
   z-index: 2;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 16px;
   padding: 18px clamp(20px, 3vw, 40px);
@@ -148,12 +148,6 @@
 
 .site-footer :focus-visible {
   outline-color: #fff;
-}
-
-.back-to-top {
-  font-family: var(--mono-font);
-  font-size: 12px;
-  letter-spacing: 0.02em;
 }
 
 .social-links {
@@ -264,7 +258,7 @@
 
 @media (max-width: 760px) {
   .site-footer {
-    flex-direction: column-reverse;
+    justify-content: center;
   }
 }
 

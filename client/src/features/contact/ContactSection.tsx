@@ -75,9 +75,6 @@ export const ContactSection = ({ language, prefersReducedMotion }: ContactSectio
         </div>
       </div>
       <footer className="site-footer">
-        <a className="back-to-top" href="#top">
-          {text.backToTopLabel}
-        </a>
         <SocialLinks language={language} onHandleCopied={showNotice} />
       </footer>
       <CopiedNotice
