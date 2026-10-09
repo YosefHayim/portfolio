@@ -21,8 +21,11 @@ test('keyboard reaches the top bar and arrow keys move through the problems', as
   const tabKey =
     testInfo.project.name === 'webkit' && process.platform === 'darwin' ? 'Alt+Tab' : 'Tab';
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.clock.install();
+  const clockStart = new Date('2026-01-01T00:00:00Z');
+  const keyboardTime = new Date('2026-01-01T00:01:00Z');
+  await page.clock.install({ time: clockStart });
   await openSite(page, 'en');
+  await page.clock.pauseAt(keyboardTime);
 
   await page.keyboard.press(tabKey);
   await expect(page.getByRole('button', { name: languageText.en.switchLabel })).toBeFocused();
