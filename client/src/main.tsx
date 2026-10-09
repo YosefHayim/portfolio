@@ -1,6 +1,5 @@
-import '@fontsource-variable/inter';
-import '@fontsource-variable/heebo';
-import '@fontsource/dm-mono';
+import '@fontsource/dm-mono/latin-400.css';
+import './fonts.css';
 import './globalStyles.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
