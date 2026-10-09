@@ -1,0 +1,164 @@
+.load-gauge {
+  position: absolute;
+  left: 50%;
+  top: 9cqw;
+  width: 48cqw;
+  transform: translateX(-50%);
+}
+
+.load-gauge svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.gauge-track {
+  fill: none;
+  stroke: #eef1f5;
+  stroke-width: 16;
+  stroke-linecap: round;
+}
+
+.gauge-arc {
+  fill: none;
+  stroke: url(#load-gauge-gradient);
+  stroke-width: 16;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+
+.gauge-needle {
+  position: absolute;
+  left: 50%;
+  top: calc(91.6% - 18cqw);
+  width: 1cqw;
+  height: 18cqw;
+  margin-left: -0.5cqw;
+  border-radius: 1cqw;
+  background: #1a1f27;
+  transform-origin: 50% 100%;
+  transform: rotate(-85deg);
+  transition: transform 1.6s var(--spring-ease);
+}
+
+.gauge-needle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2cqw;
+  width: 4cqw;
+  height: 4cqw;
+  margin-left: -2cqw;
+  border-radius: 50%;
+  background: #1a1f27;
+  box-shadow: 0 0 0 1cqw #fff;
+}
+
+.slow-site-animation.is-active .gauge-needle {
+  transform: rotate(68deg);
+}
+
+.problem-animation-panel.is-showing-fix .slow-site-animation.is-active .gauge-needle {
+  transform: rotate(-60deg);
+}
+
+.gauge-value {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 3cqw;
+  justify-items: center;
+  font-size: 7cqw;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  display: grid;
+}
+
+.gauge-value > * {
+  grid-area: 1 / 1;
+}
+
+.gauge-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin-top: 12cqw;
+  text-align: center;
+  font-size: 2cqw;
+  color: var(--muted-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.leaving-visitors {
+  position: absolute;
+  inset-inline-end: 5cqw;
+  top: 14cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+}
+
+.leaving-visitors span {
+  padding: 1cqw 2cqw;
+  border-radius: 99px;
+  background: #ffecec;
+  color: #c9373c;
+  font-size: 1.9cqw;
+  font-weight: 600;
+  opacity: 0;
+}
+
+.slow-site-animation.is-active .leaving-visitors span {
+  animation: leave-up 2.6s ease-in infinite;
+  animation-delay: calc(0.6s + var(--order) * 0.8s);
+}
+
+@keyframes leave-up {
+  0% {
+    opacity: 0;
+    transform: translateY(2cqw);
+  }
+  25% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(6cqw, -5cqw);
+  }
+}
+
+.staying-visitors {
+  position: absolute;
+  left: 50%;
+  bottom: 4cqw;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4cqw;
+  padding: 1.4cqw 3cqw;
+  border-radius: 99px;
+  background: #e8f8ee;
+  color: #167a40;
+  font-size: 2.2cqw;
+  font-weight: 600;
+  white-space: nowrap;
+  translate: -50% 0;
+}
+
+.staying-visitors i {
+  width: 1.4cqw;
+  height: 1.4cqw;
+  border-radius: 50%;
+  background: #34c759;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leaving-visitors span,
+  .slow-site-animation.is-active .leaving-visitors span {
+    animation: none;
+    opacity: 1;
+  }
+}

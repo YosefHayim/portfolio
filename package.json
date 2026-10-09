@@ -11,6 +11,7 @@
     "typecheck": "pnpm --dir client typecheck",
     "test": "pnpm --dir client test",
     "test:browser": "pnpm --dir client test:browser",
-    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:browser"
+    "test:vitals": "pnpm --dir client test:vitals",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm test:browser && pnpm test:vitals"
   }
 }

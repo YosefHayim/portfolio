@@ -1,0 +1,34 @@
+.rolling-label {
+  display: grid;
+  overflow: hidden;
+  line-height: 1.3;
+}
+
+.rolling-label > span {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  transition:
+    transform 0.5s var(--spring-ease),
+    opacity 0.3s;
+}
+
+.rolling-label > span + span {
+  transform: translateY(110%);
+  opacity: 0;
+}
+
+:is(:hover, :focus-visible) > .rolling-label > span:first-child {
+  transform: translateY(-110%);
+  opacity: 0;
+}
+
+:is(:hover, :focus-visible) > .rolling-label > span + span {
+  transform: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rolling-label > span {
+    transition: opacity 0.2s;
+  }
+}

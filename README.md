@@ -1,7 +1,8 @@
-# Joseph Tech Solutions
+# Joseph Sabag
 
-A bilingual business website for Joseph Sabag. React, TypeScript, Vite, Tailwind, and
-Cloudflare Workers Static Assets, with one application folder: `client/`.
+A one-page bilingual (English and Hebrew) business site, live at
+https://joseph-tech-solutions.dev/. React 19, TypeScript, Vite and plain CSS, served by a
+Cloudflare Worker with static assets. Everything lives in `client/`.
 
 ## Local development
 
@@ -14,8 +15,8 @@ cp client/.env.example client/.env
 pnpm dev
 ```
 
-No application secrets or remote services are required. Choose EN or עב to switch languages.
-Browser language is used on the first visit; manual choices are remembered locally.
+No secrets or remote services are needed. The flag button switches language. The first visit
+follows the browser language; a manual choice is remembered.
 
 ## Checks
 
@@ -24,55 +25,39 @@ pnpm --dir client exec playwright install chromium webkit
 pnpm check
 ```
 
-This runs Biome, TypeScript, Vitest, the production build, and Playwright in Chromium/WebKit.
-On macOS, WebKit uses Option+Tab for native keyboard traversal when full keyboard access
-is disabled; the suite follows that browser behavior without changing OS preferences.
-See the [Playwright WebKit keyboard issue](https://github.com/microsoft/playwright/issues/41808).
+This runs Biome, TypeScript, Vitest, the production build, Playwright in Chromium and WebKit,
+and a mobile Lighthouse gate. The browser tests cover both languages at 320 to 1440px,
+overflow and clipped text, accessibility, keyboard use, reduced motion, the problem and iceberg
+animations, WhatsApp links, cache headers and 404s.
 
-The browser suite covers English and Hebrew at 320, 390, 430, 768, and 1440px, image loading,
-overflow, accessibility, WhatsApp destinations, language persistence, keyboard selection,
-reduced motion, carousel timing, and retired-route 404s. It saves full-page and section images.
-Set `PLAYWRIGHT_ARTIFACTS` to a session scratchpad for local review artifacts.
+On macOS, WebKit moves focus with Option+Tab when full keyboard access is off, so the suite
+uses it there ([Playwright issue](https://github.com/microsoft/playwright/issues/41808)).
 
-The eight scenes cycle through a shuffled bag without immediate repeats. Pointer hover,
-keyboard focus, offscreen visibility, page visibility, and explicit pause suspend playback.
-Reduced motion gives a static, selectable version. The hero pause control stops decorative
-motion and scenario playback throughout the page.
-
-## Preview and release
+## Preview
 
 ```sh
 pnpm build
 pnpm --dir client preview
 ```
 
-Preview uses the real local Worker at http://127.0.0.1:4173, including Worker asset handling and 404s. The preview command explicitly uses localhost
-as its upstream so production domain routes cannot trigger local redirect loops.
-Unknown URLs do not fall back to the home page.
+Preview runs the real Worker locally at http://127.0.0.1:4173, including cache headers and 404s.
+It uses localhost as its upstream, so the production domain redirects cannot loop locally.
 
-Deployment requires explicit approval after mobile screenshot review. CI does not deploy.
-After approval, squash merge the PR, check out the approved main commit, and run:
+## Release
 
-```sh
-pnpm install --frozen-lockfile
-pnpm --dir client run deploy
-```
-
-The Worker remains named `portfolio` in the existing account. The six intended domain routes are declared in configuration and applied only by an
-authorized deployment. Complete the read-only readiness review in `RELEASE.md` before
-changing bindings or DNS. Regenerate binding types after configuration changes:
+Deploying needs explicit approval after a mobile screenshot review; CI never deploys. The steps
+are in `AGENTS.md`. After changing `client/wrangler.jsonc`, regenerate the binding types:
 
 ```sh
 pnpm --dir client types
 ```
 
-## Reference patterns
+## References
 
 - [React effect cleanup](https://react.dev/learn/synchronizing-with-effects)
 - [Vite static build](https://vite.dev/guide/static-deploy.html)
-- [Tailwind Vite integration](https://tailwindcss.com/docs/installation/using-vite)
 - [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
 - [Worker-first routing](https://developers.cloudflare.com/workers/static-assets/routing/worker-script/)
+- [Lighthouse CI](https://googlechrome.github.io/lighthouse-ci/docs/configuration.html)
 
-The legacy site versions, API, chat, blog, product pages, and legal pages have been removed.
-Earlier versions remain available in Git history.
+Earlier versions of the site remain in Git history.

@@ -11,6 +11,7 @@ dist/
 # Tests and logs
 playwright-report/
 test-results/
+.lighthouseci/
 coverage/
 *.log
 
