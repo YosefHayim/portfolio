@@ -15,11 +15,15 @@ for (const language of languages) {
   }) => {
     test.setTimeout(90000);
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.clock.install();
+    const clockStart = new Date('2026-01-01T00:00:00Z');
+    const animationTime = new Date('2026-01-01T00:01:00Z');
+    await page.clock.install({ time: clockStart });
     await openSite(page, language);
+    await page.clock.pauseAt(animationTime);
     const text = problemsText[language];
     const panel = page.locator('#problem-animation-panel');
     await panel.scrollIntoViewIfNeeded();
+    await expect(page.locator('.problem-progress-bar.is-running')).toHaveCount(1);
 
     await expect(activeProblemTitle(page)).toHaveText(text.problems[0].title);
     await page.clock.runFor(300);
