@@ -1,5 +1,11 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "root": "..",
+    "useIgnoreFile": true
+  },
   "files": {
     "includes": ["**", "!dist", "!worker/cloudflareBindings.d.ts", "!.wrangler"]
   },
