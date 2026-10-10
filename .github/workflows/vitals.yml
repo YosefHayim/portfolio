@@ -1,0 +1,14 @@
+name: Vitals
+'on':
+  workflow_call: null
+permissions:
+  contents: read
+jobs:
+  vitals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup workspace
+        uses: ./.github/actions/setup
+      - run: pnpm build && pnpm test:vitals

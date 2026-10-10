@@ -88,6 +88,11 @@ languages, 320 to 1440px, on the local Worker at 127.0.0.1:4173) and a mobile Li
 (performance 0.9+, LCP 2.5s or less, CLS 0.1 or less, TBT 200ms or less). Port 4173 must be
 free.
 
+CI runs the same checks as parallel jobs behind one required `CI Gate` job. Before opening a
+PR, run them locally with `act workflow_dispatch -W .github/workflows/ci.yml`; the root
+`.actrc` picks the Docker runner and keeps the pnpm store outside the workspace. act skips the
+Lighthouse job because Docker is too slow to measure it; `pnpm test:vitals` covers it locally.
+
 ## Release
 
 - Feature branch and PR, squash merge. Never push to main. No AI attribution or emojis.
