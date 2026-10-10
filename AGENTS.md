@@ -1,10 +1,10 @@
 # Agent guide
 
 A one-page bilingual (English and Hebrew) business site for Joseph Sabag, served at
-https://joseph-tech-solutions.dev/ by one Cloudflare Worker named `portfolio`. The look and
-motion follow the design file `03-sheets-v6.html` one to one; only the words were rewritten.
-Every call button opens WhatsApp at +972546187549 with a localized draft message. There are no
-forms, accounts, business API, database or secrets.
+https://joseph-tech-solutions.dev/ by one Cloudflare Worker named `freelance-landing-page`. The
+look and motion follow the design file `03-sheets-v6.html` one to one; only the words were
+rewritten. Every call button opens WhatsApp at +972546187549 with a localized draft message.
+There are no forms, accounts, business API, database or secrets.
 
 ## Structure
 
