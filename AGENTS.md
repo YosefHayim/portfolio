@@ -99,9 +99,7 @@ free.
   308 with path and query kept, a retired path ends in 404, both languages and the WhatsApp
   links work. Save the commit and Worker version in the PR. If the live check fails, roll back
   to the recorded version.
-- Open since 2026-10-06: the four `yosefhayimsabag.com` and `yosefhayimsabag.dev` hosts have no
-  public DNS. Restore them as proxied records and verify TLS before relying on them. Never
-  touch mail records.
+- Never touch mail records in the `yosefhayimsabag.com` and `yosefhayimsabag.dev` zones.
 - If GitHub Actions is blocked by billing, run the workflow with act in Docker and remove only
   what that run created. Never prune Docker globally.
 
