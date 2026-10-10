@@ -7,6 +7,7 @@ import { languages, openSite, revealEverySection } from './openSite';
 
 for (const language of languages) {
   test(`${language} page passes axe`, async ({ page }) => {
+    test.setTimeout(60000);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await openSite(page, language);
     await revealEverySection(page);

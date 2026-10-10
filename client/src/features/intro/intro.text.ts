@@ -1,4 +1,10 @@
 import type { Language } from '../language/savedLanguage';
+import type { WorkTypeName } from './workTypes';
+
+type WorkTypeText = {
+  label: string;
+  caption: string;
+};
 
 type IntroText = {
   sectionLabel: string;
@@ -9,6 +15,8 @@ type IntroText = {
   summary: string;
   callLabel: string;
   callHoverLabel: string;
+  showcaseLabel: string;
+  workTypes: Record<WorkTypeName, WorkTypeText>;
 };
 
 export const introText: Record<Language, IntroText> = {
@@ -16,22 +24,44 @@ export const introText: Record<Language, IntroText> = {
     sectionLabel: 'Intro',
     greeting: "Hi, I'm Joseph",
     photoAlt: 'Joseph Sabag',
-    headline: 'Stuck at "almost done"?',
-    mutedLine: "Let's finish it",
+    headline: 'I turn ideas into software',
+    mutedLine: 'that works for real customers',
     summary:
-      "Most people who message me come with the same story. There's an idea, sometimes half an app already, and it's been stuck for months. Honestly, those are my favorite projects. I'm a software engineer, and I take it from \"almost\" to live, with real customers paying. Hire me per project, bring me in as a partner for equity, or a bit of both. Either way, you'll hear from me every Friday.",
+      'It can be a website, an app, an automation or an AI tool. Sometimes we start from scratch, sometimes from something that got stuck halfway. Work with me per project, as a partner for equity, or a mix of both.',
     callLabel: "Let's talk",
     callHoverLabel: '15 minutes, no sales pitch',
+    showcaseLabel: 'What I build',
+    workTypes: {
+      website: {
+        label: 'Websites',
+        caption: "A nonprofit's system for donors, donations and reports",
+      },
+      app: { label: 'Apps', caption: 'Apps with AI that runs right on the phone' },
+      automation: { label: 'Automations', caption: 'Automations that end hours of copy-paste' },
+      aiTool: { label: 'AI tools', caption: 'Open-source AI tools, like AI that talks to eBay' },
+      extension: {
+        label: 'Extensions',
+        caption: 'Chrome extensions that do the work on their own',
+      },
+    },
   },
   he: {
     sectionLabel: 'פתיחה',
     greeting: 'היי, אני יוסף',
     photoAlt: 'יוסף סבג',
-    headline: 'תקועים על "כמעט מוכן"?',
-    mutedLine: 'בואו נסיים את זה',
+    headline: 'אני הופך רעיונות לתוכנה',
+    mutedLine: 'שעובדת אצל לקוחות אמיתיים',
     summary:
-      'רוב מי שכותב לי מגיע עם אותו סיפור. יש רעיון, לפעמים כבר חצי אפליקציה, והכול תקוע כבר כמה חודשים. בכנות, אלה הפרויקטים שאני הכי אוהב. אני מהנדס תוכנה, ואני לוקח את זה מ"כמעט" לאוויר, עם לקוחות אמיתיים שמשלמים. אפשר לעבוד איתי לפי פרויקט, לצרף אותי כשותף תמורת אקוויטי, או קצת מזה וקצת מזה. בכל מקרה, בסוף כל שבוע תקבלו ממני עדכון.',
+      'זה יכול להיות אתר, אפליקציה, אוטומציה או כלי AI. לפעמים מתחילים מאפס, ולפעמים ממשהו שנתקע באמצע הדרך. אפשר לעבוד איתי לפי פרויקט, כשותף תמורת אקוויטי, או שילוב של שניהם.',
     callLabel: 'בואו נדבר',
     callHoverLabel: 'רבע שעה, בלי חפירות',
+    showcaseLabel: 'מה אני בונה',
+    workTypes: {
+      website: { label: 'אתרים ומערכות', caption: 'מערכת ניהול לעמותה: תורמים, תרומות ודוחות' },
+      app: { label: 'אפליקציות', caption: 'אפליקציות עם AI שרץ ישר על הטלפון' },
+      automation: { label: 'אוטומציות', caption: 'אוטומציות שחוסכות שעות של העתק-הדבק' },
+      aiTool: { label: 'כלי AI', caption: 'כלי AI בקוד פתוח, למשל AI שמדבר עם eBay' },
+      extension: { label: 'תוספים לכרום', caption: 'תוספים לכרום שעושים את העבודה לבד' },
+    },
   },
 };

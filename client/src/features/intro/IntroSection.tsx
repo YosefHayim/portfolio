@@ -5,6 +5,7 @@ import type { Language } from '../language/savedLanguage';
 import { IntroCallButton } from './IntroCallButton';
 import { introText } from './intro.text';
 import { PixelRippleCanvas } from './PixelRippleCanvas';
+import { WorkShowcase } from './WorkShowcase';
 
 const lightStreaks = [
   { top: '20%', animationDelay: '0s' },
@@ -61,6 +62,11 @@ export const IntroSection = ({ language, prefersReducedMotion, isCovered }: Intr
         <div className="reveal-on-scroll" style={{ transitionDelay: '.15s' }}>
           <IntroCallButton language={language} />
         </div>
+        <WorkShowcase
+          language={language}
+          prefersReducedMotion={prefersReducedMotion}
+          isCovered={isCovered}
+        />
       </div>
     </section>
   );

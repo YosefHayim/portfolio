@@ -1,10 +1,10 @@
 # Agent guide
 
 A one-page bilingual (English and Hebrew) business site for Joseph Sabag, served at
-https://joseph-tech-solutions.dev/ by one Cloudflare Worker named `portfolio`. The look and
-motion follow the design file `03-sheets-v6.html` one to one; only the words were rewritten.
-Every call button opens WhatsApp at +972546187549 with a localized draft message. There are no
-forms, accounts, business API, database or secrets.
+https://joseph-tech-solutions.dev/ by one Cloudflare Worker named `freelance-landing-page`. The
+look and motion follow the design file `03-sheets-v6.html` one to one; only the words were
+rewritten. Every call button opens WhatsApp at +972546187549 with a localized draft message.
+There are no forms, accounts, business API, database or secrets.
 
 ## Structure
 
@@ -68,8 +68,8 @@ names or CSS classes.
   main language is Hebrew. A manual choice is saved in `localStorage` and wins later.
 - Every visible word and accessible label lives in a `<feature>.text.ts` in both languages.
 - Voice: spoken, specific, first person. Hebrew talks to the visitor in plural. No em dashes,
-  no revenue promises, no claims beyond the facts already in the text. Military service:
-  combat soldier and then commander in Nahal's 931st Battalion; add no award names.
+  no revenue promises, no claims beyond the facts already in the text. Do not mention
+  military service.
 - Use CSS logical properties. Mirror directional animations under `html[dir="rtl"]`.
 
 ## Caching and routes

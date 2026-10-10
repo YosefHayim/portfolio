@@ -16,12 +16,12 @@ type AboutText = {
 
 export const aboutText: Record<Language, AboutText> = {
   en: {
-    heading: 'No agency, no handoffs',
+    heading: 'No agency, no middlemen',
     mutedHeadingLines: ['You talk to the person', 'who writes the code'],
     paragraphs: [
-      "There's no account manager between us. The person answering your WhatsApp is the one writing your code. And if a feature isn't worth the money, you'll hear it from me first.",
-      "Quick background: I've worked on systems that handle 83 million requests a day, moved ten years of data without losing a single row, put an app on the App Store and built an open-source eBay server with 387 tools. Mostly it taught me which shortcuts are fine and which ones come back to bite you on a Saturday.",
-      "Before all that I served in Nahal's 931st Battalion, as a combat soldier and then as a commander, with an excellence award in both. What stuck with me: clear plan, clear owner, clear date. That's how I run projects. You'll get an update every Friday, even when the week was a mess.",
+      "There's no account manager between us. The person answering your WhatsApp is the one writing your code. And if a feature isn't worth the money, I'll tell you straight, before we even start.",
+      "How I got here: I used to be on your side. In 2022, when ChatGPT had just come out, I paid a Fiverr developer to automate my online store and got something late that I never ordered. So I sat down and learned to build it myself, and to do it properly: clean code that works and doesn't need fixing every week. Since then I've worked at startups, built websites and apps, and helped clients sort out their apps and get them onto the App Store. I know exactly what waiting on a developer feels like, and I make sure you won't have to.",
+      "Here's how I work: a clear plan, a clear date, and an update every Friday on what shipped, what's next and what's blocking. Even when the week was a mess, you'll hear it from me. No chasing me down.",
     ],
     icebergLabel: 'Iceberg: everyone sees the demo, I build the part under the water',
     icebergCaption: 'Everyone sees the demo.',
@@ -41,12 +41,12 @@ export const aboutText: Record<Language, AboutText> = {
     },
   },
   he: {
-    heading: 'בלי סוכנות, בלי מתווכים',
+    heading: 'בלי סוכנות, בלי טלפון שבור',
     mutedHeadingLines: ['מדברים ישר עם מי', 'שכותב את הקוד'],
     paragraphs: [
-      "אין בינינו מנהל לקוח. מי שעונה לכם בוואטסאפ הוא מי שכותב לכם את הקוד. ואם פיצ'ר מסוים לא שווה את הכסף, תשמעו את זה ממני ראשון.",
-      'קצת רקע: עבדתי על מערכות שמטפלות ב-83 מיליון בקשות ביום, העברתי עשר שנים של נתונים בלי לאבד שורה אחת, העליתי אפליקציה ל-App Store ובניתי שרת קוד פתוח ל-eBay עם 387 כלים. בעיקר למדתי מזה אילו קיצורי דרך בסדר, ואילו יחזרו אליכם בשבת בבוקר.',
-      'לפני כל זה שירתתי בגדוד 931 של הנח"ל, כלוחם ואחר כך כמפקד, וקיבלתי הצטיינות בשני התפקידים. מה שנשאר איתי: תוכנית ברורה, אחראי ברור, תאריך ברור. ככה אני מנהל פרויקטים. בסוף כל שבוע תקבלו עדכון, גם כשהשבוע היה בלגן.',
+      "אין בינינו מנהל לקוח. מי שעונה לכם בוואטסאפ הוא מי שכותב את הקוד. ואם פיצ'ר לא שווה את הכסף, אני אגיד לכם את זה דוגרי, עוד לפני שהתחלנו.",
+      'איך הגעתי לזה? פעם הייתי בצד שלכם. ב-2022, כש-ChatGPT רק יצא, שילמתי למתכנת מפייבר על אוטומציה לחנות שלי וקיבלתי באיחור משהו שלא הזמנתי. אז ישבתי ולמדתי לבנות בעצמי, ולעשות את זה כמו שצריך: קוד נקי שעובד, ולא צריך לתקן אותו כל שבוע. מאז עבדתי בסטארטאפים, בניתי אתרים ואפליקציות, ועזרתי ללקוחות לסדר את האפליקציה שלהם ולעלות איתה ל-App Store. אז אני יודע בדיוק איך זה לחכות למתכנת, ודואג שאצלי לא תצטרכו.',
+      'ככה זה עובד אצלי: תוכנית ברורה, תאריך ברור, ועדכון בכל יום שישי על מה עלה, מה הבא בתור ומה תקוע. גם כשהשבוע היה על הפנים, תשמעו את זה ממני ולא תצטרכו לרדוף אחריי.',
     ],
     icebergLabel: 'קרחון: כולם רואים את הדמו, אני בונה את מה שמתחת למים',
     icebergCaption: 'כולם רואים את הדמו.',
