@@ -1,0 +1,130 @@
+.chat-window {
+  position: absolute;
+  left: 50%;
+  top: 10cqw;
+  bottom: 4cqw;
+  width: 62cqw;
+  transform: translateX(-50%);
+  border-radius: 3cqw;
+  background: #efeae2;
+  border: 1px solid #e2dcd2;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 1.8cqw;
+  padding: 1.8cqw 2.4cqw;
+  background: #fff;
+  border-bottom: 1px solid #e6e1d8;
+}
+
+.chat-avatar {
+  display: grid;
+  width: 5.6cqw;
+  height: 5.6cqw;
+  border-radius: 50%;
+  background: #d7dce3;
+  color: #fff;
+  font-weight: 700;
+  font-size: 2.4cqw;
+  place-items: center;
+  transition: background 0.5s;
+}
+
+.chat-avatar > * {
+  grid-area: 1 / 1;
+}
+
+.problem-animation-panel.is-showing-fix .developer-gone-animation .chat-avatar {
+  background: linear-gradient(180deg, #3bb2ff, #1e86ff);
+}
+
+.chat-contact {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-contact b {
+  font-size: 2.3cqw;
+  font-weight: 600;
+}
+
+.chat-contact .chat-contact-status {
+  font-size: 1.8cqw;
+  color: var(--muted-dark);
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 2.4cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4cqw;
+  justify-content: flex-end;
+}
+
+.chat-message {
+  max-width: 72%;
+  padding: 1.4cqw 2cqw;
+  border-radius: 2cqw;
+  font-size: 2.05cqw;
+  line-height: 1.35;
+  box-shadow: 0 0.3cqw 0.6cqw rgba(0, 0, 0, 0.06);
+}
+
+.chat-message small {
+  display: block;
+  text-align: end;
+  font-size: 1.5cqw;
+  color: #7a8088;
+  margin-top: 0.4cqw;
+}
+
+.chat-message.is-sent {
+  align-self: flex-end;
+  background: #d9fdd3;
+  border-end-end-radius: 0.6cqw;
+}
+
+.chat-message.is-received {
+  align-self: flex-start;
+  background: #fff;
+  border-end-start-radius: 0.6cqw;
+}
+
+.developer-gone-animation .chat-message.is-sent {
+  opacity: 0;
+  transform: translateY(8px) scale(0.95);
+}
+
+.developer-gone-animation.is-active .chat-message.is-sent {
+  animation: pop-in 0.5s var(--spring-ease) forwards;
+  animation-delay: calc(0.35s + var(--order) * 0.7s);
+}
+
+.read-ticks {
+  display: inline-grid;
+}
+
+.read-ticks > * {
+  grid-area: 1 / 1;
+}
+
+.problem-animation-panel.is-showing-fix .developer-gone-animation .read-ticks .fix-state {
+  color: #34b7f1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .developer-gone-animation .chat-message.is-sent {
+    opacity: 1;
+    transform: none;
+  }
+
+  .developer-gone-animation.is-active .chat-message.is-sent {
+    animation: none;
+  }
+}

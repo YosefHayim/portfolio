@@ -1,0 +1,146 @@
+.idea-sketch {
+  position: absolute;
+  inset-inline-start: 6cqw;
+  top: 12cqw;
+  width: 40cqw;
+  padding: 2.4cqw;
+  border-radius: 2.4cqw;
+  background: repeating-linear-gradient(180deg, #fff 0 3.6cqw, #eef2f7 3.6cqw calc(3.6cqw + 1px));
+  border: 1px solid #e6ebf2;
+  box-shadow: 0 2cqw 4cqw -2cqw rgba(20, 40, 80, 0.25);
+  transform: rotate(-3deg);
+}
+
+.idea-sketch svg {
+  width: 100%;
+  display: block;
+}
+
+.idea-sketch span {
+  display: block;
+  margin-top: 1cqw;
+  font-size: 2cqw;
+  color: var(--muted-dark);
+  font-style: italic;
+}
+
+.cofounder-post {
+  position: absolute;
+  inset-inline-end: 6cqw;
+  top: 18cqw;
+  width: 38cqw;
+  padding: 2.4cqw;
+  border-radius: 2.4cqw;
+  background: #fff;
+  border: 1px solid #e6ebf2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8cqw;
+  box-shadow: 0 2cqw 4cqw -2cqw rgba(20, 40, 80, 0.25);
+}
+
+.cofounder-post b {
+  font-size: 2.3cqw;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.cofounder-post span {
+  font-size: 1.9cqw;
+  color: var(--muted-dark);
+}
+
+.cofounder-post .is-bad {
+  font-weight: 600;
+  color: #e5484d;
+}
+
+.no-tech-partner-animation.is-active .cofounder-post {
+  animation: post-sway 3s ease-in-out infinite;
+}
+
+@keyframes post-sway {
+  50% {
+    transform: translateY(-1cqw);
+  }
+}
+
+.partner-pair {
+  position: absolute;
+  left: 50%;
+  top: 16cqw;
+  display: flex;
+  align-items: center;
+  gap: 2cqw;
+  translate: -50% 0;
+}
+
+.partner-avatar {
+  width: 14cqw;
+  height: 14cqw;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 3cqw;
+  box-shadow: 0 2cqw 5cqw -2cqw rgba(0, 0, 0, 0.3);
+  transition: transform 1.2s var(--spring-ease);
+}
+
+.partner-avatar.is-visitor {
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  color: var(--text);
+  transform: translateX(-14cqw);
+}
+
+.partner-avatar.is-joseph {
+  background: linear-gradient(180deg, #3bb2ff, #1e86ff);
+  color: #fff;
+  font-size: 5cqw;
+  transform: translateX(14cqw);
+}
+
+html[dir="rtl"] .partner-avatar.is-visitor {
+  transform: translateX(14cqw);
+}
+
+html[dir="rtl"] .partner-avatar.is-joseph {
+  transform: translateX(-14cqw);
+}
+
+.problem-animation-panel.is-showing-fix .no-tech-partner-animation.is-active .partner-avatar {
+  transform: none;
+}
+
+.partner-plus {
+  font-size: 5cqw;
+  font-weight: 300;
+  color: var(--blue);
+}
+
+.deal-options {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8cqw;
+  display: flex;
+  justify-content: center;
+  gap: 1.6cqw;
+}
+
+.deal-options span {
+  padding: 1.4cqw 2.8cqw;
+  border-radius: 99px;
+  background: #fff;
+  border: 1px solid #bfdbff;
+  color: #1e5fc8;
+  font-size: 2.1cqw;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .no-tech-partner-animation.is-active .cofounder-post {
+    animation: none;
+  }
+}

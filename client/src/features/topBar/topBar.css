@@ -1,0 +1,136 @@
+.top-bar {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+html[dir="rtl"] .top-bar {
+  right: auto;
+  left: 24px;
+}
+
+.top-bar-call-button {
+  position: relative;
+  overflow: hidden;
+  height: 40px;
+  padding: 0 16px 0 14px;
+  border-radius: 999px;
+  background: var(--text);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  transition: transform 0.45s var(--spring-ease);
+}
+
+.top-bar-call-button:hover {
+  color: #fff;
+}
+
+.top-bar-call-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: translateX(-150%) skewX(-20deg);
+  animation: shine 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0%,
+  62% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  84%,
+  100% {
+    transform: translateX(340%) skewX(-20deg);
+  }
+}
+
+.top-bar-call-button:hover,
+.top-bar-call-button:focus-visible {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.online-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34c759;
+  flex: none;
+}
+
+.online-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #34c759;
+  animation: online-pulse 1.8s ease-out infinite;
+}
+
+@keyframes online-pulse {
+  to {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+.phone-icon {
+  display: grid;
+  width: 15px;
+  height: 15px;
+}
+
+.phone-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.top-bar-call-button:is(:hover, :focus-visible) .phone-icon {
+  animation: phone-ringing 0.6s ease-in-out 2;
+}
+
+@media (max-width: 760px) {
+  .top-bar {
+    top: 16px;
+    right: 16px;
+  }
+
+  html[dir="rtl"] .top-bar {
+    left: 16px;
+  }
+
+  .top-bar-call-button .rolling-label > span + span {
+    display: none;
+  }
+
+  .top-bar-call-button:is(:hover, :focus-visible) .rolling-label > span:first-child {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-bar-call-button::after,
+  .online-dot::after {
+    animation: none;
+  }
+
+  .top-bar-call-button:hover {
+    transform: none;
+  }
+}

@@ -1,15 +1,14 @@
-name: CI Gate
+name: Browser
 'on':
   workflow_call: null
 permissions:
   contents: read
 jobs:
   browser:
-    name: CI Gate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup workspace
         uses: ./.github/actions/setup
       - run: pnpm --dir client exec playwright install --with-deps --only-shell chromium webkit

@@ -1,0 +1,258 @@
+.problems-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.problems-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+}
+
+.problem-carousel {
+  position: relative;
+  overflow: hidden;
+  height: 400px;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 16%, #000 84%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 16%, #000 84%, transparent);
+}
+
+.problem-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  will-change: transform;
+}
+
+.problem-tab {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  align-content: center;
+  width: 100%;
+  height: 96px;
+  flex: none;
+  text-align: start;
+  padding: 14px 20px;
+  border-radius: 18px;
+  border: 1px solid var(--hairline);
+  background: #fff;
+  opacity: 0.4;
+  transform: scale(0.95);
+  transition:
+    opacity 0.5s,
+    transform 0.7s var(--spring-ease),
+    border-color 0.3s,
+    background 0.3s;
+}
+
+.problem-tab:hover {
+  opacity: 0.8;
+}
+
+.problem-tab.is-active {
+  border-color: #bfdbff;
+  background: linear-gradient(180deg, #f4f9ff, #fff);
+  opacity: 1;
+  transform: none;
+  box-shadow: 0 14px 30px -18px rgba(30, 134, 255, 0.45);
+}
+
+.problem-carousel.is-wrapping .problem-tab {
+  transition: none;
+}
+
+.problem-tab-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.problem-tab-subtitle {
+  display: block;
+  font-size: 14.5px;
+  color: var(--muted-dark);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.problem-animation-panel {
+  position: relative;
+  aspect-ratio: 16 / 11;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  background:
+    radial-gradient(90% 70% at 100% 0%, #eaf4ff, transparent 60%),
+    radial-gradient(70% 60% at 0% 100%, #fff1f1, transparent 60%), #fbfcfe;
+  container-type: inline-size;
+  transition: background 0.6s;
+}
+
+.problem-animation-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(90% 70% at 0% 100%, #eafbf1, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.8s;
+  pointer-events: none;
+}
+
+.problem-animation-panel.is-showing-fix::after {
+  opacity: 1;
+}
+
+.problem-progress-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  z-index: 6;
+  background: linear-gradient(90deg, var(--blue-light), #34c759);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.problem-progress-bar.is-running {
+  animation: fill-progress var(--duration, 10s) linear forwards;
+}
+
+@keyframes fill-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.problem-animation {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.4s,
+    visibility 0s 0.4s;
+  z-index: 1;
+}
+
+.problem-animation.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s;
+}
+
+.problem-animation .fix-state {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  transition:
+    opacity 0.45s,
+    transform 0.7s var(--spring-ease);
+}
+
+.problem-animation-panel.is-showing-fix .problem-animation.is-active .fix-state {
+  opacity: 1;
+  transform: none;
+  transition-delay: var(--fix-delay, 0s);
+}
+
+.problem-animation .problem-state {
+  transition: opacity 0.35s;
+}
+
+.problem-animation-panel.is-showing-fix .problem-animation .problem-state {
+  opacity: 0;
+}
+
+.state-swap {
+  display: inline-grid;
+}
+
+.state-swap > * {
+  grid-area: 1 / 1;
+}
+
+.is-good {
+  color: #1f9d55;
+}
+
+.is-bad {
+  color: #e5484d;
+}
+
+@keyframes pop-in {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.problem-fix {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-top: 16px;
+  min-height: 4.8em;
+}
+
+.problem-fix-text {
+  font-size: 16px;
+  color: #3a3a3a;
+  max-width: 38em;
+  transition: opacity 0.35s;
+}
+
+.problem-fix-label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+@media (max-width: 900px) {
+  .problems-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .problem-carousel {
+    height: 320px;
+  }
+
+  .problem-tab {
+    height: 92px;
+  }
+
+  .problem-animation-panel {
+    aspect-ratio: 4 / 4.2;
+  }
+}
+
+@media (max-width: 760px) {
+  .problems-heading {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .problem-progress-bar.is-running {
+    animation: none;
+  }
+
+  .problem-animation .fix-state,
+  .problem-animation-panel.is-showing-fix .problem-animation.is-active .fix-state {
+    transform: none;
+  }
+}

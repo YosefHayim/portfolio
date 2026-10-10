@@ -21,6 +21,9 @@ jobs:
     uses: ./.github/workflows/build.yml
   browser:
     uses: ./.github/workflows/browser.yml
+  vitals:
+    if: github.actor != 'nektos/act'
+    uses: ./.github/workflows/vitals.yml
   gate:
     name: CI Gate
     runs-on: ubuntu-slim
@@ -31,8 +34,9 @@ jobs:
     - test
     - build
     - browser
+    - vitals
     if: always()
     steps:
     - name: Require every check to pass
-      run: test "${{ needs.lint.result }}" = "success" && test "${{ needs.typecheck.result }}" = "success" && test "${{ needs.test.result
-        }}" = "success" && test "${{ needs.build.result }}" = "success" && test "${{ needs.browser.result }}" = "success"
+      if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+      run: exit 1

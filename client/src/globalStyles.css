@@ -1,0 +1,101 @@
+:root {
+  --page-color: #232323;
+  --section-color: #fff;
+  --text: #0f0f0f;
+  --muted: #8c8c8c;
+  --muted-dark: #6b6b6b;
+  --hairline: #ececec;
+  --blue-light: #3bb2ff;
+  --blue: #1e86ff;
+  --blue-dark: #0a5fc4;
+  --blue-wash: #e8f2ff;
+  --green: #166534;
+  --green-wash: #dcfce7;
+  --soft-gray: #f6f7f9;
+  --placeholder-gray: #e3e6ea;
+  --heading-font:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Variable", "Heebo Variable",
+    system-ui, sans-serif;
+  --body-font:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", "Heebo Variable", system-ui,
+    sans-serif;
+  --mono-font: "DM Mono", ui-monospace, monospace;
+  --spring-ease: cubic-bezier(0.34, 1.45, 0.64, 1);
+  --soft-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html[dir="rtl"] {
+  --heading-font: -apple-system, BlinkMacSystemFont, "Heebo Variable", sans-serif;
+  --body-font: -apple-system, BlinkMacSystemFont, "Heebo Variable", sans-serif;
+  --mono-font: "DM Mono", "Heebo Variable", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: var(--page-color);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--body-font);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  padding: 8px;
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--blue);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+h2 {
+  font-size: clamp(34px, 4vw, 56px);
+}
+
+.display-heading {
+  font-family: var(--heading-font);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.muted-line {
+  color: var(--muted);
+}
+
+.section-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(72px, 9vw, 128px) clamp(20px, 5vw, 72px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

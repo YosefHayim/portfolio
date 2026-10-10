@@ -1,0 +1,81 @@
+import type { Language } from '../language/savedLanguage';
+import { whatsappLink } from '../whatsapp/whatsappLink';
+import { contactText } from './contact.text';
+import { copyText } from './copyText';
+
+const xHandle = '@yosefhayim';
+
+const linkedinIconPath =
+  'M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z';
+const githubIconPath =
+  'M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57l-.02-2.04c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.36.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3';
+const whatsappIconPath =
+  'M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.47-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41Z';
+const xIconPath =
+  'M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.47l8.6-9.83L0 1.15h7.59l5.24 6.93zm-1.29 19.5h2.04L6.49 3.24H4.3z';
+
+interface SocialLinksProps {
+  language: Language;
+  onHandleCopied: () => void;
+}
+
+export const SocialLinks = ({ language, onHandleCopied }: SocialLinksProps) => {
+  const text = contactText[language];
+  const profileLinks = [
+    {
+      name: 'LinkedIn',
+      href: 'https://www.linkedin.com/in/yosef-hayim-sabag/',
+      brandColor: '#0A66C2',
+      iconPath: linkedinIconPath,
+    },
+    {
+      name: 'GitHub',
+      href: 'https://github.com/YosefHayim',
+      brandColor: '#181717',
+      iconPath: githubIconPath,
+    },
+    {
+      name: 'WhatsApp',
+      href: whatsappLink(language),
+      brandColor: '#25D366',
+      iconPath: whatsappIconPath,
+    },
+  ];
+
+  return (
+    <div className="social-links">
+      {profileLinks.map((profile) => (
+        <a
+          key={profile.name}
+          className="social-link"
+          href={profile.href}
+          target="_blank"
+          rel="noopener"
+          aria-label={profile.name}
+          data-tooltip={profile.name}
+          style={{ '--brand': profile.brandColor }}
+        >
+          <span className="social-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d={profile.iconPath} />
+            </svg>
+          </span>
+        </a>
+      ))}
+      <button
+        type="button"
+        className="social-link"
+        aria-label={text.copyHandleLabel}
+        data-tooltip={text.copyHandleTooltip}
+        style={{ '--brand': '#000' }}
+        onClick={() => copyText(xHandle, onHandleCopied)}
+      >
+        <span className="social-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d={xIconPath} />
+          </svg>
+        </span>
+      </button>
+    </div>
+  );
+};

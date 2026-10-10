@@ -1,0 +1,279 @@
+.contact-section {
+  position: relative;
+  min-height: calc(100svh - 16px);
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  background: #1a0f3d;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.moving-sky {
+  position: absolute;
+  left: -30%;
+  right: -30%;
+  top: -60%;
+  bottom: -60%;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    #140c33 0%,
+    #2b1660 22%,
+    #5a2477 38%,
+    #a8396b 52%,
+    #e8664a 66%,
+    #f7a55a 78%,
+    #e8664a 88%,
+    #5a2477 100%
+  );
+  animation: sky-move 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes sky-move {
+  0% {
+    transform: translateY(-14%) rotate(-5deg) scale(1);
+  }
+
+  50% {
+    transform: translateY(6%) rotate(3deg) scale(1.06);
+  }
+
+  100% {
+    transform: translateY(14%) rotate(-2deg) scale(1);
+  }
+}
+
+.sunset-cloud {
+  position: absolute;
+  z-index: 1;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.75;
+  animation: cloud-drift 22s ease-in-out infinite alternate;
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-6%) translateY(0);
+  }
+
+  to {
+    transform: translateX(8%) translateY(-6%);
+  }
+}
+
+.starry-sky-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.contact-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 36px;
+  padding: 120px 24px 60px;
+}
+
+.contact-heading {
+  font-size: clamp(36px, 5vw, 72px);
+  color: #fff;
+  max-width: 14em;
+}
+
+.contact-muted-line {
+  display: block;
+  color: #ffe1c7;
+  font-size: 0.62em;
+  margin-top: 0.4em;
+  letter-spacing: -0.02em;
+}
+
+.contact-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.contact-call-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  font-weight: 500;
+  box-shadow: 0 10px 30px -8px rgba(40, 10, 60, 0.5);
+  transition: transform 0.45s var(--spring-ease);
+}
+
+.contact-call-button:hover {
+  transform: translateY(-2px);
+  color: var(--text);
+}
+
+.contact-call-button:focus-visible {
+  outline-color: #fff;
+}
+
+.site-footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  padding: 18px clamp(20px, 3vw, 40px);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.site-footer a,
+.site-footer button {
+  color: #fff;
+}
+
+.site-footer :focus-visible {
+  outline-color: #fff;
+}
+
+.social-links {
+  display: flex;
+  gap: 10px;
+}
+
+.social-link {
+  position: relative;
+  isolation: isolate;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  transition: transform 0.5s var(--spring-ease);
+}
+
+.social-link::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  background: var(--brand, #fff);
+  transform: scale(0);
+  transition: transform 0.45s var(--spring-ease);
+  z-index: -1;
+}
+
+.social-link::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translate(-50%, 8px) scale(0.6);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  background: #fff;
+  color: var(--brand, #2b1660);
+  font-family: var(--body-font);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(40, 10, 60, 0.3);
+  transition:
+    transform 0.45s var(--spring-ease),
+    opacity 0.2s;
+  pointer-events: none;
+}
+
+.social-icon {
+  display: grid;
+  place-items: center;
+  transition:
+    transform 0.6s var(--spring-ease),
+    color 0.25s;
+}
+
+.social-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.social-link:is(:hover, :focus-visible) {
+  transform: translateY(-5px);
+}
+
+.social-link:is(:hover, :focus-visible)::after {
+  transform: scale(1);
+}
+
+.social-link:is(:hover, :focus-visible)::before {
+  transform: translate(-50%, 0) scale(1);
+  opacity: 1;
+}
+
+.social-link:is(:hover, :focus-visible) .social-icon {
+  color: #fff;
+  transform: rotate(360deg) scale(1.1);
+}
+
+.copied-notice {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 300;
+  transform: translate(-50%, 20px);
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    transform 0.5s var(--spring-ease);
+  background: var(--text);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.copied-notice.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (max-width: 760px) {
+  .site-footer {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moving-sky,
+  .sunset-cloud {
+    animation: none;
+  }
+
+  .contact-call-button:hover,
+  .social-link:is(:hover, :focus-visible) {
+    transform: none;
+  }
+
+  .social-icon {
+    transition: opacity 0.2s;
+  }
+}

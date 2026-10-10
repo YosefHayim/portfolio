@@ -1,0 +1,46 @@
+.section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stacking-section {
+  position: sticky;
+  top: 8px;
+  background: var(--section-color);
+  border-radius: 24px;
+  overflow: hidden;
+  will-change: transform;
+  transform-origin: 50% 0;
+}
+
+.stacking-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--cover-dim, 0);
+  pointer-events: none;
+  z-index: 50;
+  border-radius: inherit;
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translate(var(--reveal-x, 0), var(--reveal-y, 24px));
+  transition:
+    opacity 0.9s,
+    transform 1.1s var(--soft-ease);
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll {
+    transform: none;
+    transition: none;
+  }
+}
