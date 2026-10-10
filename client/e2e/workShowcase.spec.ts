@@ -44,18 +44,24 @@ for (const language of languages) {
   });
 }
 
-test('the showcase pauses while the next section covers it', async ({ page }) => {
+test('the showcase pauses while the next section covers it and resumes after', async ({ page }) => {
   await page.clock.install();
   await openSite(page, 'en');
   const { panel } = findShowcase(page, 'en');
   await panel.scrollIntoViewIfNeeded();
   await expect(panel).toHaveClass(/is-visible/);
+  const visibleScrollTop = await page.evaluate(() => window.scrollY);
   await page.locator('#contact').scrollIntoViewIfNeeded();
   await expect(panel).not.toHaveClass(/is-visible/);
   const pressedButton = panel.locator('.work-type-button[aria-pressed="true"]');
   const pausedLabel = String(await pressedButton.textContent());
   await page.clock.runFor(rotationDelay * 3);
   await expect(pressedButton).toHaveText(pausedLabel);
+
+  await page.evaluate((top) => window.scrollTo({ top, behavior: 'instant' }), visibleScrollTop);
+  await expect(panel).toHaveClass(/is-visible/);
+  await page.clock.runFor(rotationDelay);
+  await expect(pressedButton).not.toHaveText(pausedLabel);
 });
 
 test('with reduced motion the showcase stays still until a visitor picks one', async ({ page }) => {

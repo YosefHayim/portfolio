@@ -41,5 +41,6 @@
 @media (prefers-reduced-motion: reduce) {
   .reveal-on-scroll {
     transform: none;
+    transition: none;
   }
 }
